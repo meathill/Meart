@@ -1,0 +1,6 @@
+# IDE
+.idea
+
+# repo
+node_modules
+bower_components
