@@ -2,10 +2,12 @@ const {app, BrowserWindow} = require('electron');
 const path = require('path');
 const url = require('url');
 const fs = require('fs');
+const _ = require('underscore');
+const defaultConfig = require('../config/default.json');
 
 class Meart {
   constructor() {
-    this.path = app.getPath('userData');
+    this.path = app.getAppPath();
     this.delegateEvent();
     this.loadConfig();
   }
@@ -23,7 +25,7 @@ class Meart {
     });
 
     this.win.loadURL(url.format({
-      pathname: path.join(__dirname, 'index.html'),
+      pathname: path.join(__dirname, '../index.html'),
       protocol: 'file:',
       slashes: true
     }));
@@ -34,7 +36,11 @@ class Meart {
   }
 
   delegateEvent() {
-    app.on('ready', this.onAppReady);
+    if (!app.isReady()) {
+      app.on('ready', this.onAppReady.bind(this));
+    } else {
+      this.isAppReady = true;
+    }
     app.on('window-all-closed', () => {
       if (process.platform !== 'darwin') {
         app.quit();
@@ -45,22 +51,28 @@ class Meart {
         this.createWindow();
       }
     });
-    this.startUp();
   }
 
   loadConfig() {
-    fs.readFile(this.path + 'config.json', 'utf8', (error, content) => {
+    let configFile = this.path + '/config.json';
+    if (!fs.existsSync(configFile)) {
+      // 初始化
+      this.config = defaultConfig;
+      return this.startUp();
+    }
+    fs.readFile(configFile, 'utf8', (error, content) => {
       if (error) {
         console.log(error);
       }
-      global.sharedObject.config = this.config = JSON.parse(content);
+      global.sharedObject.config = this.config = _.defaults(JSON.parse(content), defaultConfig);
       this.startUp();
     });
   }
 
   onAppReady() {
     this.isAppReady = true;
+    this.startUp();
   }
 }
 
-export default Meart;
+module.exports = Meart;
