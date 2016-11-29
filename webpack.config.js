@@ -9,5 +9,13 @@ module.exports = {
   },
   externals: {
     electron: 'electron'
+  },
+  modules: {
+    noParse: /vue/
+  },
+  resolve: {
+    alias: {
+      'vue$': 'vue/dist/vue.common.js'
+    }
   }
 };

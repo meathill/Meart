@@ -57,16 +57,37 @@ class Meart {
     let configFile = this.path + '/config.json';
     if (!fs.existsSync(configFile)) {
       // 初始化
-      this.config = defaultConfig;
+      global.sharedObject = this.config = defaultConfig;
       return this.startUp();
     }
-    fs.readFile(configFile, 'utf8', (error, content) => {
-      if (error) {
-        console.log(error);
-      }
+
+    // 加载保存的配置
+    let sites = this.path + '/sites.json';
+    let configPromise = new Promise(function (resolve, reject) {
+      fs.readFile(configFile, 'utf8', (error, content) => {
+        if (error) {
+          return reject(error);
+        }
+        resolve(content);
+      });
+    })
+    .then( (content) => {
       global.sharedObject.config = this.config = _.defaults(JSON.parse(content), defaultConfig);
-      this.startUp();
     });
+    let sitesPromise = new Promise(function (resolve, reject) {
+      fs.readFile(sites, 'utf8', (error, content) => {
+        if (error) {
+          return reject(error);
+        }
+        resolve(content)
+      });
+    }).then( (content) => {
+      global.shareObject.sites = this.sites = JSON.parse(content);
+    });
+    Promise.all([configPromise, sitesPromise])
+      .then(() => {
+        this.startUp();
+      });
   }
 
   onAppReady() {
