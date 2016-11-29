@@ -4,6 +4,7 @@ const url = require('url');
 const fs = require('fs');
 const _ = require('underscore');
 const defaultConfig = require('../config/default.json');
+const config = require('../config');
 
 class Meart {
   constructor() {
@@ -33,6 +34,10 @@ class Meart {
     this.win.on('close',() => {
       this.win = null;
     });
+
+    if (config.isDebug) {
+      this.win.webcContents.openDevTools();
+    }
   }
 
   delegateEvent() {

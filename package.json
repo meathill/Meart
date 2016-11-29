@@ -28,6 +28,7 @@
     "vue": "^2.1.3"
   },
   "devDependencies": {
+    "colors.css": "^3.0.0",
     "webpack": "^1.13.3"
   }
 }
