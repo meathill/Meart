@@ -10,12 +10,13 @@ module.exports = {
   externals: {
     electron: 'electron'
   },
-  modules: {
+  module: {
     noParse: /vue/
   },
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue.common.js'
+      'vue$': 'vue/dist/vue.js',
+      'vue-router$': 'vue-router/dist/vue-router.js'
     }
   }
 };

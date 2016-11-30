@@ -10,18 +10,12 @@
   <link rel="stylesheet" href="css/screen.css">
 </head>
 <body>
-<div class="container-fluid" id="app">
+<div id="app">
   <aside id="aside">
-    <nav>
-      <ul>
-        <li><a href="/new"><i class="fa fa-plus"></i></a></li>
-        <li><a href="/"><i class="fa fa-list"></i></a></li>
-      </ul>
-    </nav>
+    <router-link to="/new" class="btn btn-secondary btn-block"><i class="fa fa-plus"></i></router-link>
+    <router-link to="/" class="btn btn-secondary btn-block"><i class="fa fa-list"></i></router-link>
   </aside>
-  <div id="container">
-
-  </div>
+  <router-view></router-view>
 </div>
 <script src="dist/bundle.js"></script>
 </body>

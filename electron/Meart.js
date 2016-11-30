@@ -4,7 +4,6 @@ const url = require('url');
 const fs = require('fs');
 const _ = require('underscore');
 const defaultConfig = require('../config/default.json');
-const config = require('../config');
 
 class Meart {
   constructor() {
@@ -14,7 +13,7 @@ class Meart {
   }
 
   startUp() {
-    if (this.isAppReady && this.config) {
+    if (this.isAppReady && this.settings) {
       this.createWindow();
     }
   }
@@ -34,10 +33,6 @@ class Meart {
     this.win.on('close',() => {
       this.win = null;
     });
-
-    if (config.isDebug) {
-      this.win.webcContents.openDevTools();
-    }
   }
 
   delegateEvent() {
@@ -59,40 +54,33 @@ class Meart {
   }
 
   loadConfig() {
-    let configFile = this.path + '/config.json';
-    if (!fs.existsSync(configFile)) {
+    let settings = this.path + '/settings.json'; // 用户设置
+    if (!fs.existsSync(settings)) {
       // 初始化
-      global.sharedObject = this.config = defaultConfig;
+      global.settings = this.settings = defaultConfig;
       return this.startUp();
     }
 
-    // 加载保存的配置
-    let sites = this.path + '/sites.json';
-    let configPromise = new Promise(function (resolve, reject) {
-      fs.readFile(configFile, 'utf8', (error, content) => {
-        if (error) {
-          return reject(error);
-        }
-        resolve(content);
-      });
-    })
-    .then( (content) => {
-      global.sharedObject.config = this.config = _.defaults(JSON.parse(content), defaultConfig);
-    });
-    let sitesPromise = new Promise(function (resolve, reject) {
-      fs.readFile(sites, 'utf8', (error, content) => {
-        if (error) {
-          return reject(error);
-        }
-        resolve(content)
-      });
-    }).then( (content) => {
-      global.shareObject.sites = this.sites = JSON.parse(content);
-    });
-    Promise.all([configPromise, sitesPromise])
+    let site = this.path + '/site.json'; // 站点信息
+    let settingsPromise = this.readFile(settings, 'settings', defaultConfig);
+    let sitePromise = this.readFile(site, 'site');
+    Promise.all([settingsPromise, sitePromise])
       .then(() => {
         this.startUp();
       });
+  }
+
+  readFile(file, field, defaults = {}) {
+    return new Promise( (resolve, reject) => {
+      fs.readFile(file, 'utf8', (error, content) => {
+        if (error) {
+          console.log(error);
+          return reject(error);
+        }
+        global[field] = this[field] = _.defaults(JSON.parse(content), defaults);
+        resolve();
+      });
+    });
   }
 
   onAppReady() {

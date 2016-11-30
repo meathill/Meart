@@ -9,16 +9,16 @@ button-size = aside-width - gap * 2
   top: 0
   left: 0
   bottom: 0
+  padding gap
 
-  ul
-    padding: gap gap 0
-    margin: 0
+  > a.btn
+    height button-size
+    line-height button-size
+    padding 0
 
-    li
-      background: white
-      list-style none
-      width button-size
-      height button-size
+    + a.btn
+      margin gap 0 0
+
+    i
+      font-size 1.5em
       line-height button-size
-      border-radius 4px
-      text-align center
