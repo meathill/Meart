@@ -55,6 +55,7 @@ class Meart {
     ipcMain.on('site-init', (event, site) => {
       global.site = this.site = site;
       global.isNew = false;
+      fs.writeFile(this.path + '/site.json', JSON.stringify(site), 'utf8');
       event.returnValue = true;
     });
   }
@@ -64,11 +65,14 @@ class Meart {
     if (!fs.existsSync(settings)) {
       // 初始化
       global.settings = this.settings = defaultConfig;
-      global.isNew = true;
-      return this.startUp();
+      fs.writeFile(this.path + '/settings.json', '{}', 'utf8');
     }
 
     let site = this.path + '/site.json'; // 站点信息
+    if (!fs.existsSync(site)) {
+      global.isNew = true;
+      return this.startUp();
+    }
     let settingsPromise = this.readFile(settings, 'settings', defaultConfig);
     let sitePromise = this.readFile(site, 'site');
     Promise.all([settingsPromise, sitePromise])

@@ -1,21 +1,12 @@
 const remote = require('electron').remote;
 const Welcome = require('./app/component/Welcome');
-
-const NotFound = {
-  template: '<p>Page not found</p>'
-};
-const Home = {
-  template: '<p>home</p>'
-};
-const New = {
-  template: '<p>new</p>'
-};
+const Site = require('./app/component/Site');
 
 const routes = [
   {
     path: '/site',
     name: "home",
-    component: Home
+    component: Site
   },
   {
     path: '/welcome',

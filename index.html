@@ -17,10 +17,16 @@
 </div>
 
 <script type="text/x-template" id="site">
-  <aside>
-    <router-link to="/new" class="btn btn-secondary btn-block"><i class="fa fa-plus"></i></router-link>
-    <router-link to="/" class="btn btn-secondary btn-block"><i class="fa fa-list"></i></router-link>
-  </aside>
+  <div id="site-container">
+    <aside>
+      <router-link to="/site/setting" class="btn btn-secondary btn-block"><i class="fa fa-home"></i></router-link>
+      <router-link to="/site/articles" class="btn btn-secondary btn-block"><i class="fa fa-photo"></i></router-link>
+      <router-link to="/site/server" class="btn btn-secondary btn-block"><i class="fa fa-server"></i></router-link>
+    </aside>
+    <div class="container-fluid">
+
+    </div>
+  </div>
 </script>
 
 <script type="text/x-template" id="welcome">
@@ -80,7 +86,6 @@
         </div>
       </div>
     </form>
-
   </div>
 </script>
 
