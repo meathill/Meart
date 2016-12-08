@@ -1,4 +1,4 @@
-const {app, BrowserWindow} = require('electron');
+const {app, BrowserWindow, ipcMain} = require('electron');
 const path = require('path');
 const url = require('url');
 const fs = require('fs');
@@ -20,8 +20,8 @@ class Meart {
 
   createWindow() {
     this.win = new BrowserWindow({
-      width: 900,
-      height: 450
+      width: 1200,
+      height: 800
     });
 
     this.win.loadURL(url.format({
@@ -51,6 +51,12 @@ class Meart {
         this.createWindow();
       }
     });
+
+    ipcMain.on('site-init', (event, site) => {
+      global.site = this.site = site;
+      global.isNew = false;
+      event.returnValue = true;
+    });
   }
 
   loadConfig() {
@@ -58,6 +64,7 @@ class Meart {
     if (!fs.existsSync(settings)) {
       // 初始化
       global.settings = this.settings = defaultConfig;
+      global.isNew = true;
       return this.startUp();
     }
 

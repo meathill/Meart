@@ -1,0 +1,34 @@
+.welcome-panel
+  background-color white
+  margin-top 2rem
+  border-radius 4px
+  box-shadow 0 2px 4px rgba(0, 0, 0, 0.1)
+  min-height 600px
+
+  h2
+    text-align center
+    line-height 3em
+
+  .carousel-control
+    position static
+    opacity inherit
+
+.theme-list
+    input:checked + label .card
+      background-color state-success-bg
+      border-color state-success-border
+      color state-success-text
+
+      &:before
+        content '\f00c'
+        position absolute
+        top 0
+        left 0
+        right 0
+        text-align center
+        font-family 'FontAwesome'
+        font-size 10rem
+        line-height 1.2em
+
+    img
+      max-width 100%

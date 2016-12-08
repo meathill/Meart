@@ -1,6 +1,5 @@
-const remote = require('electron').remote.getGlobal('sharedObeject');
-const Vue = require('vue');
-const VueRouter = require('vue-router');
+const remote = require('electron').remote;
+const Welcome = require('./app/component/Welcome');
 
 const NotFound = {
   template: '<p>Page not found</p>'
@@ -14,12 +13,14 @@ const New = {
 
 const routes = [
   {
-    path: '/',
+    path: '/site',
+    name: "home",
     component: Home
   },
   {
-    path: '/new',
-    component: New
+    path: '/welcome',
+    name: "welcome",
+    component: Welcome
   }
 ];
 const router = new VueRouter({
@@ -29,5 +30,13 @@ const router = new VueRouter({
 const app = new Vue({
   router
 }).$mount('#app');
-let config = global.config;
-let sites = global.remote;
+
+if (remote.getGlobal('isNew')) {
+  router.push({
+    name: "welcome"
+  });
+} else {
+  router.push({
+    name: 'home'
+  })
+}

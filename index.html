@@ -10,13 +10,96 @@
   <link rel="stylesheet" href="css/screen.css">
 </head>
 <body>
-<div id="app">
-  <aside id="aside">
+<div id="app" class="container-fluid">
+  <div class="row">
+    <router-view></router-view>
+  </div>
+</div>
+
+<script type="text/x-template" id="site">
+  <aside>
     <router-link to="/new" class="btn btn-secondary btn-block"><i class="fa fa-plus"></i></router-link>
     <router-link to="/" class="btn btn-secondary btn-block"><i class="fa fa-list"></i></router-link>
   </aside>
-  <router-view></router-view>
-</div>
-<script src="dist/bundle.js"></script>
+</script>
+
+<script type="text/x-template" id="welcome">
+  <div class="welcome-panel col-sm-10 offset-sm-1 col-md-8 offset-md-2">
+    <h2>欢迎使用 Meart</h2>
+    <hr>
+    <form class="carousel slide" data-ride="carousel" data-interval="0" data-keyboard="false" id="welcome-wizard" v-on:submit.prevent="onSubmit">
+      <div class="carousel-inner" role="listbox">
+        <div class="carousel-item active">
+          <p class="lead">Meart 是一个免费工具，试图帮助设计师、摄影师快捷方便的创建个人作品网站。Meart 尽量将技术细节隐藏起来，所有过程均通过图形界面操作来实现。最终网站托管在免费 CDN 上。</p>
+          <p>接下来，请跟随向导指引，完成网初始化。</p>
+          <p class="t-a-c"><a href="#welcome-wizard" data-slide="next" role="button" class="btn btn-primary btn-lg carousel-control"><i class="fa fa-cog"></i> 开始</a></p>
+        </div>
+        <div class="carousel-item">
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="site-title">网站名称</label>
+            <div class="col-sm-10">
+              <input class="form-control" name="site-title" id="site-title" placeholder="网站名称，比如“我的作品”" v-model="siteTitle">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="site-desc">网站描述</label>
+            <div class="col-sm-10">
+              <textarea class="form-control" name="site-desc" id="site-desc" rows="2" placeholder="网站描述，在某些主题中会显示，主要用作被搜索时展示" v-model="siteDesc">
+
+              </textarea>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">网站图标</label>
+            <div class="col-sm-10">
+              <input type="file" name="site-icon" class="hide">
+              <img class="rounded" src="img/placeholder.svg" width="80" height="80">
+              <small class="help-inline text-muted">(可选)</small>
+            </div>
+          </div>
+          <div class="form-group t-a-r">
+            <a href="#welcome-wizard" data-slide="next" role="button" class="btn btn-primary btn-lg carousel-control"><i class="fa fa-chevron-right"></i></a>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <label>请选择模板：</label>
+          <div class="form-group row theme-list">
+            <input type="radio" name="site-theme" value="default" id="theme-default" class="hide" v-model="siteTheme">
+            <label class="col-sm-6" for="theme-default">
+              <div class="card">
+                <img class="card-img-top" src="img/theme/default.png" alt="默认主题">
+                <div class="card-block">
+                  <p class="card-text">默认主题。暂时只有这一个，未来会添加。</p>
+                </div>
+              </div>
+            </label>
+          </div>
+          <div class="form-group t-a-r">
+            <button class="btn btn-primary btn-lg"><i class="fa fa-check"></i> 好了，开始吧</button>
+          </div>
+        </div>
+      </div>
+    </form>
+
+  </div>
+</script>
+
+<script>
+  if (typeof module === 'object') {
+    window.module = module;
+    module =undefined;
+  }
+</script>
+<script src="node_modules/jquery/dist/jquery.min.js"></script>
+<script src="node_modules/tether/dist/js/tether.min.js"></script>
+<script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="node_modules/vue/dist/vue.js"></script>
+<script src="node_modules/vue-router/dist/vue-router.js"></script>
+<script src="app/index.js"></script>
+<script>
+  if (window.module) {
+    module = window.module;
+  }
+</script>
 </body>
 </html>
