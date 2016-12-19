@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "colors.css": "^2.2.0",
+    "electron": "^1.4.12",
     "webpack": "^1.13.3"
   }
 }

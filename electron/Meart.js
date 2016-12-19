@@ -13,12 +13,14 @@ class Meart {
   }
 
   startUp() {
-    if (this.isAppReady && this.settings) {
+    if (this.isAppReady && this.settings && !this.isStarted) {
+      this.isStarted = true;
       this.createWindow();
     }
   }
 
   createWindow() {
+    console.log('UI start');
     this.win = new BrowserWindow({
       width: 1200,
       height: 800
@@ -61,15 +63,11 @@ class Meart {
   }
 
   loadConfig() {
+    global.settings = this.settings = defaultConfig;
     let settings = this.path + '/settings.json'; // 用户设置
-    if (!fs.existsSync(settings)) {
-      // 初始化
-      global.settings = this.settings = defaultConfig;
-      fs.writeFile(this.path + '/settings.json', '{}', 'utf8');
-    }
-
     let site = this.path + '/site.json'; // 站点信息
     if (!fs.existsSync(site)) {
+      global.settings = this.settings = defaultConfig;
       global.isNew = true;
       return this.startUp();
     }
@@ -82,6 +80,9 @@ class Meart {
   }
 
   readFile(file, field, defaults = {}) {
+    if (!fs.existsSync(file)) {
+      return true;
+    }
     return new Promise( (resolve, reject) => {
       fs.readFile(file, 'utf8', (error, content) => {
         if (error) {

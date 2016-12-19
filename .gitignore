@@ -9,3 +9,7 @@ bower_components
 dist
 styl/*.css
 css/
+
+# dev
+site.json
+settings.json

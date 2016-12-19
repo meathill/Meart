@@ -10,22 +10,20 @@
   <link rel="stylesheet" href="css/screen.css">
 </head>
 <body>
-<div id="app" class="container-fluid">
-  <div class="row">
-    <router-view></router-view>
-  </div>
+<div id="app">
+  <router-view></router-view>
 </div>
 
 <script type="text/x-template" id="site">
   <div id="site-container">
     <aside>
-      <router-link to="/site/setting" class="btn btn-secondary btn-block"><i class="fa fa-home"></i></router-link>
-      <router-link to="/site/articles" class="btn btn-secondary btn-block"><i class="fa fa-photo"></i></router-link>
+      <router-link to="/site/settings" class="btn btn-secondary btn-block"><i class="fa fa-home"></i></router-link>
+      <router-link to="/site/article" class="btn btn-secondary btn-block"><i class="fa fa-photo"></i></router-link>
       <router-link to="/site/server" class="btn btn-secondary btn-block"><i class="fa fa-server"></i></router-link>
     </aside>
-    <div class="container-fluid">
+    <router-view class="container-fluid">
 
-    </div>
+    </router-view>
   </div>
 </script>
 
@@ -89,6 +87,37 @@
   </div>
 </script>
 
+<script type="text/x-template" id="site-settings">
+  <form>
+    <div class="form-group row">
+      <label class="col-sm-2 col-form-label" for="site-title">站点名称</label>
+      <div class="col-sm-10">
+        <input class="form-control" id="site-title">
+      </div>
+    </div>
+  </form>
+</script>
+
+<script type="text/x-template" id="site-server">
+  <div>
+    site-server
+  </div>
+</script>
+
+<script type="text/x-template" id="article-list">
+  <div>
+    <ul class="list">
+      <li>article list</li>
+    </ul>
+  </div>
+</script>
+
+<script type="text/x-template" id="article">
+  <article>
+    <h1>article</h1>
+  </article>
+</script>
+
 <script>
   if (typeof module === 'object') {
     window.module = module;
@@ -100,7 +129,7 @@
 <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="node_modules/vue/dist/vue.js"></script>
 <script src="node_modules/vue-router/dist/vue-router.js"></script>
-<script src="app/index.js"></script>
+<script src="app.js"></script>
 <script>
   if (window.module) {
     module = window.module;

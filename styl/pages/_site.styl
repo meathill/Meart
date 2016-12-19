@@ -1,0 +1,31 @@
+aside-width = 80px
+gap = 10px
+button-size = aside-width - gap * 2
+
+#site-container
+  height 100%
+
+  aside
+    width: aside-width
+    position fixed
+    top: 0
+    left: 0
+    bottom: 0
+    padding gap
+
+    > a.btn
+      height button-size
+      line-height button-size
+      padding 0
+
+      + a.btn
+        margin gap 0 0
+
+      i
+        font-size 1.5em
+        line-height button-size
+
+  .container-fluid
+    background-color white
+    height 100%
+    margin-left aside-width
