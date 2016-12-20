@@ -3,5 +3,10 @@
  */
 module.exports = {
   name: 'SiteServer',
-  template: '#site-server'
+  template: '#site-server',
+  data: () => {
+    return {
+      serverName: '七牛'
+    }
+  }
 };

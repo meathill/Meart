@@ -17,9 +17,9 @@
 <script type="text/x-template" id="site">
   <div id="site-container">
     <aside>
-      <router-link to="/site/settings" class="btn btn-secondary btn-block"><i class="fa fa-home"></i></router-link>
-      <router-link to="/site/article" class="btn btn-secondary btn-block"><i class="fa fa-photo"></i></router-link>
-      <router-link to="/site/server" class="btn btn-secondary btn-block"><i class="fa fa-server"></i></router-link>
+      <router-link to="/site/settings" class="btn btn-secondary btn-block" title="网站设置"><i class="fa fa-home"></i></router-link>
+      <router-link to="/site/article" class="btn btn-secondary btn-block" title="相册"><i class="fa fa-photo"></i></router-link>
+      <router-link to="/site/server" class="btn btn-secondary btn-block" title="服务器设置"><i class="fa fa-server"></i></router-link>
     </aside>
     <router-view class="container-fluid">
 
@@ -46,7 +46,7 @@
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 col-form-label" for="site-desc">网站描述</label>
+            <label class="col-sm-2 col-form-label" for="site-desc">网站简介</label>
             <div class="col-sm-10">
               <textarea class="form-control" name="site-desc" id="site-desc" rows="2" placeholder="网站描述，在某些主题中会显示，主要用作被搜索时展示" v-model="siteDesc">
 
@@ -88,26 +88,80 @@
 </script>
 
 <script type="text/x-template" id="site-settings">
-  <form>
-    <div class="form-group row">
-      <label class="col-sm-2 col-form-label" for="site-title">站点名称</label>
-      <div class="col-sm-10">
-        <input class="form-control" id="site-title">
+  <div class="settings">
+    <h2>网站设置</h2>
+    <hr>
+    <form>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="site-title">网点名称</label>
+        <div class="col-sm-10">
+          <input class="form-control" id="site-title" v-model="siteTitle">
+        </div>
       </div>
-    </div>
-  </form>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="site-desc">网站简介</label>
+        <div class="col-sm-10">
+          <textarea class="form-control" id="site-desc" v-model="siteDesc" rows="2"></textarea>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="site-icon">网站图标</label>
+        <div class="col-sm-2">
+          <img v-if="site-icon" src="{{site-icon}}" class="img-thumbnail">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">网站模板</label>
+        <div class="col-sm-10">
+          <div class="card">
+            <img class="card-img-top img-fluid" src="img/theme/default.png" alt="默认模板">
+            <div class="card-block">
+              <h4 class="card-title">默认主题</h4>
+              <p class="card-text">暂时只有这个主题</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
 </script>
 
 <script type="text/x-template" id="site-server">
   <div>
-    site-server
+    <h2>服务器设置</h2>
+    <hr>
+    <form>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="server-name">服务器名称</label>
+        <div class="col-sm-10">
+          <input class="form-control" id="server-name" v-model="serverName">
+        </div>
+      </div>
+    </form>
   </div>
 </script>
 
-<script type="text/x-template" id="article-list">
-  <div>
-    <ul class="list">
-      <li>article list</li>
+<script type="text/x-template" id="article-list-template">
+  <div id="article-list">
+    <h2>相册</h2>
+    <hr>
+    <ul class="list row">
+      <li v-for="article in articles" class="col-sm-4 single-article">
+        <div class="card">
+          <img class="card-img-top" :src="thumbnail" :alt="title">
+          <div class="card-block">
+            <h4 class="card-title">{{title}}</h4>
+            <p class="card-text">{{description}}</p>
+            <small>创建时间：<time :datetime="create_time">{{create_time}}</time></small>
+            <small>最后修改：<time :datetime="last_modified_time">{{last_modified_time}}</time></small>
+          </div>
+        </div>
+      </li>
+      <li class="article add col-sm-4">
+        <button type="button" class="btn btn-secondary btn-block" v-on:click="add">
+          <i class="fa fa-plus"></i>
+        </button>
+      </li>
     </ul>
   </div>
 </script>

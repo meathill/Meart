@@ -22,12 +22,15 @@ const routes = [
         path: 'article',
         name: 'articleList',
         component: ArticleList,
-        children: [
-          {
-            path: ':id',
-            component: Article
-          }
-        ]
+      },
+      {
+        path: 'article/new',
+        component: Article,
+        name: 'newArticle'
+      },
+      {
+        path: 'article/:id',
+        component: Article
       },
       {
         path: 'server',
