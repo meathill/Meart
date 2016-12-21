@@ -96,6 +96,7 @@ class Meart {
   }
 
   onAppReady() {
+    BrowserWindow.addDevToolsExtension('C:\\Users\\realm\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\nhdogjmejiglipccpnnnanhbledajbpd\\2.3.1_0\\');
     this.isAppReady = true;
     this.startUp();
   }

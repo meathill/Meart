@@ -7,13 +7,16 @@ module.exports = {
   name: 'ArticleList',
   template: '#article-list-template',
   methods: {
-    add: function(event) {
+    add() {
       this.$router.push({
-        name: 'newArticle'
+        name: 'article',
+        params: {
+          id: 'new'
+        }
       });
     }
   },
-  data: () => {
+  data () {
     let site = remote.getGlobal('site');
     site.articles = site.articles ? site.articles : [];
     return site;

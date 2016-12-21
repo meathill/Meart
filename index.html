@@ -18,7 +18,7 @@
   <div id="site-container">
     <aside>
       <router-link to="/site/settings" class="btn btn-secondary btn-block" title="网站设置"><i class="fa fa-home"></i></router-link>
-      <router-link to="/site/article" class="btn btn-secondary btn-block" title="相册"><i class="fa fa-photo"></i></router-link>
+      <router-link to="/site/articles" class="btn btn-secondary btn-block" title="相册"><i class="fa fa-photo"></i></router-link>
       <router-link to="/site/server" class="btn btn-secondary btn-block" title="服务器设置"><i class="fa fa-server"></i></router-link>
     </aside>
     <router-view class="container-fluid">
@@ -142,7 +142,7 @@
 </script>
 
 <script type="text/x-template" id="article-list-template">
-  <div id="article-list">
+  <div id="article-list" class="article-list article">
     <h2>相册</h2>
     <hr>
     <ul class="list row">
@@ -152,8 +152,8 @@
           <div class="card-block">
             <h4 class="card-title">{{title}}</h4>
             <p class="card-text">{{description}}</p>
-            <small>创建时间：<time :datetime="create_time">{{create_time}}</time></small>
-            <small>最后修改：<time :datetime="last_modified_time">{{last_modified_time}}</time></small>
+            <small class="text-muted">创建时间：<time :datetime="create_time">{{create_time}}</time></small>
+            <small class="text-muted">最后修改：<time :datetime="last_modified_time">{{last_modified_time}}</time></small>
           </div>
         </div>
       </li>
@@ -167,9 +167,51 @@
 </script>
 
 <script type="text/x-template" id="article">
-  <article>
-    <h1>article</h1>
+  <article class="single article">
+    <p v-if="loading">
+      <i class="fa fa-spin fa-spinner fa-3x"></i>
+    </p>
+    <template v-else>
+      <editor :origin-value="article.title" @change="onEditorChange('title', $event)">
+        <h1 class="edit">{{article.title}}</h1>
+      </editor>
+      <editor :orgin-value="article.description" @change="onEditorChange('description', $event)">
+        <p class="lead edit">{{article.description}}</p>
+      </editor>
+      <editor :origin-value="article.url" @change="onEditorChange('url', $event)">
+        <u class="edit">{{article.url}}</u>
+      </editor>
+      <p>
+        <time>{{article.create_time}}</time>
+        <time>{{article.last_modified_time}}</time>
+      </p>
+      <hr>
+      <ul class="row list">
+        <li v-for="photo in article.albums" class="col-sm-4 photo">
+          <div class="card">
+            <img class="card-img-top" :src="photo.src" :alt="photo.title">
+            <div class="card-block">
+              <h4 class="card-title">{{photo.title}}</h4>
+              <p class="card-text">{{photo.description}}</p>
+            </div>
+          </div>
+        </li>
+        <li class="col-sm-4 add photo">
+          <label class="btn btn-secondary btn-block">
+            <i class="fa fa-plus"></i>
+            <input type="file" accept="image/*" @change="onSelectFile">
+          </label>
+        </li>
+      </ul>
+    </template>
   </article>
+</script>
+
+<script type="text/x-template" id="editor">
+<div class="dbl-click-editor" @dblclick="edit">
+  <slot></slot>
+  <input class="form-control" v-model="value" @blur="editDone" @keyup.enter.prevent="editDone" @keyup.esc="cancel">
+</div>
 </script>
 
 <script>

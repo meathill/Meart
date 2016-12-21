@@ -25,7 +25,7 @@ module.exports = {
         'siteTheme'
       ]));
       this.$router.push({
-        name: 'home'
+        name: 'site'
       });
     }
   }

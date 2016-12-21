@@ -19,17 +19,13 @@ const routes = [
         component: SiteSettings
       },
       {
-        path: 'article',
+        path: 'articles',
         name: 'articleList',
         component: ArticleList,
       },
       {
-        path: 'article/new',
-        component: Article,
-        name: 'newArticle'
-      },
-      {
         path: 'article/:id',
+        name: 'article',
         component: Article
       },
       {

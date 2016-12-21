@@ -1,15 +1,37 @@
-#article-list
+.article
+  .edit
+    text-decoration 1px dashed
+
+    &:after
+      font-family 'FontAwesome'
+      content ' \f044'
+      color gray
+      font-size .75em
+
+    &.editing
+      border: 1px solid
+
+      &:after
+        content ''
+
   .list
     padding 0
 
     li
       list-style none
 
-    .article.add button
-      color #333
-      height 10rem
-      font-size 5em
-      border 4px dashed
+    .add
+      .btn
+        color #333
+        font-size 5em
+        border .5rem dashed
 
+      button
+        height 10rem
+
+      input
+        display none
+
+#article-list
   .card
     width 100%
