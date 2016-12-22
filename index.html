@@ -173,13 +173,13 @@
     </p>
     <template v-else>
       <editor :origin-value="article.title" @change="onEditorChange('title', $event)">
-        <h1 class="edit">{{article.title}}</h1>
+        <h1>{{article.title}}</h1>
       </editor>
       <editor :orgin-value="article.description" @change="onEditorChange('description', $event)">
-        <p class="lead edit">{{article.description}}</p>
+        <p class="lead">{{article.description}}</p>
       </editor>
       <editor :origin-value="article.url" @change="onEditorChange('url', $event)">
-        <u class="edit">{{article.url}}</u>
+        <u>{{article.url}}</u>
       </editor>
       <p>
         <time>{{article.create_time}}</time>
@@ -187,12 +187,16 @@
       </p>
       <hr>
       <ul class="row list">
-        <li v-for="photo in article.albums" class="col-sm-4 photo">
+        <li v-for="(photo, index) in article.albums" class="col-sm-4 photo">
           <div class="card">
-            <img class="card-img-top" :src="photo.src" :alt="photo.title">
+            <img class="card-img-top img-fluid" :src="photo.src" :alt="photo.title">
             <div class="card-block">
-              <h4 class="card-title">{{photo.title}}</h4>
-              <p class="card-text">{{photo.description}}</p>
+              <editor :origin-value="photo.title" @change="onPhotoChange('title', index, $event)">
+                <h4 class="card-title">{{photo.title}}</h4>
+              </editor>
+              <editor :origin-value="photo.title" @change="onPhotoChange('description', index, $event)">
+                <p class="card-text">{{photo.description}}</p>
+              </editor>
             </div>
           </div>
         </li>
@@ -208,9 +212,9 @@
 </script>
 
 <script type="text/x-template" id="editor">
-<div class="dbl-click-editor" @dblclick="edit">
+<div class="dbl-click-editor" v-bind:class="{ editing: isEditing }" @dblclick="edit">
   <slot></slot>
-  <input class="form-control" v-model="value" @blur="editDone" @keyup.enter.prevent="editDone" @keyup.esc="cancel">
+  <input class="form-control" v-model="value" @blur="editDone" @keyup.enter.prevent="editDone" @keyup.esc="cancel" autofocus>
 </div>
 </script>
 

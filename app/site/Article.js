@@ -13,8 +13,9 @@ module.exports = {
   data () {
     return {
       loading: true,
+      isNew: true,
+      id: null,
       article: {
-        id: null,
         title: '相册标题',
         description: '相册简介',
         url: '路径名称',
@@ -26,6 +27,12 @@ module.exports = {
   },
   created () {
     this.fetchData();
+    this.$watch('article', function () {
+      if (this.isNew) {
+        this.id = ipcRenderer.sendSync('/article/new');
+      }
+      ipcRenderer.sendSync('/article/edit', this.id, this.article);
+    }, {deep: true});
   },
   methods: {
     fetchData () {
@@ -33,6 +40,8 @@ module.exports = {
       if (id === 'new') {
         this.loading = false;
       } else {
+        this.isNew = false;
+        this.id = id;
         this.article = ipcRenderer.sendSync('fetch-article', {
           id: id
         });
@@ -41,6 +50,9 @@ module.exports = {
     },
     onEditorChange(key, value) {
       this.article[key] = value;
+    },
+    onPhotoChange(key, index, value) {
+      this.article.albums[index][key] = value;
     },
     onSelectFile(event) {
       let addon = Array.prototype.map.call(event.target.files, function (file) {

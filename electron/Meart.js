@@ -8,6 +8,8 @@ const defaultConfig = require('../config/default.json');
 class Meart {
   constructor() {
     this.path = app.getAppPath();
+    this.sitePath = this.path + '/site.json'; // 站点信息;
+    this.settingsPath = this.path + '/settings.json'; // 用户设置
     this.delegateEvent();
     this.loadConfig();
   }
@@ -54,25 +56,33 @@ class Meart {
       }
     });
 
-    ipcMain.on('site-init', (event, site) => {
+    ipcMain.on('/site/init', (event, site) => {
       global.site = this.site = site;
       global.isNew = false;
       fs.writeFile(this.path + '/site.json', JSON.stringify(site), 'utf8');
+      event.returnValue = true;
+    });
+
+    ipcMain.on('/article/new', (event) => {
+      event.returnValue = this.site.articles.length + 1;
+    });
+
+    ipcMain.on('/article/edit', (event, id, article) => {
+      this.site.articles[id] = article;
+      fs.writeFileSync(this.sitePath, JSON.stringify(this.site), 'utf8');
       event.returnValue = true;
     });
   }
 
   loadConfig() {
     global.settings = this.settings = defaultConfig;
-    let settings = this.path + '/settings.json'; // 用户设置
-    let site = this.path + '/site.json'; // 站点信息
-    if (!fs.existsSync(site)) {
+    if (!fs.existsSync(this.sitePath)) {
       global.settings = this.settings = defaultConfig;
       global.isNew = true;
       return this.startUp();
     }
-    let settingsPromise = this.readFile(settings, 'settings', defaultConfig);
-    let sitePromise = this.readFile(site, 'site');
+    let settingsPromise = this.readFile(this.settingsPath, 'settings', defaultConfig);
+    let sitePromise = this.readFile(this.sitePath, 'site');
     Promise.all([settingsPromise, sitePromise])
       .then(() => {
         this.startUp();

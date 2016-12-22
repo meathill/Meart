@@ -1,4 +1,18 @@
 .dbl-click-editor
+  > *:not(input)
+    text-decoration 1px dashed
+
+    &:after
+      font-family 'FontAwesome'
+      content ' \f044'
+      color gray
+      font-size .75em
+
+    &.editing
+      border: 1px solid
+
+      &:after
+        content ''
   input
     display none
 

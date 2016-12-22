@@ -12,17 +12,19 @@ module.exports = {
       siteTitle: '',
       siteDesc: '',
       siteIcon: '',
-      siteTheme: 'default'
+      siteTheme: 'default',
+      articles: []
     }
   },
   methods: {
     onSubmit(event) {
       console.log(this.$data);
-      ipcRenderer.sendSync('site-init', _.pick(this.$data, [
+      ipcRenderer.sendSync('/site/init', _.pick(this.$data, [
         'siteTitle',
         'siteDesc',
         'siteIcon',
-        'siteTheme'
+        'siteTheme',
+        'articles'
       ]));
       this.$router.push({
         name: 'site'
