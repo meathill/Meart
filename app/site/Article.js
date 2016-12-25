@@ -19,6 +19,7 @@ module.exports = {
         title: '相册标题',
         description: '相册简介',
         url: '路径名称',
+        tags: '标签',
         create_time: '',
         last_modified_time: '',
         albums: []
@@ -28,8 +29,10 @@ module.exports = {
   created () {
     this.fetchData();
     this.$watch('article', function () {
+      this.article.last_modified_time = Date.now();
       if (this.isNew) {
-        this.id = ipcRenderer.sendSync('/article/new');
+        this.article.create_time = Date.now();
+        this.id = this.article.id = ipcRenderer.sendSync('/article/new');
       }
       ipcRenderer.sendSync('/article/edit', this.id, this.article);
     }, {deep: true});

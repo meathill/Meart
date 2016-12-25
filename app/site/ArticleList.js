@@ -14,6 +14,11 @@ module.exports = {
           id: 'new'
         }
       });
+    },
+    isVisible(articles) {
+      return articles.filter((article) => {
+        return !!article;
+      });
     }
   },
   data () {

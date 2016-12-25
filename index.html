@@ -146,8 +146,8 @@
     <h2>相册</h2>
     <hr>
     <ul class="list row">
-      <li v-for="article in articles" class="col-sm-4 single-article">
-        <div class="card">
+      <li v-for="article in isVisible(articles)" class="col-sm-4 single-article">
+        <div class="card" v-if="title">
           <img class="card-img-top" :src="thumbnail" :alt="title">
           <div class="card-block">
             <h4 class="card-title">{{title}}</h4>
@@ -180,6 +180,9 @@
       </editor>
       <editor :origin-value="article.url" @change="onEditorChange('url', $event)">
         <u>{{article.url}}</u>
+      </editor>
+      <editor :origin-value="article.tags" @change="onEditorChange('tags', $event)">
+        <p>{{article.tags}}</p>
       </editor>
       <p>
         <time>{{article.create_time}}</time>

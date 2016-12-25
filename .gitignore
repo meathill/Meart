@@ -11,5 +11,6 @@ styl/*.css
 css/
 
 # dev
-site.json
+site/site.json
 settings.json
+site/

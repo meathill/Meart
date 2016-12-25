@@ -8,7 +8,7 @@ const defaultConfig = require('../config/default.json');
 class Meart {
   constructor() {
     this.path = app.getAppPath();
-    this.sitePath = this.path + '/site.json'; // 站点信息;
+    this.sitePath = this.path + '/site/site.json'; // 站点信息;
     this.settingsPath = this.path + '/settings.json'; // 用户设置
     this.delegateEvent();
     this.loadConfig();
@@ -77,6 +77,7 @@ class Meart {
   loadConfig() {
     global.settings = this.settings = defaultConfig;
     if (!fs.existsSync(this.sitePath)) {
+      fs.mkdirSync(this.path + '/site');
       global.settings = this.settings = defaultConfig;
       global.isNew = true;
       return this.startUp();
