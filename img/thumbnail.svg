@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" xml:space="preserve" width="160" height="90">
+  <defs>
+    <style type="text/css">
+      rect {
+        fill: #AAA;
+      }
+      text {
+        fill: #FFF;
+        font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+        font-size: 20px;
+        letter-spacing: .05em;
+        text-anchor: middle;
+      }
+    </style>
+  </defs>
+  <rect x="0" y="0" width="160" height="90"></rect>
+  <text x="80" y="45">缩略图</text>
+</svg>

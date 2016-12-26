@@ -23,6 +23,7 @@ module.exports = {
         tags: '标签',
         create_time: '',
         last_modified_time: '',
+        thumbnail: '',
         status: 0,
         albums: []
       }
@@ -40,6 +41,11 @@ module.exports = {
       ipcRenderer.sendSync('/article/edit', this.id, this.article);
     }, {deep: true});
   },
+  filters: {
+    defaultThumbnail(value) {
+      return value || 'img/thumbnail.svg';
+    }
+  },
   methods: {
     fetchData () {
       let id = this.$route.params.id;
@@ -51,6 +57,9 @@ module.exports = {
         this.article = ipcRenderer.sendSync('/article/', id);
         this.loading = false;
       }
+    },
+    remove(index) {
+      this.article.albums.splice(index, 1);
     },
     onEditorChange(key, value) {
       this.article[key] = value;
@@ -67,6 +76,9 @@ module.exports = {
         }
       });
       this.article.albums = this.article.albums.concat(addon);
+    },
+    onSelectThumbnail(event) {
+      this.article.thumbnail = event.target.files[0].path;
     }
   },
   mixins: [moment]

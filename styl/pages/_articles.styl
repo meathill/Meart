@@ -6,7 +6,7 @@
       list-style none
 
       img
-        max-height 200px
+        max-height 400px
 
     a.card
       color black
@@ -31,6 +31,28 @@
   &.single
     header > *:last-child
       padding-top 3rem
+
+    .thumbnail label
+      width 100%
+      cursor pointer
+
+      img
+        width 100%
+
+        &:hover
+          border-color brand-primary
+
+    .album .delete-button
+      background-color transparent
+      border-color currentColor
+      color white
+      position absolute
+      top .5rem
+      right .5rem
+
+      &:hover
+        background-color white
+        color lighten(black, 20%)
 
 #article-list
   .card
