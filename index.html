@@ -48,7 +48,7 @@
           <div class="form-group row">
             <label class="col-sm-2 col-form-label" for="site-desc">网站简介</label>
             <div class="col-sm-10">
-              <textarea class="form-control" name="site-desc" id="site-desc" rows="2" placeholder="网站描述，在某些主题中会显示，主要用作被搜索时展示" v-model="siteDesc">
+              <textarea class="form-control" name="site-desc" id="site-desc" rows="3" placeholder="网站描述，在某些主题中会显示，主要用作被搜索时展示" v-model="siteDesc">
 
               </textarea>
             </div>
@@ -56,9 +56,15 @@
           <div class="form-group row">
             <label class="col-sm-2 col-form-label">网站图标</label>
             <div class="col-sm-10">
-              <input type="file" name="site-icon" class="hide">
-              <img class="rounded" src="img/placeholder.svg" width="80" height="80">
-              <small class="help-inline text-muted">(可选)</small>
+              <p class="help-block" v-if="siteIcon">
+                <img class="rounded img-thumbnail" :src="siteIcon" width="80" height="80">
+              </p>
+              <input type="file" class="hide" id="site-icon" @change="onSelectFile">
+              <label class="btn btn-secondary" for="site-icon">
+                <i class="fa fa-picture-o"></i>
+                选择图片（png，ico）
+              </label>
+              <p class="help-block text-muted"><small>(可选)</small></p>
             </div>
           </div>
           <div class="form-group t-a-r">
@@ -107,17 +113,21 @@
       <div class="form-group row">
         <label class="col-sm-2 col-form-label" for="site-icon">网站图标</label>
         <div class="col-sm-2">
-          <img v-if="site-icon" src="{{site-icon}}" class="img-thumbnail">
+          <img v-if="siteIcon" :src="siteIcon" class="img-thumbnail site-icon">
         </div>
       </div>
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">网站模板</label>
         <div class="col-sm-10">
-          <div class="card">
-            <img class="card-img-top img-fluid" src="img/theme/default.png" alt="默认模板">
-            <div class="card-block">
-              <h4 class="card-title">默认主题</h4>
-              <p class="card-text">暂时只有这个主题</p>
+          <div class="row">
+            <div class="col-sm-4">
+              <div class="card">
+                <img class="card-img-top img-fluid" src="img/theme/default.png" alt="默认模板">
+                <div class="card-block">
+                  <h4 class="card-title">默认主题</h4>
+                  <p class="card-text">暂时只有这个主题</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -147,15 +157,15 @@
     <hr>
     <ul class="list row">
       <li v-for="article in isVisible(articles)" class="col-sm-4 single-article">
-        <div class="card" v-if="title">
-          <img class="card-img-top" :src="thumbnail" :alt="title">
+        <a :href="getHref(article.id)" class="card">
+          <img class="card-img-top img-fluid" :src="article.thumbnail" :alt="article.title" v-if="article.thumbnail">
           <div class="card-block">
-            <h4 class="card-title">{{title}}</h4>
-            <p class="card-text">{{description}}</p>
-            <small class="text-muted">创建时间：<time :datetime="create_time">{{create_time}}</time></small>
-            <small class="text-muted">最后修改：<time :datetime="last_modified_time">{{last_modified_time}}</time></small>
+            <h4 class="card-title">{{article.title}}</h4>
+            <p class="card-text">{{article.description}}</p>
+            <small class="text-muted">创建时间：<time :datetime="article.create_time | toDate">{{article.create_time | toMoment}}</time></small><br>
+            <small class="text-muted">最后修改：<time :datetime="article.last_modified_time | toDate">{{article.last_modified_time | toMoment}}</time></small>
           </div>
-        </div>
+        </a>
       </li>
       <li class="article add col-sm-4">
         <button type="button" class="btn btn-secondary btn-block" v-on:click="add">
@@ -172,22 +182,37 @@
       <i class="fa fa-spin fa-spinner fa-3x"></i>
     </p>
     <template v-else>
-      <editor :origin-value="article.title" @change="onEditorChange('title', $event)">
-        <h1>{{article.title}}</h1>
-      </editor>
-      <editor :orgin-value="article.description" @change="onEditorChange('description', $event)">
-        <p class="lead">{{article.description}}</p>
-      </editor>
-      <editor :origin-value="article.url" @change="onEditorChange('url', $event)">
-        <u>{{article.url}}</u>
-      </editor>
-      <editor :origin-value="article.tags" @change="onEditorChange('tags', $event)">
-        <p>{{article.tags}}</p>
-      </editor>
-      <p>
-        <time>{{article.create_time}}</time>
-        <time>{{article.last_modified_time}}</time>
-      </p>
+      <header class="row">
+        <div class="col-sm-8">
+          <editor :origin-value="article.title" @change="onEditorChange('title', $event)">
+            <h1>{{article.title}}</h1>
+          </editor>
+          <editor :orgin-value="article.description" @change="onEditorChange('description', $event)">
+            <p class="lead">{{article.description}}</p>
+          </editor>
+          <editor :origin-value="article.url" @change="onEditorChange('url', $event)">
+            <p>
+              <u>{{article.url}}</u>
+            </p>
+          </editor>
+          <p class="text-muted">
+            <small>创建时间：<time :datetime="article.create_time | toDate">{{article.create_time | toMoment}}</time></small> |
+            <small>修改时间：<time :datetime="article.last_modified_time | toDate">{{article.last_modified_time | toMoment}}</time></small>
+          </p>
+        </div>
+        <div class="col-sm-4">
+          <div class="form-group">
+            <label for="draft">发布状态</label>
+            <select v-model.number="article.status" id="draft" class="form-control">
+              <option value="0">发布</option>
+              <option value="1">草稿</option>
+            </select>
+          </div>
+          <editor :origin-value="article.tags" @change="onEditorChange('tags', $event)">
+            <p>{{article.tags}}</p>
+          </editor>
+        </div>
+      </header>
       <hr>
       <ul class="row list">
         <li v-for="(photo, index) in article.albums" class="col-sm-4 photo">
@@ -232,6 +257,7 @@
 <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="node_modules/vue/dist/vue.js"></script>
 <script src="node_modules/vue-router/dist/vue-router.js"></script>
+<script src="node_modules/moment/min/moment-with-locales.min.js"></script>
 <script src="app.js"></script>
 <script>
   if (window.module) {

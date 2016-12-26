@@ -8,6 +8,14 @@
       img
         max-height 200px
 
+    a.card
+      color black
+
+      &:hover
+        background-color alert-info-bg
+        border-color brand-primary
+        text-decoration none
+
     .add
       .btn
         color #444
@@ -19,6 +27,10 @@
 
       input
         display none
+
+  &.single
+    header > *:last-child
+      padding-top 3rem
 
 #article-list
   .card

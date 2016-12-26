@@ -29,6 +29,10 @@ module.exports = {
       this.$router.push({
         name: 'site'
       });
+    },
+    onSelectFile(event) {
+      let file = event.target.files[0];
+      this.siteIcon = file.path;
     }
   }
 };

@@ -3,6 +3,7 @@
  */
 const {ipcRenderer} = require('electron');
 const Editor = require('../component/Editor');
+const moment = require('../mixin/moment');
 
 module.exports = {
   name: 'Article',
@@ -22,6 +23,7 @@ module.exports = {
         tags: '标签',
         create_time: '',
         last_modified_time: '',
+        status: 0,
         albums: []
       }
     }
@@ -33,6 +35,7 @@ module.exports = {
       if (this.isNew) {
         this.article.create_time = Date.now();
         this.id = this.article.id = ipcRenderer.sendSync('/article/new');
+        this.isNew = false;
       }
       ipcRenderer.sendSync('/article/edit', this.id, this.article);
     }, {deep: true});
@@ -44,10 +47,8 @@ module.exports = {
         this.loading = false;
       } else {
         this.isNew = false;
-        this.id = id;
-        this.article = ipcRenderer.sendSync('fetch-article', {
-          id: id
-        });
+        this.id = id = Number(id);
+        this.article = ipcRenderer.sendSync('/article/', id);
         this.loading = false;
       }
     },
@@ -67,5 +68,6 @@ module.exports = {
       });
       this.article.albums = this.article.albums.concat(addon);
     }
-  }
+  },
+  mixins: [moment]
 };

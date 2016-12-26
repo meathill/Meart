@@ -4,6 +4,7 @@ const url = require('url');
 const fs = require('fs');
 const _ = require('underscore');
 const defaultConfig = require('../config/default.json');
+const dev = require('../config/dev.json');
 
 class Meart {
   constructor() {
@@ -15,7 +16,7 @@ class Meart {
   }
 
   startUp() {
-    if (this.isAppReady && this.settings && !this.isStarted) {
+    if (this.isAppReady && this.site && !this.isStarted) {
       this.isStarted = true;
       this.createWindow();
     }
@@ -59,7 +60,7 @@ class Meart {
     ipcMain.on('/site/init', (event, site) => {
       global.site = this.site = site;
       global.isNew = false;
-      fs.writeFile(this.path + '/site.json', JSON.stringify(site), 'utf8');
+      fs.writeFile(this.sitePath, JSON.stringify(site), 'utf8');
       event.returnValue = true;
     });
 
@@ -72,15 +73,24 @@ class Meart {
       fs.writeFileSync(this.sitePath, JSON.stringify(this.site), 'utf8');
       event.returnValue = true;
     });
+
+    ipcMain.on('/article/', (event, id) => {
+      event.returnValue = this.site.articles[id];
+    });
   }
 
   loadConfig() {
     global.settings = this.settings = defaultConfig;
     if (!fs.existsSync(this.sitePath)) {
-      fs.mkdirSync(this.path + '/site');
       global.settings = this.settings = defaultConfig;
       global.isNew = true;
-      return this.startUp();
+      fs.mkdir(this.path + '/site', (err) => {
+        if (err.code === 'EEXIST') {
+          return this.startUp();
+        }
+        console.log(err);
+      });
+      return;
     }
     let settingsPromise = this.readFile(this.settingsPath, 'settings', defaultConfig);
     let sitePromise = this.readFile(this.sitePath, 'site');
@@ -107,7 +117,7 @@ class Meart {
   }
 
   onAppReady() {
-    BrowserWindow.addDevToolsExtension('C:\\Users\\realm\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\nhdogjmejiglipccpnnnanhbledajbpd\\2.3.1_0\\');
+    BrowserWindow.addDevToolsExtension(dev.vueDevTool);
     this.isAppReady = true;
     this.startUp();
   }
