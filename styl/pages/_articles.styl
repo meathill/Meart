@@ -42,17 +42,29 @@
         &:hover
           border-color brand-primary
 
-    .album .delete-button
-      background-color transparent
-      border-color currentColor
-      color white
-      position absolute
-      top .5rem
-      right .5rem
+    .album
+      .photo.active
+        border-color brand-primary
 
-      &:hover
-        background-color white
-        color lighten(black, 20%)
+        &:before
+          font-family 'FontAwesome'
+          content '\f058'
+          position absolute
+          top .5rem
+          left .5rem
+          font-size 1.5em
+
+      .delete-button
+        background-color transparent
+        border-color currentColor
+        color white
+        position absolute
+        top .5rem
+        right .5rem
+
+        &:hover
+          background-color white
+          color lighten(black, 20%)
 
 #article-list
   .card

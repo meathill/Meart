@@ -21,9 +21,11 @@ button-size = aside-width - gap * 2
       + a.btn
         margin gap 0 0
 
-      i
+      > i,
+      > span
         font-size 1.5em
-        line-height button-size
+        height  button-size - 2px
+        line-height button-size - 2px
 
       &.router-link-active
         background-color darken(white, 10%)
@@ -37,9 +39,9 @@ button-size = aside-width - gap * 2
     margin-left aside-width
     padding-top 15px
 
-    .settings
-      .card
-        max-width 20rem
+  .settings
+    .card-img-top
+      width 100%
 
 .site-icon
   max-width 64px

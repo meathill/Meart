@@ -3,8 +3,11 @@ const path = require('path');
 const url = require('url');
 const fs = require('fs');
 const _ = require('underscore');
+const Handlebars = require('handlebars');
+const moment = require('moment');
 const defaultConfig = require('../config/default.json');
 const dev = require('../config/dev.json');
+const EXIST = 'EEXIST';
 
 class Meart {
   constructor() {
@@ -77,6 +80,80 @@ class Meart {
     ipcMain.on('/article/', (event, id) => {
       event.returnValue = this.site.articles[id];
     });
+
+    ipcMain.on('/publish/', (event) => {
+      Handlebars.registerHelper('toCalendar', (value) => {
+        return moment(value).calendar();
+      });
+      Handlebars.registerHelper('toDate', (value) => {
+        return moment(value).format('YYYY-MM-DD HH:mm:ss');
+      });
+      event.sender.send('/publish/progress/', '读取模板文件', 0);
+      let theme = this.site.siteTheme;
+      let path = this.path + '/theme/' + theme + '/';
+      let index = new Promise( resolve => {
+        fs.readFile(path + 'index.hbs', 'utf8', (err, content) => {
+          if (err) {
+            throw err;
+          }
+          resolve(Handlebars.compile(content));
+        })
+      });
+      let page = new Promise( resolve => {
+        fs.readFile(path + 'page.hbs', 'utf8', (err, content) => {
+          if (err) {
+            throw err;
+          }
+          resolve(Handlebars.compile(content))
+        })
+      });
+      Promise.all([index, page]).then( ([index, page]) => {
+        event.sender.send('/publish/progress/', '生成导出目录', 15);
+        return new Promise( resolve => {
+          fs.mkdir(this.path + '/output/', (err) => {
+            if (err && err.code === EXIST) {
+              return resolve([index, page]);
+            }
+            throw err;
+          })
+        });
+      }).then( ([index, page]) => {
+        event.sender.send('/publish/progress/', '生成首页', 20);
+        let html = index(this.site);
+        return new Promise((resolve) => {
+          fs.writeFile(this.path + '/output/index.html', html, 'utf8', err => {
+            if (err) {
+              throw err;
+            }
+            resolve(page);
+          });
+        });
+      }).then( (page) => {
+        let articles = this.site.articles.filter( article => {
+          return article && article.status === 0;
+        });
+        let pageNumber = Math.ceil(articles.length / 5);
+        let progress = 75 / pageNumber;
+        let count = 0;
+        event.sender.send('/publish/progress/', '准备生成单个相册', 25);
+        return Promise.all(articles.map( article => {
+          let html = page(article);
+          return new Promise( resolve => {
+            fs.writeFile(this.path + '/output/' + (article.url || article.id) + '.html', html, 'utf8', err => {
+              if (err) {
+                throw err;
+              }
+              event.sender.send('/publish/progress/', '生成相册', 25 + progress * (count + 1));
+              count++;
+              resolve();
+            });
+          })
+        }));
+      }).then( () => {
+        event.sender.send('/publish/finish/');
+      })
+        .catch(console.log.bind(console));
+    });
   }
 
   loadConfig() {
@@ -85,7 +162,7 @@ class Meart {
       global.settings = this.settings = defaultConfig;
       global.isNew = true;
       fs.mkdir(this.path + '/site', (err) => {
-        if (err.code === 'EEXIST') {
+        if (err.code === EXIST) {
           return this.startUp();
         }
         console.log(err);

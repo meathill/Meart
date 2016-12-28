@@ -2,7 +2,7 @@
 <html lang="zh-cmn-Hans">
 <head>
   <meta charset="UTF-8">
-  <title>Builder</title>
+  <title>Meart: a static site builder</title>
 
   <link rel="stylesheet" href="node_modules/tether/dist/css/tether.min.css">
   <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
@@ -20,6 +20,12 @@
       <router-link to="/site/settings" class="btn btn-secondary btn-block" title="网站设置"><i class="fa fa-home"></i></router-link>
       <router-link to="/site/articles" class="btn btn-secondary btn-block" title="相册"><i class="fa fa-photo"></i></router-link>
       <router-link to="/site/server" class="btn btn-secondary btn-block" title="服务器设置"><i class="fa fa-server"></i></router-link>
+      <a href="#publish-modal" data-toggle="modal" class="btn btn-primary btn-block" title="发布网站">
+        <span class="fa-stack fa-lg">
+          <i class="fa fa-archive fa-stack-2x"></i>
+          <i class="fa fa-check-circle text-success fa-stack-1x"></i>
+        </span>
+      </a>
     </aside>
     <router-view class="container-fluid">
 
@@ -209,8 +215,8 @@
         <div class="col-sm-2">
           <div class="form-group">
             <label for="draft">发布状态</label>
-            <select v-model.number="article.status" id="draft" class="form-control">
-              <option value="0">发布</option>
+            <select v-model.number="article.status" id="draft" class="form-control fa" v-bind:class="isPublished">
+              <option value="0" class="fa-check">&#xf00c 发布</option>
               <option value="1">草稿</option>
             </select>
           </div>
@@ -221,7 +227,7 @@
       </header>
       <hr>
       <ul class="row list album">
-        <li v-for="(photo, index) in article.albums" class="col-sm-4 photo">
+        <li v-for="(photo, index) in article.album" class="col-sm-4 photo" :class="{ active: photo.isActive }" @click="onClick(index)">
           <div class="card">
             <button type="button" class="btn btn-sm btn-secondary delete-button" @click="remove(index)">
               <i class="fa fa-trash"></i>
@@ -237,7 +243,7 @@
             </div>
           </div>
         </li>
-        <li class="col-sm-4 add photo">
+        <li class="col-sm-4 add">
           <label class="btn btn-secondary btn-block">
             <i class="fa fa-plus"></i>
             <input type="file" accept="image/*" @change="onSelectFile">
@@ -254,6 +260,29 @@
   <input class="form-control" v-model="value" @blur="editDone" @keyup.enter.prevent="editDone" @keyup.esc="cancel" autofocus>
 </div>
 </script>
+
+<div class="modal fade" id="publish-modal" tabindex="-1" role="dialog" aria-labelledby="#publish-modal-label" aria-hidden="true" :class="{ progress: isProgress }" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" id="publish-modal-label">发布网站</h4>
+      </div>
+      <div class="modal-body">
+        <template>
+          <p>将网站内容发布成静态网页，稍后您可以将网页上传，更新自己的网站。</p>
+          <div class="text-xs-center" id="publish-progress-label" v-if="isProgress">当前进度：{{label}}</div>
+          <progress class="progress" :value="progress" max="100" aria-describedby="#publish-progress-label" v-if="isProgress"></progress>
+          <p>
+            <button type="button" class="btn btn-primary btn-lg" @click="start" :disabled="isProgress"><i class="fa fa-play"></i> 开始生成</button>
+          </p>
+        </template>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
   if (typeof module === 'object') {

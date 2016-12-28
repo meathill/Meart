@@ -25,7 +25,7 @@ module.exports = {
         last_modified_time: '',
         thumbnail: '',
         status: 0,
-        albums: []
+        album: []
       }
     }
   },
@@ -40,6 +40,11 @@ module.exports = {
       }
       ipcRenderer.sendSync('/article/edit', this.id, this.article);
     }, {deep: true});
+  },
+  computed: {
+    isPublished() {
+      return this.article.status === 0 ? ['bg-success', 'text-white'] : '';
+    }
   },
   filters: {
     defaultThumbnail(value) {
@@ -60,6 +65,9 @@ module.exports = {
     },
     remove(index) {
       this.article.albums.splice(index, 1);
+    },
+    onClick(index) {
+      this.article.albums[index].isActive = !this.article.albums[index].isActive;
     },
     onEditorChange(key, value) {
       this.article[key] = value;

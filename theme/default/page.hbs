@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+  <meta charset="UTF-8">
+  <title>{{title}} | {{siteTitle}}</title>
+  <meta name="keywords" content="{{tags}}">
+  <meta name="description" content="{{description}}">
+  <meta name="robots" content="index,follow">
+  {{#if siteIcon}}
+    <link rel="shortcut icon" type="image/png" href="./img/fav.png">
+  {{/if}}
+  <link rel="stylesheet" href="http://cdn.staticfile.org/twitter-bootstrap/4.0.0-alpha.5/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+  <h1>{{title}}</h1>
+  <p class="lead">{{description}}</p>
+  <hr>
+  <ul class="row">
+    {{#each album}}
+      <li class="col-sm-3 col-xs-12">
+        <div class="card">
+          <img src="{{src}}" alt="{{title}}" class="img-fluid card-img-top">
+          <div class="card-block">
+            <h4 class="card-title">{{title}}</h4>
+            <p class="card-text">{{description}}</p>
+          </div>
+        </div>
+      </li>
+    {{/each}}
+  </ul>
+</div>
+</body>
+</html>

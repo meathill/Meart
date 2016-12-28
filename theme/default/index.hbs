@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+  <meta charset="UTF-8">
+  <title>{{siteTitle}}</title>
+  <meta name="keywords" content="{{siteTags}}">
+  <meta name="description" content="{{siteDesc}}">
+  <meta name="robots" content="index,follow">
+  {{#if siteIcon}}
+  <link rel="shortcut icon" type="image/png" href="./img/fav.png">
+  {{/if}}
+  <link rel="stylesheet" href="http://cdn.staticfile.org/twitter-bootstrap/4.0.0-alpha.5/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+  <h1>{{siteTitle}}</h1>
+  <hr>
+  <ul class="row">
+    {{#each articles}}
+    <li class="col-sm-3 col-xs-12">
+      <div class="card">
+        {{#if thumbnail}}
+          <img src="{{thumbnail}}" class="img-fluid card-img-top" alt="{{title}}">
+        {{/if}}
+        <div class="card-block">
+          <h4 class="card-title">{{title}}</h4>
+          <p class="card-text">{{description}}</p>
+          <p class="card-text">
+            <small class="text-muted">创建于：<time datetime="{{toDate create_time}}">{{toCalendar create_time}}</time></small>
+            <small class="text-muted">最新：<time datetime="{{toDate last_modified_time}}">{{toCalendar last_modified_time}}</time></small>
+          </p>
+        </div>
+      </div>
+    </li>
+    {{/each}}
+  </ul>
+</div>
+
+</body>
+</html>

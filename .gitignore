@@ -9,6 +9,7 @@ bower_components
 dist
 styl/*.css
 css/
+output
 
 # dev
 site/site.json
