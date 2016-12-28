@@ -82,12 +82,6 @@ class Meart {
     });
 
     ipcMain.on('/publish/', (event) => {
-      Handlebars.registerHelper('toCalendar', (value) => {
-        return moment(value).calendar();
-      });
-      Handlebars.registerHelper('toDate', (value) => {
-        return moment(value).format('YYYY-MM-DD HH:mm:ss');
-      });
       event.sender.send('/publish/progress/', '读取模板文件', 0);
       let theme = this.site.siteTheme;
       let path = this.path + '/theme/' + theme + '/';

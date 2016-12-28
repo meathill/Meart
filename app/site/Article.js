@@ -7,7 +7,7 @@ const moment = require('../mixin/moment');
 
 module.exports = {
   name: 'Article',
-  template: '#article',
+  template: '#article-template',
   components: {
     'editor': Editor
   },

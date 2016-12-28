@@ -3,8 +3,8 @@
  */
 const Welcome = require('./Welcome');
 const Site = require('./Site');
-const SiteSettings = require('./site/SiteSettings');
-const SiteServer = require('./site/SiteServer');
+const Preview = require('./site/Preview');
+const SiteConfig = require('./site/Config');
 const ArticleList = require('./site/ArticleList');
 const Article = require('./site/Article');
 
@@ -15,8 +15,8 @@ const routes = [
     component: Site,
     children: [
       {
-        path: 'settings',
-        component: SiteSettings
+        path: 'preview',
+        component: Preview
       },
       {
         path: 'articles',
@@ -29,8 +29,8 @@ const routes = [
         component: Article
       },
       {
-        path: 'server',
-        component: SiteServer
+        path: 'config',
+        component: SiteConfig
       }
     ]
   },

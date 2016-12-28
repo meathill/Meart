@@ -17,15 +17,9 @@
 <script type="text/x-template" id="site">
   <div id="site-container">
     <aside>
-      <router-link to="/site/settings" class="btn btn-secondary btn-block" title="网站设置"><i class="fa fa-home"></i></router-link>
+      <router-link to="/site/preview" class="btn btn-secondary btn-block" title="预览网站"><i class="fa fa-home"></i></router-link>
       <router-link to="/site/articles" class="btn btn-secondary btn-block" title="相册"><i class="fa fa-photo"></i></router-link>
-      <router-link to="/site/server" class="btn btn-secondary btn-block" title="服务器设置"><i class="fa fa-server"></i></router-link>
-      <a href="#publish-modal" data-toggle="modal" class="btn btn-primary btn-block" title="发布网站">
-        <span class="fa-stack fa-lg">
-          <i class="fa fa-archive fa-stack-2x"></i>
-          <i class="fa fa-check-circle text-success fa-stack-1x"></i>
-        </span>
-      </a>
+      <router-link to="/site/config" class="btn btn-secondary btn-block" title="设置"><i class="fa fa-cog"></i></router-link>
     </aside>
     <router-view class="container-fluid">
 
@@ -33,7 +27,7 @@
   </div>
 </script>
 
-<script type="text/x-template" id="welcome">
+<script type="text/x-template" id="welcome-template">
   <div class="welcome-panel col-sm-10 offset-sm-1 col-md-8 offset-md-2">
     <h2>欢迎使用 Meart</h2>
     <hr>
@@ -99,61 +93,93 @@
   </div>
 </script>
 
-<script type="text/x-template" id="site-settings">
-  <div class="settings">
-    <h2>网站设置</h2>
+<script type="text/x-template" id="preview-template">
+  <div class="preview">
+    <h2>预览网站</h2>
     <hr>
-    <form>
-      <div class="form-group row">
-        <label class="col-sm-2 col-form-label" for="site-title">网点名称</label>
-        <div class="col-sm-10">
-          <input class="form-control" id="site-title" v-model="siteTitle">
-        </div>
-      </div>
-      <div class="form-group row">
-        <label class="col-sm-2 col-form-label" for="site-desc">网站简介</label>
-        <div class="col-sm-10">
-          <textarea class="form-control" id="site-desc" v-model="siteDesc" rows="2"></textarea>
-        </div>
-      </div>
-      <div class="form-group row">
-        <label class="col-sm-2 col-form-label" for="site-icon">网站图标</label>
-        <div class="col-sm-2">
-          <img v-if="siteIcon" :src="siteIcon" class="img-thumbnail site-icon">
-        </div>
-      </div>
-      <div class="form-group row">
-        <label class="col-sm-2 col-form-label">网站模板</label>
-        <div class="col-sm-10">
-          <div class="row">
-            <div class="col-sm-4">
-              <div class="card">
-                <img class="card-img-top img-fluid" src="img/theme/default.svg" alt="默认模板">
-                <div class="card-block">
-                  <h4 class="card-title">默认主题</h4>
-                  <p class="card-text">暂时只有这个主题</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </form>
   </div>
 </script>
 
-<script type="text/x-template" id="site-server">
-  <div>
-    <h2>服务器设置</h2>
+<script type="text/x-template" id="config-template">
+  <div id="config">
+    <h2>设置</h2>
     <hr>
-    <form>
-      <div class="form-group row">
-        <label class="col-sm-2 col-form-label" for="server-name">服务器名称</label>
-        <div class="col-sm-10">
-          <input class="form-control" id="server-name" v-model="serverName">
+    <ul class="nav nav-tabs" role="tablist">
+      <li class="nav-item">
+        <a href="#site-config" class="nav-link active" data-toggle="tab" role="tab">
+          <i class="fa fa-info-circle"></i> 网站信息
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#site-server" class="nav-link" data-toggle="tab" role="tab">
+          <i class="fa fa-server"></i> 服务器信息
+        </a>
+      </li>
+    </ul>
+    <div class="tab-content">
+      <div id="site-config" class="tab-pane active"role="tabpanel">
+        <div class="settings">
+          <form>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label" for="site-title">网点名称</label>
+              <div class="col-sm-10">
+                <input class="form-control" id="site-title" v-model="siteTitle">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label" for="site-desc">网站简介</label>
+              <div class="col-sm-10">
+                <textarea class="form-control" id="site-desc" v-model="siteDesc" rows="2"></textarea>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label" for="site-icon">网站图标</label>
+              <div class="col-sm-2">
+                <img v-if="siteIcon" :src="siteIcon" class="img-thumbnail site-icon">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">网站模板</label>
+              <div class="col-sm-10">
+                <div class="row">
+                  <div class="col-sm-4">
+                    <div class="card">
+                      <img class="card-img-top img-fluid" src="img/theme/default.svg" alt="默认模板">
+                      <div class="card-block">
+                        <h4 class="card-title">默认主题</h4>
+                        <p class="card-text">暂时只有这个主题</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
-    </form>
+      <div id="site-server" class="tab-pane" role="tabpanel">
+        <form>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="server-name">服务器名称</label>
+            <div class="col-sm-10">
+              <input class="form-control" id="server-name" v-model="server.name">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="ACCESS_KEY">Access Key</label>
+            <div class="col-sm-10">
+              <input class="form-control" id="access_key" v-model="server.ACCESS_KEY">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="SECRET_KEY">Secret Key</label>
+            <div class="col-sm-10">
+              <input class="form-control" id="secret_key" v-model="server.SECRET_KEY">
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </script>
 
@@ -182,7 +208,7 @@
   </div>
 </script>
 
-<script type="text/x-template" id="article">
+<script type="text/x-template" id="article-template">
   <article class="single article">
     <p v-if="loading">
       <i class="fa fa-spin fa-spinner fa-3x"></i>

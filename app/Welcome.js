@@ -6,7 +6,7 @@ const { ipcRenderer } = require('electron');
 
 module.exports = {
   name: 'welcome',
-  template: '#welcome',
+  template: '#welcome-template',
   data: () => {
     return {
       siteTitle: '',

@@ -17,6 +17,7 @@
   <hr>
   <ul class="row">
     {{#each articles}}
+      {{#if id}}
     <li class="col-sm-3 col-xs-12">
       <div class="card">
         {{#if thumbnail}}
@@ -32,6 +33,7 @@
         </div>
       </div>
     </li>
+      {{/if}}
     {{/each}}
   </ul>
 </div>
