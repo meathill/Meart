@@ -12,6 +12,5 @@ css/
 output
 
 # dev
-site/site.json
 settings.json
 site/
