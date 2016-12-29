@@ -14,22 +14,22 @@
   <router-view></router-view>
 </div>
 
-<script type="text/x-template" id="site">
-  <div id="site-container">
+<script type="text/x-template" id="home-template">
+  <div id="home">
     <aside>
-      <router-link to="/site/preview" class="btn btn-secondary btn-block" title="查看网站">
+      <router-link to="/preview" class="btn btn-secondary btn-block" title="查看网站">
         <i class="fa fa-home"></i><br>
         查看网站
       </router-link>
-      <router-link to="/site/articles" class="btn btn-secondary btn-block" title="相册">
+      <router-link to="/articles" class="btn btn-secondary btn-block" title="相册">
         <i class="fa fa-photo"></i><br>
         相册
       </router-link>
-      <router-link to="/site/config" class="btn btn-secondary btn-block" title="设置">
+      <router-link to="/config" class="btn btn-secondary btn-block" title="设置">
         <i class="fa fa-cogs"></i><br>
         设置
       </router-link>
-      <router-link to="/site/help" class="btn btn-outline-secondary btn-block secondary" title="帮助"><i class="fa fa-question"></i></router-link>
+      <router-link to="/help" class="btn btn-outline-secondary btn-block secondary" title="帮助"><i class="fa fa-question"></i></router-link>
     </aside>
     <router-view class="container-fluid">
 
@@ -106,7 +106,15 @@
 <script type="text/x-template" id="preview-template">
   <div class="preview">
     <h2>预览网站</h2>
+    <p>上次生成时间：<time datetime="{{publishTime | toDate}}">{{publishTime | toMoment}}</time> |
+      最近修改时间：<time datetime="{{lastModifiedTime | toDate}}">{{lastModifiedTime | toMoment}}</time>
+    </p>
+    <div class="button-group" role="group" aria-label="发布操作">
+      <button type="button" class="btn btn-primary"><i class="fa fa-archive"></i> 发布网站</button>
+      <button type="button" class="btn btn-success"><i class="fa fa-cloud-upload"></i> 上传到服务器</button>
+    </div>
     <hr>
+    <iframe src="output/index.html" v-if="hasPublished"></iframe>
   </div>
 </script>
 
@@ -204,8 +212,8 @@
           <div class="card-block">
             <h4 class="card-title">{{article.title}}</h4>
             <p class="card-text">{{article.description}}</p>
-            <small class="text-muted">创建时间：<time :datetime="article.create_time | toDate">{{article.create_time | toMoment}}</time></small><br>
-            <small class="text-muted">最后修改：<time :datetime="article.last_modified_time | toDate">{{article.last_modified_time | toMoment}}</time></small>
+            <small class="text-muted">创建时间：<time :datetime="article.createTime | toDate">{{article.createTime | toMoment}}</time></small><br>
+            <small class="text-muted">最后修改：<time :datetime="article.lastModifiedTime | toDate">{{article.lastModifiedTime | toMoment}}</time></small>
           </div>
         </a>
       </li>
@@ -244,8 +252,8 @@
             </p>
           </editor>
           <p class="text-muted">
-            <small>创建时间：<time :datetime="article.create_time | toDate">{{article.create_time | toMoment}}</time></small> |
-            <small>修改时间：<time :datetime="article.last_modified_time | toDate">{{article.last_modified_time | toMoment}}</time></small>
+            <small>创建时间：<time :datetime="article.createTime | toDate">{{article.createTime | toMoment}}</time></small> |
+            <small>修改时间：<time :datetime="article.lastModifiedTime | toDate">{{article.lastModifiedTime | toMoment}}</time></small>
           </p>
         </div>
         <div class="col-sm-2">

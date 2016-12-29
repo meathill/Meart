@@ -2,7 +2,7 @@
  * Created by realm on 2016/12/19.
  */
 const Welcome = require('./page/Welcome');
-const Site = require('./site/Site');
+const Home = require('./Home');
 const Preview = require('./site/Preview');
 const SiteConfig = require('./site/Config');
 const ArticleList = require('./site/ArticleList');
@@ -11,9 +11,9 @@ const Help = require('./page/Help');
 
 const routes = [
   {
-    path: '/site',
-    name: "site",
-    component: Site,
+    path: '/',
+    name: "home",
+    component: Home,
     children: [
       {
         path: 'preview',

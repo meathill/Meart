@@ -72,6 +72,7 @@ class Meart {
     });
 
     ipcMain.on('/article/edit', (event, id, article) => {
+      this.site.lastModifiedTime = Date.now();
       this.site.articles[id] = article;
       fs.writeFileSync(this.sitePath, JSON.stringify(this.site), 'utf8');
       event.returnValue = true;
