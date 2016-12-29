@@ -17,9 +17,19 @@
 <script type="text/x-template" id="site">
   <div id="site-container">
     <aside>
-      <router-link to="/site/preview" class="btn btn-secondary btn-block" title="预览网站"><i class="fa fa-home"></i></router-link>
-      <router-link to="/site/articles" class="btn btn-secondary btn-block" title="相册"><i class="fa fa-photo"></i></router-link>
-      <router-link to="/site/config" class="btn btn-secondary btn-block" title="设置"><i class="fa fa-cog"></i></router-link>
+      <router-link to="/site/preview" class="btn btn-secondary btn-block" title="查看网站">
+        <i class="fa fa-home"></i><br>
+        查看网站
+      </router-link>
+      <router-link to="/site/articles" class="btn btn-secondary btn-block" title="相册">
+        <i class="fa fa-photo"></i><br>
+        相册
+      </router-link>
+      <router-link to="/site/config" class="btn btn-secondary btn-block" title="设置">
+        <i class="fa fa-cogs"></i><br>
+        设置
+      </router-link>
+      <router-link to="/site/help" class="btn btn-outline-secondary btn-block secondary" title="帮助"><i class="fa fa-question"></i></router-link>
     </aside>
     <router-view class="container-fluid">
 
@@ -285,6 +295,33 @@
   <slot></slot>
   <input class="form-control" v-model="value" @blur="editDone" @keyup.enter.prevent="editDone" @keyup.esc="cancel" autofocus>
 </div>
+</script>
+
+<script type="text/x-template" id="help-template">
+  <div id="help">
+    <h2>帮助</h2>
+    <hr>
+    <ul class="nav nav-tabs" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" data-toggle="tab" role="tab" href="#help-detail">帮助</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" role="tab" href="#help-about">关于</a>
+      </li>
+    </ul>
+    <div class="tab-content">
+      <div class="tab-pane active" id="help-detail" role="tabpanel">
+        <h3>当前版本：</h3>
+        <p>0.1.0</p>
+      </div>
+      <div class="tab-pane" id="help-about" role="tabpanel">
+        <h3>关于 Meart</h3>
+        <p class="lead">
+          Meart 是一个免费工具，试图帮助设计师、摄影师快捷方便的创建个人作品网站。Meart 尽量将技术细节隐藏起来，所有过程均通过图形界面操作来实现。最终网站托管在免费 CDN 上。
+        </p>
+      </div>
+    </div>
+  </div>
 </script>
 
 <div class="modal fade" id="publish-modal" tabindex="-1" role="dialog" aria-labelledby="#publish-modal-label" aria-hidden="true" :class="{ progress: isProgress }" data-backdrop="static" data-keyboard="false">

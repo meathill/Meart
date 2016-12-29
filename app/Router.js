@@ -1,12 +1,13 @@
 /**
  * Created by realm on 2016/12/19.
  */
-const Welcome = require('./Welcome');
-const Site = require('./Site');
+const Welcome = require('./page/Welcome');
+const Site = require('./site/Site');
 const Preview = require('./site/Preview');
 const SiteConfig = require('./site/Config');
 const ArticleList = require('./site/ArticleList');
 const Article = require('./site/Article');
+const Help = require('./page/Help');
 
 const routes = [
   {
@@ -31,12 +32,17 @@ const routes = [
       {
         path: 'config',
         component: SiteConfig
+      },
+      {
+        path: 'help',
+        name: 'help',
+        component: Help
       }
     ]
   },
   {
     path: '/welcome',
-    name: "welcome",
+    name: 'welcome',
     component: Welcome
   }
 ];

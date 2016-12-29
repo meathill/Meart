@@ -1,6 +1,6 @@
 {
   "name": "Meart",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A static web builder made for designer or photographer to show their portfolios.",
   "main": "index.js",
   "scripts": {

@@ -1,7 +1,7 @@
 const remote = require('electron').remote;
 const Handlebars =require('handlebars');
 const router = require('./app/Router');
-const Publisher = require('./app/Publish');
+const Publisher = require('./app/popup/Publish');
 
 Handlebars.registerHelper('toCalendar', (value) => {
   return moment(value).calendar();
