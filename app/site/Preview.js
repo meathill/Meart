@@ -2,6 +2,7 @@
  * Created by realm on 2016/12/19.
  */
 const remote = require('electron').remote;
+const moment = require('../mixin/moment');
 
 module.exports = {
   name: 'Preview',
@@ -11,6 +12,11 @@ module.exports = {
       lastModifiedTime: 0,
       publishTime: 0
     };
+  },
+  computed: {
+    hasPublished() {
+      return false;
+    }
   },
   create() {
     this.checkPreview();
@@ -25,5 +31,6 @@ module.exports = {
 
         })
     }
-  }
+  },
+  mixins: [moment]
 };

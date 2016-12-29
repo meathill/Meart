@@ -104,16 +104,17 @@
 </script>
 
 <script type="text/x-template" id="preview-template">
-  <div class="preview">
-    <h2>预览网站</h2>
-    <p>上次生成时间：<time datetime="{{publishTime | toDate}}">{{publishTime | toMoment}}</time> |
-      最近修改时间：<time datetime="{{lastModifiedTime | toDate}}">{{lastModifiedTime | toMoment}}</time>
-    </p>
-    <div class="button-group" role="group" aria-label="发布操作">
-      <button type="button" class="btn btn-primary"><i class="fa fa-archive"></i> 发布网站</button>
-      <button type="button" class="btn btn-success"><i class="fa fa-cloud-upload"></i> 上传到服务器</button>
-    </div>
-    <hr>
+  <div id="preview">
+    <header>
+      <h2>预览网站</h2>
+      <p>上次生成时间：<time :datetime="publishTime | toDate">{{publishTime | toMoment}}</time> |
+        最近修改时间：<time :datetime="lastModifiedTime | toDate">{{lastModifiedTime | toMoment}}</time>
+      </p>
+      <div class="button-group" role="group" aria-label="发布操作">
+        <a href="#publish-modal" type="button" class="btn btn-primary" data-toggle="modal"><i class="fa fa-archive"></i> 发布网站</a>
+        <button type="button" class="btn btn-success"><i class="fa fa-cloud-upload"></i> 上传到服务器</button>
+      </div>
+    </header>
     <iframe src="output/index.html" v-if="hasPublished"></iframe>
   </div>
 </script>
@@ -322,11 +323,8 @@
         <h3>当前版本：</h3>
         <p>0.1.0</p>
       </div>
-      <div class="tab-pane" id="help-about" role="tabpanel">
-        <h3>关于 Meart</h3>
-        <p class="lead">
-          Meart 是一个免费工具，试图帮助设计师、摄影师快捷方便的创建个人作品网站。Meart 尽量将技术细节隐藏起来，所有过程均通过图形界面操作来实现。最终网站托管在免费 CDN 上。
-        </p>
+      <div class="tab-pane" id="help-about" role="tabpanel" v-html="about">
+
       </div>
     </div>
   </div>
