@@ -14,6 +14,7 @@ class Meart {
     this.path = app.getAppPath();
     this.sitePath = this.path + '/site/site.json'; // 站点信息;
     this.settingsPath = this.path + '/settings.json'; // 用户设置
+    this.output = this.path + '/output/';
     this.delegateEvent();
     this.loadConfig();
   }
@@ -105,7 +106,7 @@ class Meart {
       Promise.all([index, page]).then( ([index, page]) => {
         event.sender.send('/publish/progress/', '生成导出目录', 15);
         return new Promise( resolve => {
-          fs.mkdir(this.path + '/output/', (err) => {
+          fs.mkdir(this.output, (err) => {
             if (err && err.code === EXIST) {
               return resolve([index, page]);
             }
@@ -116,7 +117,7 @@ class Meart {
         event.sender.send('/publish/progress/', '生成首页', 20);
         let html = index(this.site);
         return new Promise((resolve) => {
-          fs.writeFile(this.path + '/output/index.html', html, 'utf8', err => {
+          fs.writeFile(this.output + 'index.html', html, 'utf8', err => {
             if (err) {
               throw err;
             }
@@ -134,7 +135,7 @@ class Meart {
         return Promise.all(articles.map( article => {
           let html = page(article);
           return new Promise( resolve => {
-            fs.writeFile(this.path + '/output/' + (article.url || article.id) + '.html', html, 'utf8', err => {
+            fs.writeFile(this.output + (article.url || article.id) + '.html', html, 'utf8', err => {
               if (err) {
                 throw err;
               }
@@ -144,6 +145,18 @@ class Meart {
             });
           })
         }));
+      }).then(() => { // 生成版本信息
+        let build = {
+          publishTime: Date.now()
+        };
+        return new Promise( resolve => {
+          fs.writeFile(this.output + 'build.json', JSON.stringify(build), 'utf8', err => {
+            if (err) {
+              throw err;
+            }
+            resolve();
+          })
+        });
       }).then( () => {
         event.sender.send('/publish/finish/');
       })

@@ -13,13 +13,9 @@ module.exports = {
       publishTime: 0
     };
   },
-  computed: {
-    hasPublished() {
-      return false;
-    }
-  },
   create() {
     this.checkPreview();
+    this.lastModifiedTime = remote.getGlobal('site').lastModifiedTime;
   },
   watch:{
     '$route': 'checkPreview'
@@ -28,8 +24,11 @@ module.exports = {
     checkPreview() {
       fetch('output/build.json')
         .then(function (response) {
-
+          this.publishTime = response.publishTime;
         })
+        .catch(() => {
+          this.publishTime = 0;
+        });
     }
   },
   mixins: [moment]

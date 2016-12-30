@@ -2,6 +2,7 @@ const remote = require('electron').remote;
 const Handlebars =require('handlebars');
 const router = require('./app/Router');
 const Publisher = require('./app/popup/Publish');
+const store = require('./app/store/index');
 
 Handlebars.registerHelper('toCalendar', (value) => {
   return moment(value).calendar();
@@ -10,7 +11,9 @@ Handlebars.registerHelper('toDate', (value) => {
   return moment(value).format('YYYY-MM-DD HH:mm:ss');
 });
 
+store.commit('setCurrentData', remote.getGlobal('site'));
 const app = new Vue({
+  store,
   router
 }).$mount('#app');
 

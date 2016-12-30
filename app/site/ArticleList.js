@@ -1,16 +1,15 @@
 /**
  * Created by realm on 2016/12/19.
  */
-const remote = require('electron').remote;
 const moment = require('../mixin/moment');
 
 module.exports = {
   name: 'ArticleList',
   template: '#article-list-template',
-  data () {
-    let site = remote.getGlobal('site');
-    site.artilces = site.artilces || [];
-    return site;
+  computed: {
+    articles() {
+      return this.$store.state.articles;
+    }
   },
   methods: {
     add() {
@@ -27,7 +26,7 @@ module.exports = {
       });
     },
     getHref(value) {
-      return '#/site/article/' + value;
+      return '#/article/' + value;
     }
   },
   mixins: [moment]

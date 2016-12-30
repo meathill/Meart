@@ -15,18 +15,15 @@ module.exports = {
     return {
       loading: true,
       isNew: true,
-      id: null,
-      article: {
-        title: '相册标题',
-        description: '相册简介',
-        url: '路径名称',
-        tags: '标签',
-        createTime: '',
-        lastModifiedTime: '',
-        thumbnail: '',
-        status: 0,
-        album: []
-      }
+      id: null
+    }
+  },
+  computed : {
+    article() {
+      return this.$store.state.articles[this.id];
+    },
+    isPublished() {
+      return this.article.status === 0 ? ['bg-success', 'text-white'] : '';
     }
   },
   created () {
@@ -40,11 +37,6 @@ module.exports = {
       }
       ipcRenderer.sendSync('/article/edit', this.id, this.article);
     }, {deep: true});
-  },
-  computed: {
-    isPublished() {
-      return this.article.status === 0 ? ['bg-success', 'text-white'] : '';
-    }
   },
   filters: {
     defaultThumbnail(value) {
