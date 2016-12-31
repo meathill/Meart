@@ -12,5 +12,7 @@ module.exports = {
   'SET_SITE_PROP': 'setSiteProp',
   'SET_SERVER_PROP': 'setServerProp',
 
-  'SAVED': 'saved'
+  'SAVED': 'saved',
+
+  'SET_PUBLISH_TIME': 'setPublishTime'
 };

@@ -107,15 +107,22 @@
   <div id="preview">
     <header>
       <h2>预览网站</h2>
-      <p>上次生成时间：<time :datetime="publishTime | toDate" v-if="publishTime">{{publishTime | toMoment}}</time> |
-        最近修改时间：<time :datetime="lastModifiedTime | toDate" v-if="lastModifiedTime">{{lastModifiedTime | toMoment}}</time>
+      <p>上次生成时间：<time :datetime="publishTime | toDate" v-if="publishTime">{{publishTime | toMoment}}</time>
+        <span class="tag tag-success" v-if="publishTime > lastModifiedTime"><i class="fa fa-check"></i> 最新</span>
+        | 最近修改时间：<time :datetime="lastModifiedTime | toDate" v-if="lastModifiedTime">{{lastModifiedTime | toMoment}}</time>
       </p>
       <div class="button-group" role="group" aria-label="发布操作">
         <a href="#publish-modal" class="btn btn-primary" data-toggle="modal"><i class="fa fa-archive"></i> 发布网站</a>
         <button type="button" class="btn btn-success"><i class="fa fa-cloud-upload"></i> 上传到服务器</button>
       </div>
     </header>
-    <iframe src="output/index.html" v-if="publishTime"></iframe>
+    <nav class="navbar navbar-light bg-faded" v-if="publishTime">
+      <form class="form-inline float-xs-left">
+        <button type="button" class="btn btn-secondary btn-sm" @click="goBack"><i class="fa fa-chevron-left"></i></button>
+        <button type="button" class="btn btn-secondary btn-sm" @click="refresh"><i class="fa fa-refresh"></i></button>
+      </form>
+    </nav>
+    <iframe src="output/index.html" v-if="publishTime" :height="height"></iframe>
     <div class="alert alert-warning" v-else>
       <p>您还没有生成过网站页面，无法提供预览效果。</p>
       <a href="#publish-modal" class="btn btn-primary btn-lg" data-toggle="modal"><i class="fa fa-archive"></i> 立刻发布网站</a>
@@ -335,7 +342,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="关闭" v-if="!isProgress">
+        <button type="button" class="close" data-dismiss="modal" aria-label="关闭" v-if="!isProgress || isSuccess">
           <span aria-hidden="true">&times;</span>
         </button>
         <h4 class="modal-title" id="publish-modal-label">发布网站</h4>
@@ -346,7 +353,14 @@
           <div class="text-xs-center" id="publish-progress-label" v-if="isProgress">当前进度：{{label}}</div>
           <progress class="progress" :value="progress" max="100" aria-describedby="#publish-progress-label" v-if="isProgress"></progress>
           <p>
-            <button type="button" class="btn btn-primary btn-lg" @click="start" :disabled="isProgress"><i class="fa fa-play"></i> 开始生成</button>
+            <button type="button" class="btn btn-lg btn-block" @click="start" :disabled="isProgress || isSuccess" :class="isSuccess ? 'btn-success' : 'btn-primary'">
+              <template v-if="isSuccess">
+                <i class="fa fa-check"></i> 生成成功
+              </template>
+              <template v-else>
+                <i class="fa fa-play"></i> 开始生成
+              </template>
+            </button>
           </p>
         </template>
       </div>

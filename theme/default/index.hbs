@@ -10,16 +10,17 @@
   <link rel="shortcut icon" type="image/png" href="./img/fav.png">
   {{/if}}
   <link rel="stylesheet" href="http://cdn.staticfile.org/twitter-bootstrap/4.0.0-alpha.5/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/screen.css">
 </head>
 <body>
 <div class="container">
   <h1>{{siteTitle}}</h1>
   <hr>
-  <ul class="row">
+  <ul class="row list">
     {{#each articles}}
       {{#if id}}
     <li class="col-sm-3 col-xs-12">
-      <div class="card">
+      <a class="card" href="./{{url}}.html">
         {{#if thumbnail}}
           <img src="{{thumbnail}}" class="img-fluid card-img-top" alt="{{title}}">
         {{/if}}
@@ -27,11 +28,11 @@
           <h4 class="card-title">{{title}}</h4>
           <p class="card-text">{{description}}</p>
           <p class="card-text">
-            <small class="text-muted">创建于：<time datetime="{{toDate create_time}}">{{toCalendar create_time}}</time></small>
-            <small class="text-muted">最新：<time datetime="{{toDate last_modified_time}}">{{toCalendar last_modified_time}}</time></small>
+            <small class="text-muted">创建于：<time datetime="{{toDate createTime}}">{{toCalendar createTime}}</time></small>
+            <small class="text-muted">最新：<time datetime="{{toDate lastModifiedTime}}">{{toCalendar lastModifiedTime}}</time></small>
           </p>
         </div>
-      </div>
+      </a>
     </li>
       {{/if}}
     {{/each}}

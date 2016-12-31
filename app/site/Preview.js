@@ -1,7 +1,6 @@
 /**
  * Created by realm on 2016/12/19.
  */
-const remote = require('electron').remote;
 const moment = require('../mixin/moment');
 
 module.exports = {
@@ -9,29 +8,28 @@ module.exports = {
   template: '#preview-template',
   data() {
     return {
-      publishTime: 0
-    };
-  },
-  computed: {
-    lastModifiedTime() {
-      return this.$store.state.lastModifiedTime;
+      height: 200
     }
   },
-  create() {
-    this.checkPreview();
+  computed: Vuex.mapState([
+    'lastModifiedTime',
+    'publishTime'
+  ]),
+  watch: {
+    publishTime() {
+      this.refresh();
+    }
   },
-  watch:{
-    '$route': 'checkPreview'
+  mounted() {
+    this.history = history.length;
+    this.height = window.innerHeight - this.$el.querySelector('header').offsetHeight - 16 * 3;
   },
   methods: {
-    checkPreview() {
-      fetch('output/build.json')
-        .then(function (response) {
-          this.publishTime = response.publishTime;
-        })
-        .catch(() => {
-          this.publishTime = 0;
-        });
+    goBack() {
+      this.$el.querySelector('iframe').contentWindow.history.go(-1);
+    },
+    refresh() {
+      this.$el.querySelector('iframe').contentWindow.location.reload();
     }
   },
   mixins: [moment]

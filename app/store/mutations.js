@@ -39,5 +39,9 @@ module.exports = {
 
   [types.SAVED] (state, {time}) {
     state.lastModifiedTime = time;
+  },
+
+  [types.SET_PUBLISH_TIME] (state, { time }) {
+    state.publishTime = time;
   }
 };

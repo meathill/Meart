@@ -5,6 +5,7 @@ const fs = require('fs');
 const _ = require('underscore');
 const Handlebars = require('handlebars');
 const moment = require('moment');
+const ncp = require('ncp').ncp;
 const defaultConfig = require('../config/default.json');
 const dev = require('../config/dev.json');
 const EXIST = 'EEXIST';
@@ -91,6 +92,7 @@ class Meart {
       Handlebars.registerHelper('toDate', (value) => {
         return moment(value).format('YYYY-MM-DD HH:mm:ss');
       });
+      moment.locale('zh-cn');
       event.sender.send('/publish/progress/', '读取模板文件', 0);
       let theme = this.site.siteTheme;
       let path = this.path + '/theme/' + theme + '/';
@@ -131,7 +133,7 @@ class Meart {
             resolve(page);
           });
         });
-      }).then( (page) => {
+      }).then( (page) => { // generate galleries
         let articles = this.site.articles.filter( article => {
           return article && article.status === 0;
         });
@@ -152,20 +154,30 @@ class Meart {
             });
           })
         }));
+      }).then( () => { // copy static assets
+        return new Promise( resolve => {
+          ncp(path + 'css', this.output + 'css', err => {
+            if (err) {
+              throw err;
+            }
+            resolve();
+          });
+        });
       }).then(() => { // 生成版本信息
+        let now = Date.now();
         let build = {
-          publishTime: Date.now()
+          publishTime: now
         };
         return new Promise( resolve => {
           fs.writeFile(this.output + 'build.json', JSON.stringify(build), 'utf8', err => {
             if (err) {
               throw err;
             }
-            resolve();
+            resolve(now);
           })
         });
-      }).then( () => {
-        event.sender.send('/publish/finish/');
+      }).then( (time) => {
+        event.sender.send('/publish/finish/', time);
       })
         .catch(console.log.bind(console));
     });

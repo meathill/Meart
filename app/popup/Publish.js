@@ -1,4 +1,5 @@
 const { ipcRenderer } = require('electron');
+const MutationTypes = require('../store/mutation-types');
 
 module.exports = {
   created() {
@@ -8,6 +9,7 @@ module.exports = {
   data() {
     return {
       isProgress: false,
+      isSuccess: false,
       label: '开始发布网站',
       progress: 0
     };
@@ -17,11 +19,18 @@ module.exports = {
       this.isProgress = true;
       ipcRenderer.send('/publish/');
     },
-    onFinish() {
+    onFinish(event, time) {
       this.label = '生成完毕';
       this.progress = 100;
+      this.$store.commit(MutationTypes.SET_PUBLISH_TIME, {
+        time: time
+      });
+      this.isSuccess = true;
+      $('#publish-modal').one('hidden.bs.modal', () => {
+        this.isProgress = this.isSuccess = false;
+      });
       setTimeout( () => {
-        this.isProgress = false;
+        $('#publish-modal').modal('hide');
       }, 3000);
     },
     onProgress(event, label, progress) {

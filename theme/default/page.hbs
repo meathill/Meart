@@ -10,13 +10,18 @@
     <link rel="shortcut icon" type="image/png" href="./img/fav.png">
   {{/if}}
   <link rel="stylesheet" href="http://cdn.staticfile.org/twitter-bootstrap/4.0.0-alpha.5/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/screen.css">
 </head>
 <body>
 <div class="container">
   <h1>{{title}}</h1>
   <p class="lead">{{description}}</p>
+  <p>
+    <small>创建时间：<time datetime="{{toDate createTime}}">{{toCalendar createTime}}</time></small> |
+    <small>更新时间：<time datetime="{{toDate lastModifiedTime}}">{{toCalendar lastModifiedTime}}</time></small>
+  </p>
   <hr>
-  <ul class="row">
+  <ul class="row list">
     {{#each album}}
       <li class="col-sm-3 col-xs-12">
         <div class="card">
