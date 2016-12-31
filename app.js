@@ -11,7 +11,6 @@ Handlebars.registerHelper('toDate', (value) => {
   return moment(value).format('YYYY-MM-DD HH:mm:ss');
 });
 
-store.commit('setCurrentData', remote.getGlobal('site'));
 const app = new Vue({
   store,
   router

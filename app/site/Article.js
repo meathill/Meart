@@ -4,6 +4,7 @@
 const {ipcRenderer} = require('electron');
 const Editor = require('../component/Editor');
 const moment = require('../mixin/moment');
+const MutationTypes = require('../store/mutation-types');
 
 module.exports = {
   name: 'Article',
@@ -56,16 +57,31 @@ module.exports = {
       }
     },
     remove(index) {
-      this.article.albums.splice(index, 1);
+      this.$store.commit(MutationTypes.REMOVE_PHOTO, {
+        id: this.id,
+        index: index
+      });
     },
     onClick(index) {
-      this.article.albums[index].isActive = !this.article.albums[index].isActive;
+      this.$store.commit(MutationTypes.SELECT_PHOTO, {
+        id: this.id,
+        index: index
+      });
     },
     onEditorChange(key, value) {
-      this.article[key] = value;
+      this.$store.commit(MutationTypes.EDIT_ARTICLE, {
+        id: this.id,
+        key: key,
+        value: value
+      });
     },
     onPhotoChange(key, index, value) {
-      this.article.albums[index][key] = value;
+      this.$store.commit(MutationTypes.EDIT_PHOTO, {
+        id: this.id,
+        key: key,
+        index: index,
+        value: value
+      });
     },
     onSelectFile(event) {
       let addon = Array.prototype.map.call(event.target.files, function (file) {
@@ -75,10 +91,17 @@ module.exports = {
           description: ''
         }
       });
-      this.article.albums = this.article.albums.concat(addon);
+      this.$store.commit(MutationTypes.ADD_PHOTO, {
+        id: this.id,
+        photos: addon
+      });
     },
     onSelectThumbnail(event) {
-      this.article.thumbnail = event.target.files[0].path;
+      this.$store.commit(MutationTypes.EDIT_ARTICLE, {
+        id: this.id,
+        key: 'thumbnail',
+        value: event.target.files[0].path
+      });
     }
   },
   mixins: [moment]
