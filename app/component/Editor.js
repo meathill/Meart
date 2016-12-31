@@ -18,8 +18,11 @@ module.exports = {
       }
     },
     editDone() {
-      this.$emit('change', this.value);
       this.isEditing = false;
+      if (!this.isEditing || this.value === this.originValue) {
+        return;
+      }
+      this.$emit('change', this.value);
     },
     cancel() {
       this.isEditing = false;

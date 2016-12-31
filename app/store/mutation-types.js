@@ -9,5 +9,8 @@ module.exports = {
   'REMOVE_PHOTO': 'removePhoto',
   'SELECT_PHOTO': 'selectPhoto',
 
-  'SET_SITE_PROP': 'setSiteProp'
+  'SET_SITE_PROP': 'setSiteProp',
+  'SET_SERVER_PROP': 'setServerProp',
+
+  'SAVED': 'saved'
 };

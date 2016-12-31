@@ -79,8 +79,15 @@ class Meart {
       event.returnValue = true;
     });
 
-    ipcMain.on('/article/', (event, id) => {
-      event.returnValue = this.site.articles[id];
+    ipcMain.on('/site/save', (event, content) => {
+      let now = Date.now();
+      this.site.lastModifiedTime = now;
+      fs.writeFile(this.sitePath, content, 'utf8', (err) => {
+        if (err) {
+          throw err;
+        }
+        event.sender.send('saved', now);
+      });
     });
 
     ipcMain.on('/publish/', (event) => {

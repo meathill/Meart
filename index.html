@@ -233,10 +233,7 @@
 
 <script type="text/x-template" id="article-template">
   <article class="single article">
-    <p v-if="loading">
-      <i class="fa fa-spin fa-spinner fa-3x"></i>
-    </p>
-    <template v-else>
+    <template>
       <header class="row">
         <div class="col-sm-3 thumbnail">
           <input type="file" class="hide" id="article-thumbnail" @change="onSelectThumbnail">
@@ -248,7 +245,7 @@
           <editor :origin-value="article.title" @change="onEditorChange('title', $event)">
             <h1>{{article.title}}</h1>
           </editor>
-          <editor :orgin-value="article.description" @change="onEditorChange('description', $event)">
+          <editor :origin-value="article.description" @change="onEditorChange('description', $event)">
             <p class="lead">{{article.description}}</p>
           </editor>
           <editor :origin-value="article.url" @change="onEditorChange('url', $event)">

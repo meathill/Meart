@@ -1,10 +1,10 @@
 /**
  * Created by realm on 2016/12/19.
  */
-const {ipcRenderer} = require('electron');
 const Editor = require('../component/Editor');
 const moment = require('../mixin/moment');
 const MutationTypes = require('../store/mutation-types');
+const ActionTypes = require('../store/action-types');
 
 module.exports = {
   name: 'Article',
@@ -14,7 +14,6 @@ module.exports = {
   },
   data () {
     return {
-      loading: true,
       isNew: true,
       id: null
     }
@@ -28,16 +27,11 @@ module.exports = {
     }
   },
   created () {
-    this.fetchData();
-    this.$watch('article', function () {
-      this.article.lastModifiedTime = Date.now();
-      if (this.isNew) {
-        this.article.createTime = Date.now();
-        this.id = this.article.id = ipcRenderer.sendSync('/article/new');
-        this.isNew = false;
-      }
-      ipcRenderer.sendSync('/article/edit', this.id, this.article);
-    }, {deep: true});
+    let id = this.$route.params.id;
+    if (id != 'new') {
+      this.isNew = false;
+      this.id = id = Number(id);
+    }
   },
   filters: {
     defaultThumbnail(value) {
@@ -45,28 +39,19 @@ module.exports = {
     }
   },
   methods: {
-    fetchData () {
-      let id = this.$route.params.id;
-      if (id === 'new') {
-        this.loading = false;
-      } else {
-        this.isNew = false;
-        this.id = id = Number(id);
-        this.article = ipcRenderer.sendSync('/article/', id);
-        this.loading = false;
-      }
-    },
     remove(index) {
       this.$store.commit(MutationTypes.REMOVE_PHOTO, {
         id: this.id,
         index: index
       });
+      this.$store.dispatch(ActionTypes.SAVE);
     },
     onClick(index) {
       this.$store.commit(MutationTypes.SELECT_PHOTO, {
         id: this.id,
         index: index
       });
+      this.$store.dispatch(ActionTypes.SAVE);
     },
     onEditorChange(key, value) {
       this.$store.commit(MutationTypes.EDIT_ARTICLE, {
@@ -74,6 +59,7 @@ module.exports = {
         key: key,
         value: value
       });
+      this.$store.dispatch(ActionTypes.SAVE);
     },
     onPhotoChange(key, index, value) {
       this.$store.commit(MutationTypes.EDIT_PHOTO, {
@@ -82,6 +68,7 @@ module.exports = {
         index: index,
         value: value
       });
+      this.$store.dispatch(ActionTypes.SAVE);
     },
     onSelectFile(event) {
       let addon = Array.prototype.map.call(event.target.files, function (file) {
@@ -95,6 +82,7 @@ module.exports = {
         id: this.id,
         photos: addon
       });
+      this.$store.dispatch(ActionTypes.SAVE);
     },
     onSelectThumbnail(event) {
       this.$store.commit(MutationTypes.EDIT_ARTICLE, {
@@ -102,6 +90,7 @@ module.exports = {
         key: 'thumbnail',
         value: event.target.files[0].path
       });
+      this.$store.dispatch(ActionTypes.SAVE);
     }
   },
   mixins: [moment]

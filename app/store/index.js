@@ -4,6 +4,7 @@
 
 const remote = require('electron').remote;
 const mutations = require('./mutations');
+const actions = require('./actions');
 
 const debug = process.env.NODE_ENV !== 'production';
 
@@ -16,6 +17,7 @@ state.server = {
 
 module.exports = new Vuex.Store({
   state,
+  actions,
   mutations,
   strict: debug
 });
