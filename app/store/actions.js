@@ -8,9 +8,10 @@ const actions = require('./action-types');
 
 module.exports = {
   [actions.SAVE] ( { state, commit }) {
-    ipcRenderer.once('saved', function (time) {
+    ipcRenderer.once('saved', time => {
       console.log('saved');
+      commit(mutations.SAVED, time);
     });
-    ipcRenderer.send('/site/save', JSON.stringify(state));
+    ipcRenderer.send('/site/save', state);
   }
 };

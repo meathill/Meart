@@ -9,13 +9,16 @@ module.exports = {
   template: '#preview-template',
   data() {
     return {
-      lastModifiedTime: 0,
       publishTime: 0
     };
   },
+  computed: {
+    lastModifiedTime() {
+      return this.$store.state.lastModifiedTime;
+    }
+  },
   create() {
     this.checkPreview();
-    this.lastModifiedTime = remote.getGlobal('site').lastModifiedTime;
   },
   watch:{
     '$route': 'checkPreview'

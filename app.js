@@ -16,7 +16,7 @@ const app = new Vue({
   router
 }).$mount('#app');
 
-const publisher = new Vue(Publisher).$mount('#publish-modal .modal-body');
+const publisher = new Vue(Publisher).$mount('#publish-modal .modal-content');
 
 if (remote.getGlobal('isNew')) {
   router.push({

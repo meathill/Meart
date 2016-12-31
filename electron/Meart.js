@@ -72,17 +72,11 @@ class Meart {
       event.returnValue = this.site.articles.length + 1;
     });
 
-    ipcMain.on('/article/edit', (event, id, article) => {
-      this.site.lastModifiedTime = Date.now();
-      this.site.articles[id] = article;
-      fs.writeFileSync(this.sitePath, JSON.stringify(this.site), 'utf8');
-      event.returnValue = true;
-    });
-
-    ipcMain.on('/site/save', (event, content) => {
+    ipcMain.on('/site/save', (event, site) => {
       let now = Date.now();
+      this.site = site;
       this.site.lastModifiedTime = now;
-      fs.writeFile(this.sitePath, content, 'utf8', (err) => {
+      fs.writeFile(this.sitePath, JSON.stringify(this.site), 'utf8', (err) => {
         if (err) {
           throw err;
         }
@@ -91,6 +85,12 @@ class Meart {
     });
 
     ipcMain.on('/publish/', (event) => {
+      Handlebars.registerHelper('toCalendar', (value) => {
+        return moment(value).calendar();
+      });
+      Handlebars.registerHelper('toDate', (value) => {
+        return moment(value).format('YYYY-MM-DD HH:mm:ss');
+      });
       event.sender.send('/publish/progress/', '读取模板文件', 0);
       let theme = this.site.siteTheme;
       let path = this.path + '/theme/' + theme + '/';
