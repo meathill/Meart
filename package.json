@@ -4,7 +4,7 @@
   "description": "A static web builder made for designer or photographer to show their portfolios.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -36,6 +36,8 @@
   "devDependencies": {
     "colors.css": "^2.2.0",
     "electron": "^1.4.12",
+    "mocha": "^3.2.0",
+    "should": "^11.1.2",
     "webpack": "^1.13.3"
   }
 }

@@ -26,6 +26,14 @@ Handlebars.registerHelper('equal', function(expect, actual, options) {
 moment.locale('zh-cn');
 
 class Publisher {
+  /**
+   * 构造函数
+   *
+   * @param {object} site 站点信息
+   * @param {EventEmitter} event 事件触发器
+   * @param {string} path 当前项目路径
+   * @param {string} output [optional] 输出路径后缀
+   */
   constructor(site, event, path, output = '') {
     site.articles = site.articles.filter( article => {
       return article && article.status === 0;
@@ -133,7 +141,7 @@ class Publisher {
   }
 
   dispatchFinish(time) {
-    event.sender.send('/publish/finish/', time);
+    this.event.sender.send('/publish/finish/', time);
   }
 
   generateOutputDirectory(options) {
