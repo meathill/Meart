@@ -2,6 +2,7 @@
  * Created by meathill on 2017/1/2.
  */
 const assert = require('assert');
+const fs = require('fs');
 const should = require('should');
 const _ = require('underscore');
 const site = require('../../site/site.json');
@@ -18,9 +19,15 @@ describe('Test Publisher', () => {
     }
   };
   
-  before( () => {
+  before( (done) => {
     site.siteTheme = theme;
-    publisher = new Publisher(site, event, __dirname + '/../..');
+    publisher = new Publisher(site, event, __dirname + '/../..', 'tmp');
+    fs.rmdir(publisher.output, err => {
+      if (err && err.code != 'ENOENT') {
+        throw err;
+      }
+      done();
+    });
   });
 
   describe('#readThemeOptions()', () => {
@@ -39,4 +46,53 @@ describe('Test Publisher', () => {
     });
   });
 
+  describe('#generateOutputDirectory()', () => {
+    let obj = {
+      code: 42
+    };
+    it('dir should exists', (done) => {
+      publisher.generateOutputDirectory(obj)
+        .then( options => {
+          obj.should.deepEqual(options);
+          should(fs.existsSync(publisher.output)).be.true();
+          done()
+        } )
+        .catch( err => {
+          done(err);
+        });
+    });
+  });
+
+  describe('#getThemeTemplates()', () => {
+    let least = ['index', 'article', 'archive'];
+    it('default', () => {
+      let templates = publisher.getThemeTemplates();
+      should(least).containDeep(templates);
+    });
+    it('contain', () => {
+      let templates = publisher.getThemeTemplates({ templates: ['page', 'index'] });
+      should(templates).containDeep(least);
+      should(templates.length).be.exactly(4);
+    })
+  });
+
+  describe('#readTemplates()', () => {
+    let templates = ['index', 'article', 'archive'];
+    it('all template', (done) => {
+      publisher.readTemplates(templates)
+        .then( (templates) => {
+          templates.should.have.property('index').which.is.a.Function();
+          templates.should.have.property('article').which.is.a.Function();
+          templates.should.have.property('archive').which.is.a.Function();
+          done();
+        })
+        .catch( err => {
+          done(err);
+        })
+    });
+  });
+
+  describe('#readPartials()', () => {
+
+  });
 });

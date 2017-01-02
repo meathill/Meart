@@ -148,7 +148,7 @@ class Publisher {
     this.event.sender.send('/publish/progress/', '生成导出目录', 5);
     return new Promise( resolve => {
       fs.mkdir(this.output, (err) => {
-        if (err && err.code === EXIST) {
+        if (!err || err.code === EXIST) {
           return resolve(options);
         }
         throw err;
@@ -156,10 +156,13 @@ class Publisher {
     });
   }
 
-  getThemeTemplates(options) {
+  getThemeTemplates(options = {}) {
     this.event.sender.send('/publish/progress/', '读取模板文件列表', 10);
     let template = ['index', 'archive', 'article'];
-    return _.extend(template, options.templates);
+    if (!options.templates) {
+      return template;
+    }
+    return _.uniq(template.concat(options.templates));
   }
 
   logVersions() {
@@ -208,23 +211,25 @@ class Publisher {
   readTemplates(templates) {
     this.event.sender.send('/publish/progress/', '读取模板文件', 15);
     templates = templates.map( template => {
-      return fs.readFile(this.themePath + template + '.hbs', 'utf8', (err, content) => {
-        if (err) {
-          throw err;
-        }
-        resolve({
-          name: template,
-          template: Handlebars.compile(content)
+      return new Promise( resolve => {
+        fs.readFile(this.themePath + template + '.hbs', 'utf8', (err, content) => {
+          if (err) {
+            throw err;
+          }
+          resolve({
+            name: template,
+            template: Handlebars.compile(content)
+          });
         });
       });
     });
     return Promise.all(templates)
       .then( templates => {
         let map = {};
-        templates.each( (template) => {
+        templates.forEach( (template) => {
           map[template.name] = template.template;
         });
-        return templates;
+        return map;
       });
   }
 
