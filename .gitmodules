@@ -1,0 +1,3 @@
+[submodule "theme/dark"]
+	path = theme/dark
+	url = git@github.com:meathill/meart-dark.git
