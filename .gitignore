@@ -15,3 +15,4 @@ output
 settings.json
 site/
 config/dev.json
+tmp/
