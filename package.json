@@ -4,7 +4,8 @@
   "description": "A static web builder made for designer or photographer to show their portfolios.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "publish-theme": "node publish-theme"
   },
   "repository": {
     "type": "git",

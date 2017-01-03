@@ -7,7 +7,14 @@ const site = require('./site/site.json');
 const theme = process.argv[2];
 
 site.siteTheme = theme;
-let publisher = new Publisher(site);
+event = {
+  sender: {
+    send(event, label, progress) {
+      console.log(event, label, progress);
+    }
+  }
+};
+let publisher = new Publisher(site, event, __dirname, 'dark');
 publisher.output = __dirname + '/output/' + theme;
 publisher.start()
   .then( result => {

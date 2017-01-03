@@ -36,7 +36,7 @@ class Publisher {
    * @param {string} path 当前项目路径
    * @param {string} output [optional] 输出路径后缀
    */
-  constructor(site, event, path, output = '') {
+  constructor(site, event, path = __dirname, output = '') {
     site.articles = site.articles.filter( article => {
       return article && article.status === 0;
     });
