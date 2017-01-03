@@ -3,6 +3,6 @@
  */
 module.exports = {
   newID: state => {
-    return state.articles.length + 1;
+    return state.articles.length;
   }
 };

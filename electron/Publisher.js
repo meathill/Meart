@@ -24,6 +24,14 @@ Handlebars.registerHelper('equal', function(expect, actual, options) {
     return options.inverse(this);
   }
 });
+Handlebars.registerHelper('top', (array, max, options) => {
+  if (!array || array.length === 0) {
+    return options.inverse(this);
+  }
+  array.slice(0, max).map((item) => {
+    return options.fn(item);
+  }).join('');
+});
 moment.locale('zh-cn');
 
 class Publisher {
@@ -39,6 +47,8 @@ class Publisher {
   constructor(site, event, path = __dirname, output = '') {
     site.articles = site.articles.filter( article => {
       return article && article.status === 0;
+    }).sort( (a, b) => { // 按 id 倒序
+      return b.id - a.id;
     });
     this.site = site;
     this.event = event;

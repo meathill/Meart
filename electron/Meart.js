@@ -3,11 +3,11 @@ const path = require('path');
 const url = require('url');
 const fs = require('fs');
 const _ = require('underscore');
-const Handlebars = require('handlebars');
 const moment = require('moment');
 const ncp = require('ncp').ncp;
 const defaultConfig = require('../config/default.json');
 const dev = require('../config/dev.json');
+const Publisher = require('./Publisher');
 const EXIST = 'EEXIST';
 
 class Meart {
@@ -86,100 +86,8 @@ class Meart {
     });
 
     ipcMain.on('/publish/', (event) => {
-      Handlebars.registerHelper('toCalendar', (value) => {
-        return moment(value).calendar();
-      });
-      Handlebars.registerHelper('toDate', (value) => {
-        return moment(value).format('YYYY-MM-DD HH:mm:ss');
-      });
-      moment.locale('zh-cn');
-      event.sender.send('/publish/progress/', '读取模板文件', 0);
-      let theme = this.site.siteTheme;
-      let path = this.path + '/theme/' + theme + '/';
-      let index = new Promise( resolve => {
-        fs.readFile(path + 'index.hbs', 'utf8', (err, content) => {
-          if (err) {
-            throw err;
-          }
-          resolve(Handlebars.compile(content));
-        })
-      });
-      let page = new Promise( resolve => {
-        fs.readFile(path + 'page.hbs', 'utf8', (err, content) => {
-          if (err) {
-            throw err;
-          }
-          resolve(Handlebars.compile(content))
-        })
-      });
-      Promise.all([index, page]).then( ([index, page]) => {
-        event.sender.send('/publish/progress/', '生成导出目录', 15);
-        return new Promise( resolve => {
-          fs.mkdir(this.output, (err) => {
-            if (err && err.code === EXIST) {
-              return resolve([index, page]);
-            }
-            throw err;
-          })
-        });
-      }).then( ([index, page]) => {
-        event.sender.send('/publish/progress/', '生成首页', 20);
-        let html = index(this.site);
-        return new Promise((resolve) => {
-          fs.writeFile(this.output + 'index.html', html, 'utf8', err => {
-            if (err) {
-              throw err;
-            }
-            resolve(page);
-          });
-        });
-      }).then( (page) => { // generate galleries
-        let articles = this.site.articles.filter( article => {
-          return article && article.status === 0;
-        });
-        let pageNumber = Math.ceil(articles.length / 5);
-        let progress = 75 / pageNumber;
-        let count = 0;
-        event.sender.send('/publish/progress/', '准备生成单个相册', 25);
-        return Promise.all(articles.map( article => {
-          let html = page(article);
-          return new Promise( resolve => {
-            fs.writeFile(this.output + (article.url || article.id) + '.html', html, 'utf8', err => {
-              if (err) {
-                throw err;
-              }
-              event.sender.send('/publish/progress/', '生成相册', 25 + progress * (count + 1));
-              count++;
-              resolve();
-            });
-          })
-        }));
-      }).then( () => { // copy static assets
-        return new Promise( resolve => {
-          ncp(path + 'css', this.output + 'css', err => {
-            if (err) {
-              throw err;
-            }
-            resolve();
-          });
-        });
-      }).then(() => { // 生成版本信息
-        let now = Date.now();
-        let build = {
-          publishTime: now
-        };
-        return new Promise( resolve => {
-          fs.writeFile(this.output + 'build.json', JSON.stringify(build), 'utf8', err => {
-            if (err) {
-              throw err;
-            }
-            resolve(now);
-          })
-        });
-      }).then( (time) => {
-        event.sender.send('/publish/finish/', time);
-      })
-        .catch(console.log.bind(console));
+      let publisher = new Publisher(this.site, event, this.path);
+      publisher.start();
     });
   }
 

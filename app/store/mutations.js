@@ -13,12 +13,16 @@ module.exports = {
   [types.SET_SITE_PROP] (state, {key, value}) {
     state[key] = value;
   },
-  [types.SET_SERVER_PROP] (state, payload) {
-    state.server[payload.key] = payload.value;
+  [types.SET_SERVER_PROP] (state, {key, value}) {
+    state.server[key] = value;
   },
 
-  [types.ADD_ARTICLE] (state, {id}) {
-    state.articles.splice(id, 0, _.clone(article));
+  [types.ADD_ARTICLE] (state, { id }) {
+    let articles = state.articles;
+    let newArticle = _.clone(article);
+    newArticle.id = id;
+    articles.push(newArticle);
+    state.articles = articles;
   },
   [types.EDIT_ARTICLE] (state, {id, key, value}) {
     state.articles[id]['lastModifiedTime'] = Date.now();
