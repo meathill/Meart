@@ -5,6 +5,7 @@ const Editor = require('../component/Editor');
 const moment = require('../mixin/moment');
 const MutationTypes = require('../store/mutation-types');
 const ActionTypes = require('../store/action-types');
+const defaults = require('./../store/articleDefault.json');
 
 module.exports = {
   name: 'Article',
@@ -20,7 +21,7 @@ module.exports = {
   },
   computed : {
     article() {
-      return this.$store.state.articles[this.id];
+      return this.isNew ? require('./../store/articleInit.json') : this.$store.state.articles[this.id];
     },
     isPublished() {
       return this.article.status === 0 ? ['bg-success', 'text-white'] : '';
@@ -34,11 +35,20 @@ module.exports = {
     }
   },
   filters: {
-    defaultThumbnail(value) {
-      return value || 'img/thumbnail.svg';
+    defaultValue(value, key) {
+      return value || defaults[key];
     }
   },
   methods: {
+    checkNew: function () {
+      if (this.isNew) {
+        this.id = this.$store.getters.newID;
+        this.$store.commit(MutationTypes.ADD_ARTICLE, {
+          id: this.id
+        });
+        this.isNew = false;
+      }
+    },
     remove(index) {
       this.$store.commit(MutationTypes.REMOVE_PHOTO, {
         id: this.id,
@@ -54,6 +64,7 @@ module.exports = {
       this.$store.dispatch(ActionTypes.SAVE);
     },
     onEditorChange(key, value) {
+      this.checkNew();
       this.$store.commit(MutationTypes.EDIT_ARTICLE, {
         id: this.id,
         key: key,
@@ -62,6 +73,7 @@ module.exports = {
       this.$store.dispatch(ActionTypes.SAVE);
     },
     onPhotoChange(key, index, value) {
+      this.checkNew();
       this.$store.commit(MutationTypes.EDIT_PHOTO, {
         id: this.id,
         key: key,
@@ -71,6 +83,7 @@ module.exports = {
       this.$store.dispatch(ActionTypes.SAVE);
     },
     onSelectFile(event) {
+      this.checkNew();
       let addon = Array.prototype.map.call(event.target.files, function (file) {
         return {
           src: file.path,
@@ -85,6 +98,7 @@ module.exports = {
       this.$store.dispatch(ActionTypes.SAVE);
     },
     onSelectThumbnail(event) {
+      this.checkNew();
       this.$store.commit(MutationTypes.EDIT_ARTICLE, {
         id: this.id,
         key: 'thumbnail',

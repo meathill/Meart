@@ -245,19 +245,19 @@
         <div class="col-sm-3 thumbnail">
           <input type="file" class="hide" id="article-thumbnail" @change="onSelectThumbnail">
           <label for="article-thumbnail">
-            <img :src="article.thumbnail | defaultThumbnail" class="img-thumbnail">
+            <img :src="article.thumbnail | defaultValue('thumbnail')" class="img-thumbnail">
           </label>
         </div>
         <div class="col-sm-7">
           <editor :origin-value="article.title" @change="onEditorChange('title', $event)">
-            <h1>{{article.title}}</h1>
+            <h1>{{article.title | defaultValue('title')}}</h1>
           </editor>
           <editor :origin-value="article.description" @change="onEditorChange('description', $event)">
-            <p class="lead">{{article.description}}</p>
+            <p class="lead">{{article.description | defaultValue('description')}}</p>
           </editor>
           <editor :origin-value="article.url" @change="onEditorChange('url', $event)">
             <p>
-              <u><small class="text-muted">http://您的网站/</small>{{article.url}}<small class="text-muted">.html</small></u>
+              <u><small class="text-muted">http://您的网站/</small>{{article.url | defaultValue('url')}}<small class="text-muted">.html</small></u>
             </p>
           </editor>
           <p class="text-muted">
@@ -274,7 +274,7 @@
             </select>
           </div>
           <editor :origin-value="article.tags" @change="onEditorChange('tags', $event)">
-            <p>{{article.tags}}</p>
+            <p>{{article.tags | defaultValue('tags')}}</p>
           </editor>
         </div>
       </header>

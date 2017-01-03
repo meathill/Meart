@@ -4,6 +4,7 @@
 
 const _ = require('underscore');
 const types = require('./mutation-types');
+const article = require('./articleInit.json');
 
 module.exports = {
   setCurrentData(state, payload) {
@@ -16,6 +17,9 @@ module.exports = {
     state.server[payload.key] = payload.value;
   },
 
+  [types.ADD_ARTICLE] (state, {id}) {
+    state.articles.splice(id, 0, _.clone(article));
+  },
   [types.EDIT_ARTICLE] (state, {id, key, value}) {
     state.articles[id]['lastModifiedTime'] = Date.now();
     state.articles[id][key] = value;

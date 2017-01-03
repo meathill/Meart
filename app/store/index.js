@@ -2,9 +2,10 @@
  * Created by meathill on 2016/12/30.
  */
 
-const remote = require('electron').remote;
+const { remote } = require('electron');
 const mutations = require('./mutations');
 const actions = require('./actions');
+const getters = require('./getters');
 let publish;
 try {
   publish = require('../../output/build.json');
@@ -13,7 +14,6 @@ try {
     publishTime: 0
   };
 }
-
 
 const debug = process.env.NODE_ENV !== 'production';
 
@@ -28,6 +28,7 @@ state.server = {
 module.exports = new Vuex.Store({
   state,
   actions,
+  getters,
   mutations,
   strict: debug
 });

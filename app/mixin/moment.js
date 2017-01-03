@@ -4,10 +4,10 @@
 module.exports = {
   filters: {
     toMoment(value) {
-      return moment(value).calendar();
+      return value ? moment(value).calendar() : '（无）';
     },
     toDate(value) {
-      return moment(value).format('YYYY-MM-DD HH:mm:ss');
+      return value ? moment(value).format('YYYY-MM-DD HH:mm:ss') : '（无）';
     }
   }
 };

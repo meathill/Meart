@@ -2,6 +2,7 @@
  * Created by meathill on 2016/12/31.
  */
 module.exports = {
+  'ADD_ARTICLE': 'addArticle',
   'EDIT_ARTICLE': 'editArticle',
 
   'ADD_PHOTO': 'addPhoto',

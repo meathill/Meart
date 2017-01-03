@@ -49,16 +49,16 @@ class Publisher {
 
   start() {
     return this.readThemeOptions()
-      .then(this.generateOutputDirectory)
-      .then(this.getThemeTemplates)
-      .then(this.readTemplates)
-      .then(this.readPartials)
-      .then(this.createIndex)
-      .then(this.createArchives)
-      .then(this.createArticles)
-      .then(this.copyAssets)
-      .then(this.logVersions)
-      .then(this.dispatchFinish)
+      .then(this.generateOutputDirectory.bind(this))
+      .then(this.getThemeTemplates.bind(this))
+      .then(this.readTemplates.bind(this))
+      .then(this.readPartials.bind(this))
+      .then(this.createIndex.bind(this))
+      .then(this.createArchives.bind(this))
+      .then(this.createArticles.bind(this))
+      .then(this.copyAssets.bind(this))
+      .then(this.logVersions.bind(this))
+      .then(this.dispatchFinish.bind(this))
       .catch(Publisher.catchAll);
   }
 
@@ -147,6 +147,7 @@ class Publisher {
 
   dispatchFinish(time) {
     this.event.sender.send('/publish/finish/', time);
+    return true;
   }
 
   generateOutputDirectory(options) {

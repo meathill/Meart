@@ -1,0 +1,12 @@
+{
+  "id": 0,
+  "title": "相册标题",
+  "description": "相册简介",
+  "createTime": "",
+  "lastModifiedTime": "",
+  "status": 1,
+  "thumbnail": "img/thumbnail.svg",
+  "tags": "标签",
+  "url": "路径",
+  "album": []
+}
