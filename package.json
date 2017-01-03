@@ -26,6 +26,7 @@
     "font-awesome": "^4.7.0",
     "handlebars": "^4.0.6",
     "marked": "^0.3.6",
+    "mkdirp": "^0.5.1",
     "moment": "^2.17.1",
     "ncp": "^2.0.0",
     "underscore": "^1.8.3",
@@ -35,6 +36,7 @@
   },
   "devDependencies": {
     "colors.css": "^2.2.0",
+    "del": "^2.2.2",
     "electron": "^1.4.12",
     "mocha": "^3.2.0",
     "should": "^11.1.2",

@@ -2,11 +2,12 @@
  * Created by meathill on 2017/1/2.
  */
 
+const fs = require('fs');
 const Handlebars = require('handlebars');
 const moment = require('moment');
 const _ = require('underscore');
 const { ncp } = require('ncp');
-const fs = require('fs');
+const mkdirp = require('mkdirp');
 const themeDefaults = require('../theme/defaults.json');
 const EXIST = 'EEXIST';
 
@@ -31,6 +32,7 @@ class Publisher {
    *
    * @param {object} site 站点信息
    * @param {EventEmitter} event 事件触发器
+   *    @param {object} event.sender
    * @param {string} path 当前项目路径
    * @param {string} output [optional] 输出路径后缀
    */
@@ -80,6 +82,9 @@ class Publisher {
     this.event.sender.send('/publish/progress/', '生成索引页', 40);
     let pageSize = this.themeOptions.pageSize;
     let total = Math.ceil(this.site.articles.length / pageSize);
+    if (!total) {
+      return templates;
+    }
     let pages = _.range(total)
       .map( page => {
         let site = _.clone(this.site);
@@ -110,10 +115,10 @@ class Publisher {
   }
 
   createArticles(templates) {
-    let progress = 40 / this.articles.length;
+    let progress = 40 / this.site.articles.length;
     let count = 0;
     this.event.sender.send('/publish/progress/', '准备生成单个相册', 45);
-    return Promise.all(this.articles.map( article => {
+    return Promise.all(this.site.articles.map( article => {
       let html = templates.article(article);
       return new Promise( resolve => {
         fs.writeFile(this.output + (article.url || article.id) + '.html', html, 'utf8', err => {
@@ -147,7 +152,7 @@ class Publisher {
   generateOutputDirectory(options) {
     this.event.sender.send('/publish/progress/', '生成导出目录', 5);
     return new Promise( resolve => {
-      fs.mkdir(this.output, (err) => {
+      mkdirp(this.output, (err) => {
         if (!err || err.code === EXIST) {
           return resolve(options);
         }
@@ -194,13 +199,16 @@ class Publisher {
     })
       .then( files => {
         return Promise.all(files.map( file => {
-          return new Promise(fs.readFile(partial + file + '.hbs', 'utf8', (err, content) => {
-            if (err) {
-              throw err;
-            }
-            let name = file.replace('.hbs', '');
-            Handlebars.registerPartial(name, content);
-          }));
+          return new Promise( resolve => {
+            fs.readFile(partial + file, 'utf8', (err, content) => {
+              if (err) {
+                throw err;
+              }
+              let name = file.replace('.hbs', '');
+              Handlebars.registerPartial(name, content);
+              resolve();
+            });
+          });
         }));
       })
       .then( () => {

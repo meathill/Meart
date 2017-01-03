@@ -4,7 +4,9 @@
 const assert = require('assert');
 const fs = require('fs');
 const should = require('should');
+const del = require('del');
 const _ = require('underscore');
+const Handlebars = require('handlebars');
 const site = require('../../site/site.json');
 const Publisher = require('../../electron/Publisher');
 
@@ -22,12 +24,10 @@ describe('Test Publisher', () => {
   before( (done) => {
     site.siteTheme = theme;
     publisher = new Publisher(site, event, __dirname + '/../..', 'tmp');
-    fs.rmdir(publisher.output, err => {
-      if (err && err.code != 'ENOENT') {
-        throw err;
-      }
-      done();
-    });
+    del(publisher.output)
+      .then( () => {
+        done();
+      });
   });
 
   describe('#readThemeOptions()', () => {
@@ -93,6 +93,170 @@ describe('Test Publisher', () => {
   });
 
   describe('#readPartials()', () => {
+    let from = {
+      index: 'i',
+      article: ',',
+      archive: 'robot'
+    };
+    let partials = [];
+    it('all partial', (done) => {
+      new Promise( resolve => {
+        fs.readdir(publisher.themePath + 'partial/', 'utf8', (err, files) => {
+          if (err) {
+            throw err;
+          }
+          partials = files.map( file => {
+            return file.replace('.hbs', '');
+          });
+          resolve(from);
+        })
+      })
+        .then(publisher.readPartials.bind(publisher))
+        .then( templates => {
+          templates.should.deepEqual(from);
+          partials.forEach( partialName => {
+            let template = '{{> ' + partialName + '}}';
+            template = Handlebars.compile(template);
+            should(template({}).length).above(0);
+          });
+          done();
+        })
+        .catch( err => {
+          done(err);
+        });
+    });
+  });
+  
+  describe('#createIndex()', () => {
+    let mockTemplates = {
+      index: Handlebars.compile('{{siteTitle}}'),
+    };
+    it('should create file', done => {
+      publisher.createIndex(mockTemplates)
+        .then( templates => {
+          templates.should.deepEqual(mockTemplates);
+          return new Promise( resolve => {
+            fs.readFile(publisher.output + 'index.html', 'utf8', (err, content) => {
+              if (err) {
+                return done(err);
+              }
+              content.should.equal(site.siteTitle);
+              resolve();
+            });
+          });
+        })
+        .then( () => {
+          done();
+        })
+        .catch( err => {
+          done(err);
+        });
+    })
+  });
 
+  describe('#createArchives()', () => {
+    let mockTemplates = {
+      archive: Handlebars.compile('{{siteTitle}}'),
+    };
+    it('should create file', done => {
+      publisher.createArchives(mockTemplates)
+        .then( templates => {
+          templates.should.deepEqual(mockTemplates);
+          return new Promise( resolve => {
+            fs.readFile(publisher.output + 'archive.html', 'utf8', (err, content) => {
+              if (err) {
+                return done(err);
+              }
+              content.should.equal(site.siteTitle);
+              resolve();
+            });
+          });
+        })
+        .then( () => {
+          done();
+        })
+        .catch( err => {
+          done(err);
+        });
+    })
+  });
+
+  describe('#createArticles()', () => {
+    let mockTemplates = {
+      article: Handlebars.compile('{{title}} | {{url}}')
+    };
+    it('should create file', done => {
+      publisher.createArticles(mockTemplates)
+        .then( () => {
+          return Promise.all(site.articles.map( article => {
+            return new Promise( resolve => {
+              fs.readFile(publisher.output + article.url + '.html', 'utf8', (err, content) => {
+                if (err) {
+                  done(err);
+                }
+                content.should.equal(article.title + ' | ' + article.url);
+                resolve();
+              });
+            });
+          }))
+        })
+        .then( () => {
+          done();
+        })
+        .catch( err => {
+          done(err);
+        })
+    });
+  });
+
+  describe('#copyAssets()', () => {
+    it('should copy files', done => {
+      publisher.copyAssets()
+        .then( () => {
+          new Promise( resolve => {
+            fs.readdir(publisher.themePath + 'css/', 'utf8', (err, files) => {
+              if (err) {
+                return done(err);
+              }
+              resolve(files);
+            })
+          })
+            .then( (source) => {
+              fs.readdir(publisher.output + 'css/', 'utf8', (err, files) => {
+                if (err) {
+                  return done(err);
+                }
+                files.should.containEql(source);
+              });
+            });
+        })
+        .then( () => {
+          done();
+        })
+        .catch( err => {
+          done(err);
+        });
+    });
+  });
+
+  describe('#logVersions()', () => {
+    it('should write log file', done => {
+      publisher.logVersions()
+        .then( time => {
+          fs.readFile(publisher.output + 'build.json', 'utf8', (err, content) => {
+            if (err) {
+              return done(err);
+            }
+            let build = JSON.parse(content);
+            build.should.have.property('publishTime').to.be.exactly(time);
+          });
+        })
+        .then( () => {
+          done();
+        })
+        .catch( err => {
+          done(err);
+        });
+    });
   });
 });
