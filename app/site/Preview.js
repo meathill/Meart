@@ -29,7 +29,10 @@ module.exports = {
       this.$el.querySelector('iframe').contentWindow.history.go(-1);
     },
     refresh() {
-      this.$el.querySelector('iframe').contentWindow.location.reload();
+      let iframe = this.$el.querySelector('iframe');
+      if (iframe) {
+        iframe.contentWindow.location.reload();
+      }
     }
   },
   mixins: [moment]

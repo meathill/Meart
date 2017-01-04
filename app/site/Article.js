@@ -105,6 +105,14 @@ module.exports = {
         value: event.target.files[0].path
       });
       this.$store.dispatch(ActionTypes.SAVE);
+    },
+    onStatusChange(event) {
+      this.$store.commit(MutationTypes.EDIT_ARTICLE, {
+        id: this.id,
+        key: 'status',
+        value: parseInt(event.target.value)
+      });
+      this.$store.dispatch(ActionTypes.SAVE);
     }
   },
   mixins: [moment]

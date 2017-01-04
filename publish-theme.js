@@ -5,7 +5,7 @@
 const del = require('del');
 const Publisher = require('./electron/Publisher');
 const site = require('./site/site.json');
-const theme = process.argv[2];
+const theme = process.argv[2] || 'dark';
 
 site.siteTheme = theme;
 event = {

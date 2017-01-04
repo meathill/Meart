@@ -8,6 +8,7 @@ const moment = require('moment');
 const _ = require('underscore');
 const { ncp } = require('ncp');
 const mkdirp = require('mkdirp');
+const del = require('del');
 const themeDefaults = require('../theme/defaults.json');
 const EXIST = 'EEXIST';
 
@@ -28,9 +29,12 @@ Handlebars.registerHelper('top', (array, max, options) => {
   if (!array || array.length === 0) {
     return options.inverse(this);
   }
-  array.slice(0, max).map((item) => {
+  return array.slice(0, max).map((item) => {
     return options.fn(item);
   }).join('');
+});
+Handlebars.registerHelper('ifnull', (value, backup) => {
+  return value || backup;
 });
 moment.locale('zh-cn');
 
@@ -72,8 +76,8 @@ class Publisher {
       .catch(Publisher.catchAll);
   }
 
-  static catchAll() {
-    console.log.apply(console, arguments);
+  static catchAll(err) {
+    console.log(err);
   }
 
   copyAssets() {
@@ -162,6 +166,10 @@ class Publisher {
 
   generateOutputDirectory(options) {
     this.event.sender.send('/publish/progress/', '生成导出目录', 5);
+    if (fs.existsSync(this.output)) {
+      return del([this.output + 'css', this.output + '*.html' ]);
+    }
+
     return new Promise( resolve => {
       mkdirp(this.output, (err) => {
         if (!err || err.code === EXIST) {
@@ -200,6 +208,9 @@ class Publisher {
   readPartials(templates) {
     this.event.sender.send('/publish/progress/', '读取子模板', 25);
     let partial = this.themePath + 'partial/';
+    if (!fs.existsSync(partial)) { // 没有子模版就不处理
+      return templates;
+    }
     return new Promise(resolve => {
       fs.readdir(partial, 'utf8', (err, files) => {
         if (err) {

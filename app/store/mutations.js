@@ -21,6 +21,7 @@ module.exports = {
     let articles = state.articles;
     let newArticle = _.clone(article);
     newArticle.id = id;
+    newArticle.createTime = Date.now();
     articles.push(newArticle);
     state.articles = articles;
   },

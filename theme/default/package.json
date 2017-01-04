@@ -1,0 +1,10 @@
+{
+  "name": "Default",
+  "version": "0.0.1",
+  "description": "A Meart default theme, just for dev.",
+  "tags": [
+    "light",
+    "dev",
+    "gallery"
+  ]
+}
