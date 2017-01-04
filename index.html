@@ -325,6 +325,9 @@
       <li class="nav-item">
         <a class="nav-link" data-toggle="tab" role="tab" href="#help-about">关于</a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" role="tab" href="#help-author">作者</a>
+      </li>
     </ul>
     <div class="tab-content">
       <div class="tab-pane active" id="help-detail" role="tabpanel">
@@ -333,6 +336,58 @@
       </div>
       <div class="tab-pane" id="help-about" role="tabpanel" v-html="about">
 
+      </div>
+      <div class="tab-pane" id="help-author" role="tabpanel">
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="card">
+              <h3 class="card-header">
+                你好，我是 Meart 的开发者 Meathill
+              </h3>
+              <img :src="avatar" @click="easter" class="img-thumbnail img-fluid">
+              <div class="card-block">
+                <p class="card-text">
+                  我有不少设计师或者搞摄影的朋友，有一天我觉得做这样一款软件帮他们建站应该是个好主意。
+                </p>
+                <p class="card-text">
+                  于是我就做了。
+                </p>
+                <p class="card-text">
+                  感谢你来使用，欢迎反馈任何问题给我：
+                </p>
+                <a href="https://weibo.com/meathill" @click.prevent="openExternal"><i class="fa fa-weibo"></i> 我的微博</a> &nbsp;
+                <a href="mailto:meathill@qq.com" @click.prevent="openExternal"><i class="fa fa-envelope"></i> 发邮件</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <h3>请我喝杯咖啡吧</h3>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="card">
+                  <header class="card-header">
+                    微信
+                  </header>
+                  <img src="img/weixin-qrcode.jpg" class="card-img-top img-fluid img-thumbnail">
+                  <div class="card-block">
+                    <p class="card-text">扫一扫，让我有更多的时间完善这款软件。</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="card">
+                  <header class="card-header">
+                    支付宝
+                  </header>
+                  <img src="img/zhifubao-qrcode.jpg" class="card-img-top img-fluid img-thumbnail">
+                  <div class="card-block">
+                    <p class="card-text">扫一扫，拥有更强的功能，更多的模板。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
