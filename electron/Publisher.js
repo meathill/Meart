@@ -64,6 +64,7 @@ class Publisher {
   start() {
     return this.readThemeOptions()
       .then(this.generateOutputDirectory.bind(this))
+      .then(this.getThemeHelpers.bind(this))
       .then(this.getThemeTemplates.bind(this))
       .then(this.readTemplates.bind(this))
       .then(this.readPartials.bind(this))
@@ -178,6 +179,20 @@ class Publisher {
         throw err;
       })
     });
+  }
+
+  getThemeHelpers(options = {}) {
+    if ('handlebars' in options) {
+      options.handlebars.forEach( (filename, key) => {
+        try {
+          let func = require(this.themePath + filename);
+          Handlebars.registerHelper(key, func);
+        } catch (e) {
+          console.log('declared helper not found: ', filename, key);
+        }
+      });
+    }
+    return options;
   }
 
   getThemeTemplates(options = {}) {

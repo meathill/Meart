@@ -45,6 +45,13 @@ module.exports = {
   [types.SELECT_PHOTO] (state, {id, index}) {
     state.articles[id].album[index].isActive = !state.articles[id].album[index].isActive;
   },
+  [types.SET_PHOTO_ATTR] (state, {id, index, width, height}) {
+    state.articles[id].album[index] = _.extend(state.articles[i].album[index], {
+      width: width,
+      height: height,
+      aspectRatio: width / height
+    });
+  },
 
   [types.SAVED] (state, {time}) {
     state.lastModifiedTime = time;

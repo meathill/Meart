@@ -72,6 +72,15 @@ module.exports = {
       });
       this.$store.dispatch(ActionTypes.SAVE);
     },
+    onPhotoLoad(event, index) {
+      this.$store.commit(MutationTypes.SET_PHOTO_ATTR, {
+        id: this.id,
+        index: index,
+        width: event.target.width,
+        height: event.target.height
+      });
+      this.$store.dispatch(ActionTypes.SAVE);
+    },
     onPhotoChange(key, index, value) {
       this.checkNew();
       this.$store.commit(MutationTypes.EDIT_PHOTO, {

@@ -40,6 +40,7 @@ module.exports = {
       }, 1000);
       console.log(count);
       if (count > 10) {
+        alert('变身给你看！！');
         this.avatar = 'http://qiniu.meathill.com/wp-content/uploads/2011/08/MG_9178.jpg';
       }
     },

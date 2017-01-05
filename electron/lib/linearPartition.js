@@ -6,9 +6,10 @@ const _ = require('underscore');
 
 /**
  *
- * @param {array} seq
+ * @param {Array} seq
  * @param {int} k
- * @returns {array} {*}
+ *
+ * @returns {Array}
  */
 module.exports = (seq, k) =>{
   let ans, i, j, m, n, solution, table, x, y, _i, _j, _k, _l;

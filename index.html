@@ -285,7 +285,7 @@
             <button type="button" class="btn btn-sm btn-secondary delete-button" @click="remove(index)">
               <i class="fa fa-trash"></i>
             </button>
-            <img class="card-img-top img-fluid" :src="photo.src" :alt="photo.title">
+            <img class="card-img-top img-fluid" :src="photo.src" :alt="photo.title" @load="onPhotoLoad($event, index)">
             <div class="card-block">
               <editor :origin-value="photo.title" @change="onPhotoChange('title', index, $event)">
                 <h4 class="card-title">{{photo.title}}</h4>

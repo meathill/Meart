@@ -9,6 +9,7 @@ module.exports = {
   'EDIT_PHOTO': 'editPhoto',
   'REMOVE_PHOTO': 'removePhoto',
   'SELECT_PHOTO': 'selectPhoto',
+  'SET_PHOTO_ATTR': 'setPhotoAttr',
 
   'SET_SITE_PROP': 'setSiteProp',
   'SET_SERVER_PROP': 'setServerProp',
