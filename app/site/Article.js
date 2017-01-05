@@ -20,6 +20,19 @@ module.exports = {
     }
   },
   computed : {
+    status: {
+      get() {
+        return this.article.status;
+      },
+      set(value) {
+        this.$store.commit(MutationTypes.EDIT_ARTICLE, {
+          id: this.id,
+          key: 'status',
+          value: value
+        });
+        this.$store.dispatch(ActionTypes.SAVE);
+      }
+    },
     article() {
       return this.isNew ? require('./../store/articleInit.json') : this.$store.state.articles[this.id];
     },
@@ -112,14 +125,6 @@ module.exports = {
         id: this.id,
         key: 'thumbnail',
         value: event.target.files[0].path
-      });
-      this.$store.dispatch(ActionTypes.SAVE);
-    },
-    onStatusChange(event) {
-      this.$store.commit(MutationTypes.EDIT_ARTICLE, {
-        id: this.id,
-        key: 'status',
-        value: parseInt(event.target.value)
       });
       this.$store.dispatch(ActionTypes.SAVE);
     }

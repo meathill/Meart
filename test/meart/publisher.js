@@ -46,6 +46,18 @@ describe('Test Publisher', () => {
     });
   });
 
+  describe('#getThemeHelpers()', () => {
+    let themeOptions = require('../../theme/' + theme + '/package.json');
+    it('should has helper', () => {
+      publisher.getThemeHelpers(themeOptions);
+      if ('handlebars' in themeOptions) {
+        _.each(themeOptions.handlebars, (value, key) => {
+          should(Handlebars.helpers).have.property(key);
+        });
+      }
+    });
+  });
+
   describe('#generateOutputDirectory()', () => {
     let obj = {
       code: 42

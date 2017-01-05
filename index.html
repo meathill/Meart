@@ -268,7 +268,7 @@
         <div class="col-sm-2">
           <div class="form-group">
             <label for="draft">发布状态</label>
-            <select v-model.number="article.status" id="draft" class="form-control fa" :class="isPublished" @change="onStatusChange" :disabled="isNew">
+            <select v-model.number="status" id="draft" class="form-control fa" :class="isPublished" :disabled="isNew">
               <option value="0" class="fa-check">&#xf00c 发布</option>
               <option value="1">草稿</option>
             </select>

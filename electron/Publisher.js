@@ -183,7 +183,7 @@ class Publisher {
 
   getThemeHelpers(options = {}) {
     if ('handlebars' in options) {
-      options.handlebars.forEach( (filename, key) => {
+      _.each(options.handlebars, (filename, key) => {
         try {
           let func = require(this.themePath + filename);
           Handlebars.registerHelper(key, func);
