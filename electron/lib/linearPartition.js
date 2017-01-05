@@ -1,5 +1,5 @@
 /**
- * Created by meathill on 2017/1/4.
+ * Compiled from https://github.com/crispymtn/linear-partition/blob/master/linear_partition.coffee
  */
 
 const _ = require('underscore');

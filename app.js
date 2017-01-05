@@ -3,6 +3,7 @@ const Handlebars =require('handlebars');
 const router = require('./app/Router');
 const Publisher = require('./app/popup/Publish');
 const store = require('./app/store/index');
+const inspectElement = require('./app/debug/inspect-element');
 
 Handlebars.registerHelper('toCalendar', (value) => {
   return moment(value).calendar();

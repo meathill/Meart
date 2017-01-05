@@ -33,8 +33,13 @@
         display none
 
   &.single
-    header > *:last-child
-      padding-top 3rem
+    header
+      .thumbnail img
+        max-height 200px
+        object-fit cover
+
+      > *:last-child
+        padding-top 3rem
 
     .thumbnail label
       width 100%

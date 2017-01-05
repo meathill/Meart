@@ -8,6 +8,7 @@ const ncp = require('ncp').ncp;
 const defaultConfig = require('../config/default.json');
 const dev = require('../config/dev.json');
 const Publisher = require('./Publisher');
+const Uploader = require('./Uploader');
 const EXIST = 'EEXIST';
 
 class Meart {
@@ -88,6 +89,11 @@ class Meart {
     ipcMain.on('/publish/', (event) => {
       let publisher = new Publisher(this.site, event, this.path);
       publisher.start();
+    });
+
+    ipcMain.on('/upload/', (event) => {
+      let uploader = new Uploader(this.site.server, event, this.output);
+      uploader.start();
     });
   }
 

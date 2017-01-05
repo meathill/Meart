@@ -9,17 +9,11 @@ const _ = require('underscore');
 const Handlebars = require('handlebars');
 const site = require('../../site/site.json');
 const Publisher = require('../../electron/Publisher');
+const event = require('./MockEvent');
 
 describe('Test Publisher', () => {
   let publisher;
   let theme = 'dark';
-  let event = {
-    sender: {
-      send: function (event, label, progress) {
-        console.log(event, label, progress);
-      }
-    }
-  };
   
   before( (done) => {
     site.siteTheme = theme;

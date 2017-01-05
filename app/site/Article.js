@@ -86,6 +86,9 @@ module.exports = {
       this.$store.dispatch(ActionTypes.SAVE);
     },
     onPhotoLoad(event, index) {
+      if (this.article.album[index].aspectRatio) {
+        return;
+      }
       this.$store.commit(MutationTypes.SET_PHOTO_ATTR, {
         id: this.id,
         index: index,

@@ -22,7 +22,8 @@ state.publishTime = publish.publishTime;
 state.server = {
   name: '七牛',
   ACCESS_KEY: '',
-  SECRET_KEY: ''
+  SECRET_KEY: '',
+  bucket: ''
 };
 
 module.exports = new Vuex.Store({

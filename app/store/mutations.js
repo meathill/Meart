@@ -46,7 +46,7 @@ module.exports = {
     state.articles[id].album[index].isActive = !state.articles[id].album[index].isActive;
   },
   [types.SET_PHOTO_ATTR] (state, {id, index, width, height}) {
-    state.articles[id].album[index] = _.extend(state.articles[i].album[index], {
+    state.articles[id].album[index] = _.extend(state.articles[id].album[index], {
       width: width,
       height: height,
       aspectRatio: width / height
