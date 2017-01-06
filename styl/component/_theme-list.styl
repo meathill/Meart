@@ -1,0 +1,19 @@
+.theme-list
+  input:checked + label.card
+    background-color state-success-bg
+    border-color state-success-border
+    color state-success-text
+
+    &:before
+      content '\f058'
+      position absolute
+      top 0
+      left 0
+      right 0
+      text-align center
+      font-family 'FontAwesome'
+      font-size 8rem
+      line-height 1.2em
+
+  img
+    max-width 100%

@@ -2,6 +2,10 @@
   "name": "Default",
   "version": "0.0.1",
   "description": "A Meart default theme, just for dev.",
+  "thumbnail": "img/thumbnail.svg",
+  "snapshots": [
+
+  ],
   "tags": [
     "light",
     "dev",

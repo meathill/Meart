@@ -53,7 +53,7 @@ class Uploader {
     return Promise.all(files.map( file => {
       file = dir ? dir + '/' + file : file;
       return new Promise( resolve => {
-        fs.fstat(this.path + file, (err, stat) => {
+        fs.stat(this.path + file, (err, stat) => {
           if (err) {
             throw  err;
           }

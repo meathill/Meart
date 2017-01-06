@@ -84,15 +84,15 @@
         <div class="carousel-item">
           <label>请选择模板：</label>
           <div class="form-group row theme-list">
-            <input type="radio" name="site-theme" value="default" id="theme-default" class="hide" v-model="siteTheme">
-            <label class="col-sm-6" for="theme-default">
-              <div class="card">
-                <img class="card-img-top" src="img/theme/default.svg" alt="默认主题">
+            <div class="col-sm-4">
+              <input type="radio" name="site-theme" value="default" id="theme-default" class="hide" v-model="siteTheme">
+              <label class="card" for="theme-default">
+                <img class="card-img-top" src="theme/default/img/thumbnail.svg" alt="默认主题">
                 <div class="card-block">
                   <p class="card-text">默认主题。暂时只有这一个，未来会添加。</p>
                 </div>
-              </div>
-            </label>
+              </label>
+            </div>
           </div>
           <div class="form-group t-a-r">
             <button class="btn btn-primary btn-lg"><i class="fa fa-check"></i> 好了，开始吧</button>
@@ -171,15 +171,16 @@
             <div class="form-group row">
               <label class="col-sm-2 col-form-label">网站模板</label>
               <div class="col-sm-10">
-                <div class="row">
-                  <div class="col-sm-4">
-                    <div class="card">
-                      <img class="card-img-top img-fluid" src="img/theme/default.svg" alt="默认模板">
+                <div class="row theme-list">
+                  <div class="col-sm-4" v-for="theme in themes">
+                    <input type="radio" name="site-theme" class="hide" v-model="siteTheme" :value="theme.dir" :id="'theme-' + theme.dir">
+                    <label class="card" :for="'theme-' + theme.dir">
+                      <img class="card-img-top img-fluid" :src="'theme/' + theme.dir + '/' + theme.thumbnail" alt="默认模板" v-if="theme.thumbnail">
                       <div class="card-block">
-                        <h4 class="card-title">默认主题</h4>
-                        <p class="card-text">暂时只有这个主题</p>
+                        <h4 class="card-title">{{theme.name}}</h4>
+                        <p class="card-text">{{theme.description}}</p>
                       </div>
-                    </div>
+                    </label>
                   </div>
                 </div>
               </div>

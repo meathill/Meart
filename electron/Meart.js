@@ -63,6 +63,51 @@ class Meart {
       }
     });
 
+    ipcMain.on('/theme/', event => {
+      let basePath = this.path + '/theme/';
+      new Promise( resolve => {
+        fs.readdir(basePath, 'utf8', (err, files) => {
+          if (err) {
+            throw err;
+          }
+
+          resolve(files);
+        });
+      })
+        .then( files => {
+          return Promise.all(files.map( file => {
+            return new Promise( resolve => {
+              fs.stat(basePath + file, (err, stat) => {
+                if (stat.isFile()) {
+                  return resolve(false);
+                }
+
+                let info;
+                try {
+                  info = require(basePath + file + '/package.json');
+                  info.dir = file;
+                } catch (err) {
+                  if (err.code === 'ENOENT') { // no package.json, not a theme
+                    return resolve(false);
+                  }
+                  throw err;
+                }
+                resolve(info);
+              });
+            });
+          }));
+        })
+        .then( themesInfo => {
+          themesInfo = themesInfo.filter( themeInfo => {
+            return !!themeInfo;
+          });
+          event.sender.send('list-theme', themesInfo);
+        })
+        .catch( err => {
+          console.log(err);
+        });
+    });
+
     ipcMain.on('/site/init', (event, site) => {
       global.site = this.site = site;
       global.isNew = false;
