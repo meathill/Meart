@@ -113,7 +113,7 @@
       </p>
       <div class="button-group" role="group" aria-label="发布操作">
         <a href="#publish-modal" class="btn btn-primary" data-toggle="modal"><i class="fa fa-archive"></i> 发布网站</a>
-        <button type="button" class="btn btn-success"><i class="fa fa-cloud-upload"></i> 上传到服务器</button>
+        <a href="#upload-modal" class="btn btn-success" data-toggle="modal" :class="{disabled: !publishTime}"><i class="fa fa-cloud-upload"></i> 上传到服务器</a>
       </div>
     </header>
     <nav class="navbar navbar-light bg-faded" v-if="publishTime">
@@ -189,29 +189,29 @@
         </div>
       </div>
       <div id="site-server" class="tab-pane" role="tabpanel">
-        <form>
+        <form @submit.prevent="saveServerSettings" >
           <div class="form-group row">
             <label class="col-sm-2 col-form-label" for="server-name">服务器名称</label>
             <div class="col-sm-10">
-              <input class="form-control" id="server-name" v-model="server.name">
+              <input class="form-control" id="server-name" v-model="serverName">
             </div>
           </div>
           <div class="form-group row">
             <label class="col-sm-2 col-form-label" for="ACCESS_KEY">Access Key</label>
             <div class="col-sm-10">
-              <input class="form-control" id="access_key" v-model="server.ACCESS_KEY">
+              <input type="password" class="form-control" id="access_key" v-model="serverACCESS_KEY">
             </div>
           </div>
           <div class="form-group row">
             <label class="col-sm-2 col-form-label" for="SECRET_KEY">Secret Key</label>
             <div class="col-sm-10">
-              <input class="form-control" id="secret_key" v-model="server.SECRET_KEY">
+              <input type="password" class="form-control" id="secret_key" v-model="serverSECRET_KEY">
             </div>
           </div>
           <div class="form-group row">
             <label class="col-sm-2 col-form-label" for="bucket">存放空间</label>
             <div class="col-sm-10">
-              <input class="form-control" id="bucket" v-model="server.bucket">
+              <input class="form-control" id="bucket" v-model="serverBucket">
             </div>
           </div>
         </form>
@@ -408,6 +408,35 @@
           <span aria-hidden="true">&times;</span>
         </button>
         <h4 class="modal-title" id="publish-modal-label">发布网站</h4>
+      </div>
+      <div class="modal-body">
+        <template>
+          <p>将已生成的网站上传到服务器上。这个操作会需要很长时间，请不要打断程序执行，以免发生错误。</p>
+          <div class="text-xs-center" id="upload-progress-label" v-if="isProgress">当前进度：{{label}}</div>
+          <progress class="progress" :value="progress" max="100" aria-describedby="#publish-progress-label" v-if="isProgress"></progress>
+          <p>
+            <button type="button" class="btn btn-lg btn-block" @click="start" :disabled="isProgress || isSuccess" :class="isSuccess ? 'btn-success' : 'btn-primary'">
+              <template v-if="isSuccess">
+                <i class="fa fa-check"></i> 上传完成
+              </template>
+              <template v-else>
+                <i class="fa fa-play"></i> 上传失败
+              </template>
+            </button>
+          </p>
+        </template>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="upload-modal" tabindex="-1" role="dialog" aria-labelledby="#upload-modal-label" aria-hidden="true" :class="{ progress： isProgress }" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">上传到网站</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
       <div class="modal-body">
         <template>

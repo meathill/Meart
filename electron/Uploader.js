@@ -42,13 +42,17 @@ class Uploader {
   findAllImages(html) {
     let images = [];
     html.replace(IMG_REG, (match, attr, src) => {
+      if (src.indexOf('url(') != -1) {
+        src = src.substr(src.indexOf('url(') + 4);
+      }
       images.push(src);
       return match;
     });
-    return _.uniq(images);
+    return [_.uniq(images), html];
   }
 
   findFiles() {
+    this.event.sender.send('/upload/progress/', '计算所有需要上传的内容', 0);
     return new Promise( resolve => {
       fs.readdir(this.path, 'utf8', (err, files) => {
         if (err) {
@@ -59,25 +63,37 @@ class Uploader {
     });
   }
 
+  finish() {
+    this.event.sender.send('/upload/finish/');
+  }
+
+  /**
+   * 生成缩略图，存放在 ./output/tmp 目录里
+   * 只生成没过期，之前上传的图片
+   * 特征是由服务器返回，有 key
+   *
+   * @param images
+   * @returns {Promise.<TResult>}
+   */
   generateThumbnail(images) {
-    let resized = [];
+    this.event.sender.send('/upload/progress/', '开始生成缩略图');
     return Promise.all(images.filter( image => {
-      return image;
-    }).map( ({src, hash, key}) => {
+      return image.key;
+    }).map( image => {
+      let {src, hash, key} = image;
       let ext = key.substr(key.lastIndexOf('.'));
       let filename = hash + '@h400' + ext;
-      resized.push(filename);
       return sharp(src)
         .resize(null, 400)
         .toFile(this.tmp + filename)
         .then( () => {
-          return {
-            src: src,
-            key: key,
-            thumbnail: filename
-          };
+          image.thumbnail = filename;
+          return image;
         });
-    }));
+    }))
+      .then( images => {
+        return images;
+      });
   }
 
   getToken(filename) {
@@ -86,22 +102,43 @@ class Uploader {
   }
 
   readHTML(html, path) {
+    this.event.sender.send('/upload/progress/', '正在分析：' + html);
     return new Promise( resolve => {
       fs.readFile(path + html, 'utf8', (err, content) => {
         if (err) {
           throw err;
         }
-
         resolve(content);
       })
-    })
+    });
   }
 
-  replaceImageSrc(images) {
-    let map = _.object(_.pick(images, 'src'), _.pick(images, 'key'));
+  replaceImageSrc(html, images, origin) {
+    this.event.sender.send('/upload/progress/', '生成新 HTML');
+    let map = _.object(_.pick(images, 'src'), images);
+    html = html.replace(IMG_REG, (match, attr, src) => {
+      let image = map[src];
+      let ext = image.src.substr(image.src.lastIndexOf('.'));
+      let to;
+      if (attr != 'href') {
+        to = image.thumbnail || 'images/' + image.hash + '@h400' + ext;
+      } else {
+        to = image.key || 'images/' + image.hash + ext;
+      }
+      return match.replace(src, to);
+    });
+    return new Promise( resolve => {
+      fs.writeFile(this.tmp + origin, html, 'utf8', err => {
+        if (err) {
+          throw err;
+        }
+        resolve(this.tmp + origin);
+      });
+    });
   }
 
   uploadAssets(files, dir = '') {
+    this.event.sender.send('/upload/progress/', '开始上传其它资源', 70);
     return Promise.all(files.map( file => {
       file = dir ? dir + '/' + file : file;
       return new Promise( resolve => {
@@ -126,8 +163,9 @@ class Uploader {
                 });
             }
 
-            if (!(file in record) || stat.mtime > record[file]) {
-              return this.uploadFile(file);
+            let source = this.path + file;
+            if (!(source in record) || stat.mtime > record[origin]) {
+              return this.uploadFile(origin, file);
             } else {
               return true;
             }
@@ -137,6 +175,7 @@ class Uploader {
   }
 
   uploadFile(source, to = '') {
+    this.event.sender.send('progrss', '开始上传：' + source);
     let token = this.getToken(filename);
     let extra = new qiniu.io.PutExtra();
     to = to || source;
@@ -152,10 +191,15 @@ class Uploader {
   }
 
   uploadHTML(files) {
+    this.event.sender.send('/upload/progress/', '开始上传网页', 2);
     let htmls = files.filter( file => {
       return /\.html$/.test(file);
     });
-    return Promise.all(htmls.map(this.uploadSingleHTML.bind(this)))
+    let perpage = 68 / htmls.length;
+    return Promise.all(htmls.map( (html, index) => {
+      this.event.sender.send('/upload/progress/', '准备上传：' + html, 2 + index * perpage);
+      this.uploadSingleHTML(html, perpage);
+    }))
       .then( () => {
         return files.filter( file => {
           return !/\.html$/.test(file);
@@ -163,54 +207,75 @@ class Uploader {
       });
   }
 
-  uploadSingleHTML(html) {
-    return this.readHTML(html, this.path)
-      .then(this.findAllImages)
+  uploadSingleHTML(file, perpage) {
+    let html;
+    return this.readHTML(file, this.path)
+      .then( content => {
+        html = content;
+        return this.findAllImages(html);
+      })
       .then(this.uploadSourceImages.bind(this))
       .then(this.generateThumbnail.bind(this))
       .then(this.uploadThumbnailImages.bind(this))
-      .then(this.replaceImageSrc)
-      .then( () => {
-        return this.uploadFile(html);
+      .then( images => {
+        this.replaceImageSrc(html, images, file);
+      })
+      .then( newHTML => {
+        return this.uploadFile(newHTML, file);
       })
       .catch(Uploader.catchAll);
   };
 
   uploadSourceImages(images) {
+    /**
+     * @param {String} image 图片路径
+     */
     return Promise.all(images.map( image => {
-      return new Promise( resolve => {
-        fs.stat(image, (err, stat) => {
-          if (err) {
-            throw err;
-          }
-          if (stat.mtime <= record[image]) { // 上传过的不处理
-            resolve(false);
-          }
-          resolve(image);
-        })
-      })
-        .then( image => {
-          return image ? md5(image) : false;
-        })
+      md5(image)
         .then( hash => {
-          if (!hash) {
-            return false;
+          return new Promise( resolve => {
+            fs.stat(image, (err, stat) => {
+              if (err) {
+                throw err;
+              }
+              let result = {
+                hash: hash,
+                src: image,
+                size: stat.size
+              };
+              if (stat.mtime <= record[image]) { // 上传过的不处理
+                return resolve(result);
+              }
+              result.isModified = true;
+              resolve(result);
+            })
+          })
+        })
+        .then( result => {
+          if (!result.isModified) {
+            return result;
           }
 
           let ext = image.substr(image.lastIndexOf('.'));
-          return this.uploadFile(image, 'images/' + hash + ext);
+          return this.uploadFile(image, 'images/' + result.hash + ext);
         });
     }));
   }
 
   uploadThumbnailImages(images) {
-    return Promise.all(images.map( image => {
-      let {thumbnail} = image;
-      return this.uploadFile(this.tmp + thumbnail, 'images/' + thumbnail)
-        .then( () => {
-          return image;
-        });
-    }));
+    this.event.sender.send('/upload/progress/', '开始上传缩略图');
+    return Promise.all(images.filter( image => {
+      return image.thumbnail;
+    }).map( image => {
+        let {thumbnail} = image;
+        return this.uploadFile(this.tmp + thumbnail, 'images/' + thumbnail)
+          .then( result => {
+            return result;
+          });
+      }))
+      .then( () => {
+        return images;
+      });
   }
 
   static catchAll(err) {

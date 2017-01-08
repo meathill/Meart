@@ -13,5 +13,12 @@ module.exports = {
       commit(mutations.SAVED, time);
     });
     ipcRenderer.send('/site/save', state);
+  },
+
+  [actions.SAVE_SERVER] ( { state }) {
+    ipcRenderer.once('saved', () => {
+      console.log('server saved');
+    });
+    ipcRenderer.send('/server/save', state.server);
   }
 };

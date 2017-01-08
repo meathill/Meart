@@ -52,12 +52,52 @@ module.exports = {
         this.$store.dispatch(ActionTypes.SAVE);
       }
     },
-    server: {
+    serverName: {
       get() {
-        return this.$store.state.server;
+        return this.$store.state.server.name;
       },
       set(value) {
-        console.log(arguments);
+        this.$store.commit(MutationTypes.SET_SERVER_PROP, {
+          key: 'name',
+          value: value
+        });
+        this.$store.dispatch(ActionTypes.SAVE_SERVER);
+      }
+    },
+    serverACCESS_KEY: {
+      get() {
+        return this.$store.state.server.ACCESS_KEY;
+      },
+      set(value) {
+        this.$store.commit(MutationTypes.SET_SERVER_PROP, {
+          key: 'ACCESS_KEY',
+          value: value
+        });
+        this.$store.dispatch(ActionTypes.SAVE_SERVER);
+      }
+    },
+    serverSECRET_KEY: {
+      get() {
+        return this.$store.state.server.SECRET_KEY;
+      },
+      set(value) {
+        this.$store.commit(MutationTypes.SET_SERVER_PROP, {
+          key: 'SECRET_KEY',
+          value: value
+        });
+        this.$store.dispatch(ActionTypes.SAVE_SERVER);
+      }
+    },
+    serverBucket: {
+      get() {
+        return this.$store.state.server.bucket;
+      },
+      set(value) {
+        this.$store.commit(MutationTypes.SET_SERVER_PROP, {
+          key: 'bucket',
+          value: value
+        });
+        this.$store.dispatch(ActionTypes.SAVE_SERVER);
       }
     }
   }, Vuex.mapState([

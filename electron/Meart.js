@@ -123,12 +123,22 @@ class Meart {
       let now = Date.now();
       this.site = site;
       this.site.lastModifiedTime = now;
-      fs.writeFile(this.sitePath, JSON.stringify(this.site), 'utf8', (err) => {
+      fs.writeFile(this.sitePath, JSON.stringify(this.site), 'utf8', err => {
         if (err) {
           throw err;
         }
         event.sender.send('saved', now);
       });
+    });
+
+    ipcMain.on('/server/save', (event, server) => {
+      this.site.server = server;
+      fs.writeFile(this.path + 'site/server.json', JSON.stringify(server), 'utf8', err => {
+        if (err) {
+          throw err;
+        }
+        event.sender.send('saved');
+      })
     });
 
     ipcMain.on('/publish/', (event) => {

@@ -23,7 +23,7 @@ state.server = {
   name: '七牛',
   ACCESS_KEY: '',
   SECRET_KEY: '',
-  bucket: ''
+  bucket: 'meart'
 };
 
 module.exports = new Vuex.Store({

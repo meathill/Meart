@@ -1,16 +1,10 @@
 const remote = require('electron').remote;
-const Handlebars =require('handlebars');
 const router = require('./app/Router');
 const Publisher = require('./app/popup/Publish');
+const Uploader = require('./app/popup/Upload');
 const store = require('./app/store/index');
 const inspectElement = require('./app/debug/inspect-element');
-
-Handlebars.registerHelper('toCalendar', (value) => {
-  return moment(value).calendar();
-});
-Handlebars.registerHelper('toDate', (value) => {
-  return moment(value).format('YYYY-MM-DD HH:mm:ss');
-});
+const helpers = require('./electron/template/helpers');
 
 const app = new Vue({
   store,
@@ -19,6 +13,8 @@ const app = new Vue({
 
 Publisher.store = store;
 const publisher = new Vue(Publisher).$mount('#publish-modal .modal-content');
+Uploader.store = store;
+const uploader = new Vue(Uploader).$mount('#upload-modal .modal-content');
 
 if (remote.getGlobal('isNew')) {
   router.push({

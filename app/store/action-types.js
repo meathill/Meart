@@ -1,3 +1,4 @@
 module.exports = {
-  'SAVE': 'save'
+  'SAVE': 'save',
+  'SAVE_SERVER': 'saveServer'
 };
