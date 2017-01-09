@@ -52,8 +52,7 @@ describe('Test Uploader', () => {
   describe('#findAllImages()', () => {
     it('should find 2 pic', () => {
       let content = fs.readFileSync(output + 'index.html', 'utf8');
-      let [images, html] = uploader.findAllImages(content);
-      html.should.equal(content);
+      let images = uploader.findAllImages(content);
       should(images.length).be.exactly(3);
       images.forEach( image => {
         image.should.not.match(/background(-image)?:\s*url\(/);

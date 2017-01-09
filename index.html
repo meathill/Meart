@@ -436,7 +436,7 @@
     </div>
   </div>
 </div>
-<div class="modal fade" id="upload-modal" tabindex="-1" role="dialog" aria-labelledby="#upload-modal-label" aria-hidden="true" :class="{ progress： isProgress }" data-backdrop="static" data-keyboard="false">
+<div class="modal fade" id="upload-modal" tabindex="-1" role="dialog" aria-labelledby="#upload-modal-label" aria-hidden="true" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -447,16 +447,21 @@
       </div>
       <div class="modal-body">
         <template>
-          <p>将已生成的网站上传到服务器上。这个操作会需要很长时间，请不要打断程序执行，以免发生错误。</p>
+          <p>将已生成的网页上传到服务器。这个操作会需要很长时间，请不要打断程序执行，以免发生错误。</p>
           <div class="text-xs-center" id="publish-progress-label" v-if="isProgress">当前进度：{{label}}</div>
           <progress class="progress" :value="progress" max="100" aria-describedby="#publish-progress-label" v-if="isProgress"></progress>
           <p>
             <button type="button" class="btn btn-lg btn-block" @click="start" :disabled="isProgress || isSuccess" :class="isSuccess ? 'btn-success' : 'btn-primary'">
-              <template v-if="isSuccess">
-                <i class="fa fa-check"></i> 生成成功
+              <template v-if="isAwait">
+                <i class="fa fa-cloud-upload"></i> 开始上传
               </template>
               <template v-else>
-                <i class="fa fa-play"></i> 开始生成
+                <template v-if="isSuccess">
+                  <i class="fa fa-check"></i> 上传完成
+                </template>
+                <template v-else>
+                  <i class="fa fa-times"></i> 上传失败
+                </template>
               </template>
             </button>
           </p>

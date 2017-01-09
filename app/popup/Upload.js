@@ -1,8 +1,11 @@
 /**
  * Created by meathill on 2017/1/8.
  */
+
 const { ipcRenderer } = require('electron');
-const MutationTypes = require('../store/mutation-types');
+const AWAIT = 0;
+const IN_PROGRESS = 1;
+const OVER = 2;
 
 module.exports = {
   created() {
@@ -11,23 +14,36 @@ module.exports = {
   },
   data() {
     return {
-      isProgress: false,
+      status: 0,
       isSuccess: false,
       label: '开始上传网站',
       progress: 0
     };
   },
+  computed: {
+    isAwait() {
+      return this.status === AWAIT;
+    },
+    isProgress() {
+      return this.status === IN_PROGRESS;
+    },
+    isOver() {
+      return this.status === OVER;
+    }
+  },
   methods: {
     start() {
-      this.isProgress = true;
+      this.status = IN_PROGRESS;
       ipcRenderer.send('/upload/');
     },
-    onFinish(event, time) {
+    onFinish() {
       this.label = '生成完毕';
       this.progress = 100;
       this.isSuccess = true;
-      $('#upload-modal').one('hidden.bs.modal', () => {
-        this.isProgress = this.isSuccess = false;
+      this.status = OVER;
+      $('#upload-modal').on('hidden.bs.modal', () => {
+        this.status = AWAIT;
+        this.isSuccess = false;
       });
       setTimeout( () => {
         $('#upload-modal').modal('hide');

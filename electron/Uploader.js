@@ -44,7 +44,7 @@ class Uploader {
     this.findFiles()
       .then(this.uploadHTML.bind(this))
       .then(this.uploadAssets.bind(this))
-      .then(this.finish)
+      .then(this.finish.bind(this))
       .catch(Uploader.catchAll);
   }
 
@@ -57,7 +57,7 @@ class Uploader {
       images.push(src);
       return match;
     });
-    return [_.uniq(images), html];
+    return _.uniq(images);
   }
 
   /**
@@ -275,17 +275,20 @@ class Uploader {
    * @return {Promise}
    */
   uploadSingleHTML(file, perpage) {
-    let html;
+    let html, allImages;
     return this.readHTML(file, this.path)
       .then( content => {
         html = content;
         return this.findAllImages(html);
       })
       .then(this.uploadSourceImages.bind(this))
-      .then(this.generateThumbnail.bind(this))
-      .then(this.uploadThumbnailImages.bind(this))
       .then( images => {
-        return this.replaceImageSrc(html, images, file);
+        allImages = images;
+        return this.generateThumbnail(images)
+      })
+      .then(this.uploadThumbnailImages.bind(this))
+      .then( () => {
+        return this.replaceImageSrc(html, allImages, file);
       })
       .then( newHTML => {
         return this.uploadFile(newHTML, file);
@@ -351,10 +354,7 @@ class Uploader {
           .then( result => {
             return result;
           });
-      }))
-      .then( () => {
-        return images;
-      });
+      }));
   }
 
   static catchAll(err) {
