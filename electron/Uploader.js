@@ -81,8 +81,8 @@ class Uploader {
    * 只生成没过期，之前上传的图片
    * 特征是由服务器返回，有 key
    *
-   * @param images
-   * @returns {Promise.<TResult>}
+   * @param {String} images
+   * @returns {Promise}
    */
   generateThumbnail(images) {
     this.event.sender.send('/upload/progress/', '开始生成缩略图');
@@ -105,11 +105,24 @@ class Uploader {
       });
   }
 
+  /**
+   * Get qiniu token
+   *
+   * @param {String} filename
+   * @return {String}
+   */
   getToken(filename) {
     let putPolicy = new qiniu.rs.PutPolicy(this.bucket + ':' + filename);
     return putPolicy.token();
   }
 
+  /**
+   * Get the html content
+   *
+   * @param {String} html 文件名
+   * @param {String} path 路径
+   * @return {Promise}
+   */
   readHTML(html, path) {
     this.event.sender.send('/upload/progress/', '正在分析：' + html);
     return new Promise( resolve => {
@@ -122,10 +135,19 @@ class Uploader {
     });
   }
 
+  /**
+   * Replace the image file path in the html
+   *
+   * @param {String} html HTML内容
+   * @param {Array} images 刚才上传的结果
+   * @param {String} origin 原始文件名
+   * @return {Promise}
+   */
   replaceImageSrc(html, images, origin) {
     this.event.sender.send('/upload/progress/', '生成新 HTML');
-    let map = _.object(_.pick(images, 'src'), images);
+    let map = _.object(_.pluck(images, 'src'), images);
     html = html.replace(IMG_REG, (match, attr, src) => {
+      src = src.indexOf('url(') != -1 ? src.substr(src.indexOf('url(') + 4) : src;
       let image = map[src];
       let ext = image.src.substr(image.src.lastIndexOf('.'));
       let to;
@@ -146,6 +168,13 @@ class Uploader {
     });
   }
 
+  /**
+   * Upload other assets
+   *
+   * @param {Array} files 待上传的文件
+   * @param {String} dir 上一级目录名
+   * @return {Promise.<*>}
+   */
   uploadAssets(files, dir = '') {
     this.event.sender.send('/upload/progress/', '开始上传其它资源', 70);
     return Promise.all(files.map( file => {
@@ -183,6 +212,13 @@ class Uploader {
     }));
   }
 
+  /**
+   * Upload single file
+   *
+   * @param {String} source 待上传文件的路径
+   * @param {String} to 上传后的路径
+   * @return {Promise}
+   */
   uploadFile(source, to = '') {
     this.event.sender.send('/upload/progress/', '开始上传：' + source);
     let token = this.getToken(to);
@@ -199,6 +235,12 @@ class Uploader {
       .then(this.logResult.bind(this));
   }
 
+  /**
+   * Upload all html files
+   *
+   * @param {Array} files 全部文件
+   * @return {Promise}
+   */
   uploadHTML(files) {
     this.event.sender.send('/upload/progress/', '开始上传网页', 2);
     let htmls = files.filter( file => {
@@ -216,6 +258,13 @@ class Uploader {
       });
   }
 
+  /**
+   * Upload a single html file
+   *
+   * @param {String} file 文件路径
+   * @param {Number} perpage 进度
+   * @return {Promise}
+   */
   uploadSingleHTML(file, perpage) {
     let html;
     return this.readHTML(file, this.path)
@@ -227,7 +276,7 @@ class Uploader {
       .then(this.generateThumbnail.bind(this))
       .then(this.uploadThumbnailImages.bind(this))
       .then( images => {
-        this.replaceImageSrc(html, images, file);
+        return this.replaceImageSrc(html, images, file);
       })
       .then( newHTML => {
         return this.uploadFile(newHTML, file);
@@ -235,10 +284,13 @@ class Uploader {
       .catch(Uploader.catchAll);
   };
 
+  /**
+   * Upload the original images
+   *
+   * @param {Array} images 待上传的文件
+   * @return {Promise}
+   */
   uploadSourceImages(images) {
-    /**
-     * @param {String} image 图片路径
-     */
     return Promise.all(images.map( image => {
       return md5(image)
         .then( hash => {
@@ -274,6 +326,12 @@ class Uploader {
     }));
   }
 
+  /**
+   * Upload the thumbnail images
+   *
+   * @param {Array} images 待上传图片
+   * @return {Promise}
+   */
   uploadThumbnailImages(images) {
     this.event.sender.send('/upload/progress/', '开始上传缩略图');
     return Promise.all(images.filter( image => {
