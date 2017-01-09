@@ -108,6 +108,7 @@ class Publisher {
     let count = 0;
     this.event.sender.send('/publish/progress/', '准备生成单个相册', 45);
     return Promise.all(this.site.articles.map( article => {
+      article = _.extend(article, _.pick(this.site, 'siteTitle', 'siteDesc', 'siteIcon', 'siteTags'));
       let html = templates.article(article);
       return new Promise( resolve => {
         fs.writeFile(this.output + (article.url || article.id) + '.html', html, 'utf8', err => {

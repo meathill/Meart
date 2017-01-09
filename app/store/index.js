@@ -6,7 +6,7 @@ const { remote } = require('electron');
 const mutations = require('./mutations');
 const actions = require('./actions');
 const getters = require('./getters');
-let publish;
+let publish, server;
 try {
   publish = require('../../output/build.json');
 } catch (e) {
@@ -14,17 +14,22 @@ try {
     publishTime: 0
   };
 }
+try {
+  server = require('../../site/server.json');
+} catch (e) {
+  server = {
+    name: 'qiniu',
+    ACCESS_KEY: '',
+    SECRET_KEY: '',
+    bucket: 'meart'
+  };
+}
 
 const debug = process.env.NODE_ENV !== 'production';
 
 const state = remote.getGlobal('site');
 state.publishTime = publish.publishTime;
-state.server = {
-  name: '七牛',
-  ACCESS_KEY: '',
-  SECRET_KEY: '',
-  bucket: 'meart'
-};
+state.server = server;
 
 module.exports = new Vuex.Store({
   state,

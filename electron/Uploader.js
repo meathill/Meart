@@ -6,11 +6,12 @@ const qiniu = require('qiniu');
 const sharp = require('sharp');
 const md5 = require('md5-file/promise');
 const _ = require('underscore');
-let record;
+const LOG_FILE = '../site/upload-record.json';
+let server;
 try {
-  record = require('./upload-record.json');
+  server = require('../site/server.json');
 } catch (err) {
-  record = {};
+
 }
 
 const IMG_REG = /(href|style|src)="(?!https?:\/\/)([^"]+\.(?:jpg|jpeg|png|webp))[")]/ig;
@@ -29,9 +30,17 @@ class Uploader {
     this.event = event;
     this.path = path;
     this.tmp = path + 'tmp/';
+    try {
+      this.record = require(LOG_FILE);
+    } catch (err) {
+      this.record = {};
+    }
   }
 
   start() {
+    if (!server) {
+      throw new Error('缺少服务器配置，无法上传。');
+    }
     this.findFiles()
       .then(this.uploadHTML.bind(this))
       .then(this.uploadAssets.bind(this))
@@ -164,7 +173,7 @@ class Uploader {
             }
 
             let source = this.path + file;
-            if (!(source in record) || stat.mtime > record[origin]) {
+            if (!(source in this.record) || stat.mtime > this.record[origin]) {
               return this.uploadFile(origin, file);
             } else {
               return true;
@@ -175,8 +184,8 @@ class Uploader {
   }
 
   uploadFile(source, to = '') {
-    this.event.sender.send('progrss', '开始上传：' + source);
-    let token = this.getToken(filename);
+    this.event.sender.send('/upload/progress/', '开始上传：' + source);
+    let token = this.getToken(to);
     let extra = new qiniu.io.PutExtra();
     to = to || source;
     return new Promise(resolve => {
@@ -187,7 +196,7 @@ class Uploader {
         resolve([result, source]);
       });
     })
-      .then(Uploader.logResult);
+      .then(this.logResult.bind(this));
   }
 
   uploadHTML(files) {
@@ -231,7 +240,7 @@ class Uploader {
      * @param {String} image 图片路径
      */
     return Promise.all(images.map( image => {
-      md5(image)
+      return md5(image)
         .then( hash => {
           return new Promise( resolve => {
             fs.stat(image, (err, stat) => {
@@ -243,7 +252,7 @@ class Uploader {
                 src: image,
                 size: stat.size
               };
-              if (stat.mtime <= record[image]) { // 上传过的不处理
+              if (stat.mtime <= this.record[image]) { // 上传过的不处理
                 return resolve(result);
               }
               result.isModified = true;
@@ -258,6 +267,9 @@ class Uploader {
 
           let ext = image.substr(image.lastIndexOf('.'));
           return this.uploadFile(image, 'images/' + result.hash + ext);
+        })
+        .catch( err => {
+          console.log(err);
         });
     }));
   }
@@ -282,9 +294,9 @@ class Uploader {
     console.log(err);
   }
 
-  static logResult([result, source]) { // 记录下最后上传状态，避免重复上传同样的文件，节省时间
-    record[source] = Date.now();
-    fs.writeFile('./upload-record.json', JSON.stringify(record), 'utf8', err => {
+  logResult([result, source]) { // 记录下最后上传状态，避免重复上传同样的文件，节省时间
+    this.record[source] = Date.now();
+    fs.writeFile(this.path + LOG_FILE, JSON.stringify(this.record), 'utf8', err => {
       if (err) {
         throw err;
       }

@@ -246,7 +246,7 @@ describe('Test Publisher', () => {
   });
 
   describe('#logVersions()', () => {
-    it('should write log file', done => {
+    it('should write LOG_FILE file', done => {
       publisher.logVersions()
         .then( time => {
           fs.readFile(publisher.output + 'build.json', 'utf8', (err, content) => {
