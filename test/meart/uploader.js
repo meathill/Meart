@@ -25,6 +25,8 @@ describe('Test Uploader', () => {
       uploader.findFiles()
         .then( files => {
           should(files.length).be.greaterThan(1);
+          should(files.indexOf('tmp')).be.exactly(-1);
+          should(files.indexOf('.DS_Store')).be.exactly(-1);
           done();
         })
         .catch( err => {
@@ -190,6 +192,30 @@ describe('Test Uploader', () => {
         .catch( err => {
           done(err);
         })
+    });
+  });
+
+  describe('#uploadAssets()', function () {
+    this.timeout(60000);
+    it('should upload all assets', done => {
+      uploader.findFiles()
+        .then( files => {
+          should(files.indexOf('tmp')).be.exactly(-1);
+          return files.filter( file => {
+            return !/\.html$/.test(file);
+          });
+        })
+        .then( files => {
+          return uploader.uploadAssets(files);
+        })
+        .then( files => {
+          files = _.flatten(files);
+          should(files.length).be.exactly(2);
+          done();
+        })
+        .catch( err => {
+          done(err);
+        });
     });
   });
 });

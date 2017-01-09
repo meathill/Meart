@@ -60,16 +60,15 @@ class Uploader {
     return [_.uniq(images), html];
   }
 
+  /**
+   * Find all files need to be uploaded
+   * exclude the `tmp` folder
+   *
+   * @return {Promise}
+   */
   findFiles() {
     this.event.sender.send('/upload/progress/', '计算所有需要上传的内容', 0);
-    return new Promise( resolve => {
-      fs.readdir(this.path, 'utf8', (err, files) => {
-        if (err) {
-          throw err;
-        }
-        resolve(_.without(files, 'tmp')); // tmp 目录用来存放缩略图
-      });
-    });
+    return this.readDir(this.path);
   }
 
   finish() {
@@ -136,6 +135,23 @@ class Uploader {
   }
 
   /**
+   * Find all files under a folder
+   *
+   * @param {String} path 路径
+   * @return {Promise}
+   */
+  readDir(path) {
+    return new Promise(resolve => {
+      fs.readdir(path, 'utf8', (err, files) => {
+        if (err) {
+          throw err;
+        }
+        resolve(_.without(files, 'tmp', '.DS_Store')); // tmp 目录用来存放缩略图
+      });
+    });
+  }
+
+  /**
    * Replace the image file path in the html
    *
    * @param {String} html HTML内容
@@ -186,29 +202,22 @@ class Uploader {
           }
           resolve(stat);
         })
-          .then( stat => {
-            if (stat.isDirectory()) { // 是目录，递归之
-              return new Promise( resolve => {
-                fs.readdir(this.path + file, 'utf8', (err, files) => {
-                  if (err) {
-                    throw err;
-                  }
-                  resolve(files);
-                });
-              })
-                .then( files => {
-                  return this.uploadAssets(files, file);
-                });
-            }
-
-            let source = this.path + file;
-            if (!(source in this.record) || stat.mtime > this.record[origin]) {
-              return this.uploadFile(origin, file);
-            } else {
-              return true;
-            }
-          });
       })
+        .then( stat => {
+          if (stat.isDirectory()) { // 是目录，递归之
+            return this.readDir(this.path + file)
+              .then( files => {
+                return this.uploadAssets(files, file);
+              });
+          }
+
+          let source = this.path + file;
+          if (!(source in this.record) || stat.mtime > this.record[source]) {
+            return this.uploadFile(source, file);
+          } else {
+            return true;
+          }
+        });
     }));
   }
 
