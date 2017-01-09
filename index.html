@@ -108,7 +108,7 @@
     <header>
       <h2>预览网站</h2>
       <p>上次生成时间：<time :datetime="publishTime | toDate" v-if="publishTime">{{publishTime | toMoment}}</time>
-        <span class="tag tag-success" v-if="publishTime > lastModifiedTime"><i class="fa fa-check"></i> 最新</span>
+        <span class="badge badge-success" v-if="publishTime > lastModifiedTime"><i class="fa fa-check"></i> 最新</span>
         | 最近修改时间：<time :datetime="lastModifiedTime | toDate" v-if="lastModifiedTime">{{lastModifiedTime | toMoment}}</time>
       </p>
       <div class="button-group" role="group" aria-label="发布操作">
@@ -402,27 +402,32 @@
   </div>
 </script>
 
-<div class="modal fade" id="publish-modal" tabindex="-1" role="dialog" aria-labelledby="#publish-modal-label" aria-hidden="true" :class="{ progress: isProgress }" data-backdrop="static" data-keyboard="false">
+<div class="modal fade" id="publish-modal" tabindex="-1" role="dialog" aria-labelledby="#publish-modal-label" aria-hidden="true" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
+        <h4 class="modal-title" id="publish-modal-label">发布网站</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="关闭" v-if="!isProgress || isSuccess">
           <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title" id="publish-modal-label">发布网站</h4>
       </div>
       <div class="modal-body">
         <template>
-          <p>将已生成的网站上传到服务器上。这个操作会需要很长时间，请不要打断程序执行，以免发生错误。</p>
+          <p>将网站内容发布成静态网页，稍后您可以将其上传，更新网站。</p>
           <div class="text-xs-center" id="upload-progress-label" v-if="isProgress">当前进度：{{label}}</div>
           <progress class="progress" :value="progress" max="100" aria-describedby="#publish-progress-label" v-if="isProgress"></progress>
           <p>
             <button type="button" class="btn btn-lg btn-block" @click="start" :disabled="isProgress || isSuccess" :class="isSuccess ? 'btn-success' : 'btn-primary'">
-              <template v-if="isSuccess">
-                <i class="fa fa-check"></i> 上传完成
+              <template v-if="isAwait">
+                <i class="fa fa-play"></i> 开始发布
               </template>
               <template v-else>
-                <i class="fa fa-play"></i> 上传失败
+                <template v-if="isSuccess">
+                  <i class="fa fa-check"></i> 发布完成
+                </template>
+                <template v-else>
+                  <i class="fa fa-times"></i> 发布失败
+                </template>
               </template>
             </button>
           </p>
@@ -442,7 +447,7 @@
       </div>
       <div class="modal-body">
         <template>
-          <p>将网站内容发布成静态网页，稍后您可以将网页上传，更新自己的网站。</p>
+          <p>将已生成的网站上传到服务器上。这个操作会需要很长时间，请不要打断程序执行，以免发生错误。</p>
           <div class="text-xs-center" id="publish-progress-label" v-if="isProgress">当前进度：{{label}}</div>
           <progress class="progress" :value="progress" max="100" aria-describedby="#publish-progress-label" v-if="isProgress"></progress>
           <p>

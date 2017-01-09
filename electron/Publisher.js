@@ -48,7 +48,10 @@ class Publisher {
       .then(this.copyAssets.bind(this))
       .then(this.logVersions.bind(this))
       .then(this.dispatchFinish.bind(this))
-      .catch(Publisher.catchAll);
+      .catch( err => {
+        this.event.sender.send('/publish/error/', err);
+        Publisher.catchAll(err);
+      });
   }
 
   static catchAll(err) {

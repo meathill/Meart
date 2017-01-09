@@ -22,7 +22,7 @@ module.exports = {
   },
   mounted() {
     this.history = history.length;
-    this.height = window.innerHeight - this.$el.querySelector('header').offsetHeight - 16 * 3;
+    this.height = window.innerHeight - this.$el.querySelector('header').offsetHeight - 105;
   },
   methods: {
     goBack() {

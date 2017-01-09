@@ -25,8 +25,12 @@ Handlebars.registerHelper('top', (array, max, options) => {
   if (!array || array.length === 0) {
     return options.inverse(this);
   }
-  return array.slice(0, max).map((item) => {
-    return options.fn(item);
+
+  return array.slice(0, max).map( (item, index) => {
+    return options.fn(item, {data: {
+      index: index,
+      first: index === 0
+    }});
   }).join('');
 });
 Handlebars.registerHelper('ifnull', (value, backup) => {
