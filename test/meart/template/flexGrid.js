@@ -3,7 +3,7 @@
  */
 
 const should = require('should');
-const flexGrid = require('../.././flexGrid');
+const flexGrid = require('../../../electron/template/flexGrid');
 
 const testCase = [
   {
@@ -65,17 +65,29 @@ const expect = [
     width: 1200 * 4 /15,
   }
 ];
+const options = {
+  debug: true,
+  fn(item) {
+    return item.size;
+  }
+};
+
 describe('create flex grid', () => {
   it('should be correct', () => {
-    let options = {
-      debug: true,
-      fn(item) {
-        return item.size;
-      }
-    };
     let result = flexGrid(testCase, options);
     result.forEach( (item, index) => {
       should(item.width >> 0).be.exactly(expect[index].width >> 0);
     });
+  });
+});
+
+describe('height may not be 0', () => {
+  it('should be correct', () => {
+    let site = require('../../../site/site.json');
+    let article = site.articles[1];
+    let result = flexGrid(article.album, options);
+    result.forEach( (item, index) => {
+      should(item.height).be.greaterThan(0);
+    })
   });
 });

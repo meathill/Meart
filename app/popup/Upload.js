@@ -17,7 +17,8 @@ module.exports = {
       status: 0,
       isSuccess: false,
       label: '开始上传网站',
-      progress: 0
+      progress: 0,
+      messages: []
     };
   },
   computed: {
@@ -51,6 +52,7 @@ module.exports = {
     },
     onProgress(event, label, progress) {
       this.label = label;
+      this.messages.push(label);
       if (progress === null) {
         this.progress = progress;
       }

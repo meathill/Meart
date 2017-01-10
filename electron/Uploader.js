@@ -226,9 +226,11 @@ class Uploader {
    *
    * @param {String} source 待上传文件的路径
    * @param {String} to 上传后的路径
+   * @param {String} hash 文件 MD5 值
    * @return {Promise}
+   * @todo refresh CDN after uploaded
    */
-  uploadFile(source, to = '') {
+  uploadFile(source, to = '', hash = '') {
     this.event.sender.send('/upload/progress/', '开始上传：' + source);
     let token = this.getToken(to);
     let extra = new qiniu.io.PutExtra();
@@ -238,10 +240,12 @@ class Uploader {
         if (err) {
           throw err;
         }
-        resolve([result, source]);
+        resolve(result);
       });
     })
-      .then(this.logResult.bind(this));
+      .then( result => {
+        return this.logResult(result, source, hash);
+      });
   }
 
   /**
@@ -258,7 +262,7 @@ class Uploader {
     let perpage = 68 / htmls.length;
     return Promise.all(htmls.map( (html, index) => {
       this.event.sender.send('/upload/progress/', '准备上传：' + html, 2 + index * perpage);
-      this.uploadSingleHTML(html, perpage);
+      return this.uploadSingleHTML(html, perpage);
     }))
       .then( () => {
         return files.filter( file => {
@@ -330,7 +334,7 @@ class Uploader {
           }
 
           let ext = image.substr(image.lastIndexOf('.'));
-          return this.uploadFile(image, 'images/' + result.hash + ext);
+          return this.uploadFile(image, 'images/' + result.hash + ext, result.hash);
         })
         .catch( err => {
           console.log(err);
@@ -361,13 +365,15 @@ class Uploader {
     console.log(err);
   }
 
-  logResult([result, source]) { // 记录下最后上传状态，避免重复上传同样的文件，节省时间
+  logResult(result, source, hash) { // 记录下最后上传状态，避免重复上传同样的文件，节省时间
     this.record[source] = Date.now();
     fs.writeFile(this.path + LOG_FILE, JSON.stringify(this.record), 'utf8', err => {
       if (err) {
         throw err;
       }
     });
+    console.log('Uploaded: ', source, hash, result);
+    result.hash = hash; // 为了避免本地计算的 md5 和服务器不一致
     result.src = source;
     return result;
   };

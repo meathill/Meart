@@ -450,6 +450,11 @@
           <p>将已生成的网页上传到服务器。这个操作会需要很长时间，请不要打断程序执行，以免发生错误。</p>
           <div class="text-xs-center" id="publish-progress-label" v-if="isProgress">当前进度：{{label}}</div>
           <progress class="progress" :value="progress" max="100" aria-describedby="#publish-progress-label" v-if="isProgress"></progress>
+          <p class="well" v-if="isProgress">
+            <template v-for="message in messages">
+              {{message}}<br>
+            </template>
+          </p>
           <p>
             <button type="button" class="btn btn-lg btn-block" @click="start" :disabled="isProgress || isSuccess" :class="isSuccess ? 'btn-success' : 'btn-primary'">
               <template v-if="isAwait">
