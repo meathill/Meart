@@ -3,6 +3,7 @@
 const fs = require('fs');
 const _ = require('underscore');
 const { ipcRenderer } = require('electron');
+const MutationTypes = require('../store/mutation-types');
 
 module.exports = {
   name: 'welcome',
@@ -12,22 +13,29 @@ module.exports = {
       siteTitle: '',
       siteDesc: '',
       siteIcon: '',
-      siteTheme: 'default',
+      siteTheme: 'dark',
       articles: []
     }
   },
   methods: {
     onSubmit(event) {
       console.log(this.$data);
-      ipcRenderer.sendSync('/site/init', _.pick(this.$data, [
+      let data = _.pick(this.$data, [
         'siteTitle',
         'siteDesc',
         'siteIcon',
         'siteTheme',
         'articles'
-      ]));
+      ]);
+      ipcRenderer.sendSync('/site/init', data);
+      _.each(data, (value, key) => {
+        this.$store.commit(MutationTypes.SET_SITE_PROP, {
+          key: key,
+          value: value
+        });
+      });
       this.$router.push({
-        name: 'site'
+        name: 'articleList'
       });
     },
     onSelectFile(event) {

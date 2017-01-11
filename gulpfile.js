@@ -2,6 +2,7 @@
  * Created by meathill on 2017/1/2.
  */
 
+const fs = require('fs');
 const del = require('del');
 const gulp = require('gulp');
 const sequence = require('run-sequence');
@@ -40,9 +41,33 @@ gulp.task('copy', () => {
     gulp.src('img/**').pipe(gulp.dest(DEST + 'img/')),
     gulp.src(['theme/**', '!theme/dark/.git/', '!theme/dark/styl/', '!theme/default/styl/'])
       .pipe(gulp.dest(DEST + 'theme/')),
-    gulp.src(['index.html', 'index.js', 'app.js', 'package.json', 'config/default.json'])
+    gulp.src('config/default.json').pipe(gulp.dest(DEST + 'config/')),
+    gulp.src(['index.html', 'index.js', 'app.js', 'package.json'])
       .pipe(gulp.dest(DEST))
   );
+});
+
+gulp.task('production', () => {
+  let configPath = 'config/config.json';
+  return new Promise( resolve => {
+    fs.readFile(configPath, 'utf8', (err, content) => {
+      if (err) {
+        throw err;
+      }
+      resolve(JSON.parse(content));
+    });
+  })
+    .then( config => {
+      config.DEBUG = false;
+      return new Promise( resolve => {
+        fs.writeFile(DEST + configPath, JSON.stringify(config), 'utf8', err => {
+          if (err) {
+            throw err;
+          }
+          resolve();
+        })
+      });
+    });
 });
 
 gulp.task('install', () => {
@@ -57,6 +82,6 @@ gulp.task('default', callback => {
   sequence('clear',
     ['stylus', 'stylus-dark'],
     'copy',
-    'install',
+    ['production', 'install'],
     callback);
 });

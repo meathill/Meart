@@ -4,6 +4,7 @@
 const { shell } = require('electron');
 const marked = require('marked');
 const fs = require('fs');
+const {version} = require('../../package.json');
 
 let timeout;
 let count = 0;
@@ -28,11 +29,12 @@ module.exports = {
     return {
       about: '',
       author: '',
-      avatar: 'http://qiniu.meathill.com/gravatar.jpg'
+      avatar: 'http://qiniu.meathill.com/gravatar.jpg',
+      version: version
     }
   },
   methods: {
-    easter(event) {
+    easter() {
       count++;
       clearTimeout(timeout);
       timeout = setTimeout( () => {

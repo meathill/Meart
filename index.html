@@ -93,6 +93,15 @@
                 </div>
               </label>
             </div>
+            <div class="col-sm-4">
+              <input type="radio" name="site-theme" value="dark" id="theme-dark" class="hide" v-model="siteTheme">
+              <label class="card" for="theme-dark">
+                <img class="card-img-top" src="theme/dark/img/thumbnail.svg" alt="黑色主题">
+                <div class="card-block">
+                  <p class="card-text">黑色主题，内容较完整，建议选择。</p>
+                </div>
+              </label>
+            </div>
           </div>
           <div class="form-group t-a-r">
             <button class="btn btn-primary btn-lg"><i class="fa fa-check"></i> 好了，开始吧</button>
@@ -193,9 +202,9 @@
           <div class="form-group row">
             <label class="col-sm-2 col-form-label" for="server-name">服务器名称</label>
             <div class="col-sm-10">
-              <section class="form-control" id="server-name" v-model="serverName">
+              <select class="form-control" id="server-name" v-model="serverName">
                 <option value="qiniu">七牛</option>
-              </section>
+              </select>
             </div>
           </div>
           <div class="form-group row">
@@ -341,7 +350,7 @@
     <div class="tab-content">
       <div class="tab-pane active" id="help-detail" role="tabpanel">
         <h3>当前版本：</h3>
-        <p>0.1.0</p>
+        <p>{{version}}</p>
       </div>
       <div class="tab-pane" id="help-about" role="tabpanel" v-html="about">
 
@@ -349,12 +358,14 @@
       <div class="tab-pane" id="help-author" role="tabpanel">
         <div class="row">
           <div class="col-sm-6">
+            <h3>
+              你好，我是 Meart 的开发者 Meathill
+            </h3>
             <div class="card">
-              <h3 class="card-header">
-                你好，我是 Meart 的开发者 Meathill
-              </h3>
-              <img :src="avatar" @click="easter" class="img-thumbnail img-fluid">
               <div class="card-block">
+                <p>
+                  <img :src="avatar" @click="easter" class="img-thumbnail card-img-top">
+                </p>
                 <p class="card-text">
                   我有不少设计师或者搞摄影的朋友，有一天我觉得做这样一款软件帮他们建站应该是个好主意。
                 </p>

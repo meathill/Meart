@@ -6,7 +6,7 @@ const _ = require('underscore');
 const moment = require('moment');
 const ncp = require('ncp').ncp;
 const defaultConfig = require('../config/default.json');
-const dev = require('../config/dev.json');
+const { DEBUG } = require('../config/config.json');
 const Publisher = require('./Publisher');
 const Uploader = require('./Uploader');
 const EXIST = 'EEXIST';
@@ -156,9 +156,10 @@ class Meart {
     global.settings = this.settings = defaultConfig;
     if (!fs.existsSync(this.sitePath)) {
       global.settings = this.settings = defaultConfig;
+      global.site = this.site = {};
       global.isNew = true;
       fs.mkdir(this.path + '/site', (err) => {
-        if (err.code === EXIST) {
+        if (!err || err.code === EXIST) {
           return this.startUp();
         }
         console.log(err);
@@ -170,27 +171,35 @@ class Meart {
     Promise.all([settingsPromise, sitePromise])
       .then(() => {
         this.startUp();
+      })
+      .catch( err => {
+        console.log(err);
       });
   }
 
   readFile(file, field, defaults = {}) {
-    if (!fs.existsSync(file)) {
-      return true;
-    }
-    return new Promise( (resolve, reject) => {
-      fs.readFile(file, 'utf8', (error, content) => {
-        if (error) {
-          console.log(error);
-          return reject(error);
+    return new Promise( resolve => {
+      fs.readFile(file, 'utf8', (err, content) => {
+        if (err) {
+          throw err;
         }
         global[field] = this[field] = _.defaults(JSON.parse(content), defaults);
         resolve();
       });
-    });
+    })
+      .catch( err => {
+        if (field === 'site') {
+          global[field] = this[field] = {};
+        }
+        console.log(err)
+      });
   }
 
   onAppReady() {
-    BrowserWindow.addDevToolsExtension(dev.vueDevTool);
+    if (DEBUG) {
+      let {vueDevTool} = require('../config/dev.json');
+      BrowserWindow.addDevToolsExtension(vueDevTool);
+    }
     this.isAppReady = true;
     this.startUp();
   }

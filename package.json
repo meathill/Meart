@@ -1,6 +1,6 @@
 {
   "name": "Meart",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "A static web builder made for designer or photographer to show their portfolios.",
   "main": "index.js",
   "scripts": {
@@ -23,10 +23,10 @@
   },
   "homepage": "https://github.com/meathill/Meart#readme",
   "dependencies": {
+    "electron": "^1.4.12",
     "bootstrap": "^4.0.0-alpha.6",
     "font-awesome": "^4.7.0",
     "handlebars": "^4.0.6",
-    "imagemin": "^5.2.2",
     "marked": "^0.3.6",
     "md5-file": "^3.1.1",
     "mkdirp": "^0.5.1",
@@ -42,9 +42,9 @@
   "devDependencies": {
     "colors.css": "^2.3.0",
     "del": "^2.2.2",
-    "electron": "^1.4.12",
     "electron-rebuild": "^1.5.5",
     "event-stream": "^3.3.4",
+    "imagemin": "^5.2.2",
     "gulp": "^3.9.1",
     "gulp-install": "^0.6.0",
     "gulp-minify-css": "^1.2.4",
