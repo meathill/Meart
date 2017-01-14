@@ -2,8 +2,8 @@
  * Created by meathill on 2017/1/5.
  */
 const fs = require('fs');
+const { nativeImage } = require('electron');
 const qiniu = require('qiniu');
-const sharp = require('sharp');
 const md5 = require('md5-file/promise');
 const _ = require('underscore');
 const LOG_FILE = '../site/upload-record.json';
@@ -91,13 +91,20 @@ class Uploader {
       let {src, hash, key} = image;
       let ext = key.substr(key.lastIndexOf('.'));
       let filename = hash + '@h400' + ext;
-      return sharp(src)
-        .resize(null, 400)
-        .toFile(this.tmp + filename)
-        .then( () => {
-          image.thumbnail = filename;
-          return image;
+      let img = nativeImage.createFromPath(src);
+      return new Promise( resolve => {
+        let data = img.resize( {
+          height: 400
         });
+        data = /\.png$/i.test(ext) ? data.toPNG() : data.toJPEG(85);
+        fs.writeFileSync(this.tmp + filename, data, err => {
+          if (err) {
+            throw err;
+          }
+          image.thumbnail = filename;
+          resolve(image);
+        });
+      })
     }))
       .then( images => {
         return images;

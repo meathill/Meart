@@ -10,6 +10,7 @@ dist
 styl/*.css
 css/
 output
+*.asar
 
 # dev
 settings.json
