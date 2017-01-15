@@ -15,7 +15,6 @@ class Meart {
   constructor() {
     this.path = app.getAppPath();
     this.sitePath = this.path + '/site/site.json'; // 站点信息;
-    this.settingsPath = this.path + '/settings.json'; // 用户设置
     this.output = this.path + '/output/';
     this.delegateEvent();
     this.loadConfig();
@@ -133,7 +132,7 @@ class Meart {
 
     ipcMain.on('/server/save', (event, server) => {
       this.site.server = server;
-      fs.writeFile(this.path + 'site/server.json', JSON.stringify(server), 'utf8', err => {
+      fs.writeFile(this.path + '/site/server.json', JSON.stringify(server), 'utf8', err => {
         if (err) {
           throw err;
         }
@@ -155,7 +154,6 @@ class Meart {
   loadConfig() {
     global.settings = this.settings = defaultConfig;
     if (!fs.existsSync(this.sitePath)) {
-      global.settings = this.settings = defaultConfig;
       global.site = this.site = {};
       global.isNew = true;
       fs.mkdir(this.path + '/site', (err) => {
@@ -166,9 +164,8 @@ class Meart {
       });
       return;
     }
-    let settingsPromise = this.readFile(this.settingsPath, 'settings', defaultConfig);
     let sitePromise = this.readFile(this.sitePath, 'site');
-    Promise.all([settingsPromise, sitePromise])
+    sitePromise
       .then(() => {
         this.startUp();
       })

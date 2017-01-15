@@ -286,7 +286,7 @@
         <div class="col-sm-2">
           <div class="form-group">
             <label for="draft">发布状态</label>
-            <select v-model.number="status" id="draft" class="form-control fa" :class="isPublished" :disabled="isNew">
+            <select v-model.number="status" id="draft" class="form-control fa" :class="publishedClass" :disabled="isNew">
               <option value="0" class="fa-check">&#xf00c 发布</option>
               <option value="1">草稿</option>
             </select>
@@ -496,8 +496,8 @@
 <script src="node_modules/jquery/dist/jquery.min.js"></script>
 <script src="node_modules/tether/dist/js/tether.min.js"></script>
 <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="node_modules/vue/dist/vue.js"></script>
-<script src="node_modules/vue-router/dist/vue-router.js"></script>
+<script src="node_modules/vue/dist/vue.min.js"></script>
+<script src="node_modules/vue-router/dist/vue-router.min.js"></script>
 <script src="node_modules/vuex/dist/vuex.min.js"></script>
 <script src="node_modules/moment/min/moment-with-locales.min.js"></script>
 <script src="app.js"></script>

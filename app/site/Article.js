@@ -34,13 +34,13 @@ module.exports = {
       }
     },
     article() {
-      return this.isNew ? require('./../store/articleInit.json') : this.$store.state.articles[this.id];
+      return this.$store.state.articles[this.id];
     },
-    isPublished() {
+    publishedClass() {
       return this.article.status === 0 ? ['bg-success', 'text-white'] : '';
     }
   },
-  created () {
+  created() {
     let id = this.$route.params.id;
     if (id != 'new') {
       this.isNew = false;
@@ -64,13 +64,6 @@ module.exports = {
     },
     remove(index) {
       this.$store.commit(MutationTypes.REMOVE_PHOTO, {
-        id: this.id,
-        index: index
-      });
-      this.$store.dispatch(ActionTypes.SAVE);
-    },
-    onClick(index) {
-      this.$store.commit(MutationTypes.SELECT_PHOTO, {
         id: this.id,
         index: index
       });
