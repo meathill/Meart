@@ -1,12 +1,15 @@
 /**
  * Created by meathill on 2016/12/30.
  */
-
-const { remote } = require('electron');
 const mutations = require('./mutations');
 const actions = require('./actions');
 const getters = require('./getters');
-let publish, server;
+let site, publish, server;
+try {
+  site = require('../../site/site.json');
+} catch (e) {
+  site = {};
+}
 try {
   publish = require('../../output/build.json');
 } catch (e) {
@@ -27,7 +30,7 @@ try {
 
 const debug = process.env.NODE_ENV !== 'production';
 
-const state = remote.getGlobal('site');
+const state = site;
 state.publishTime = publish.publishTime;
 state.server = server;
 
