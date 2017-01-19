@@ -12,23 +12,15 @@ let count = 0;
 module.exports = {
   template: '#help-template',
   created() {
-    fs.readFile('docs/about.md', 'utf8', (err, content) => {
-      if (err) {
-        throw err;
-      }
-      this.about = marked(content);
-    });
-    fs.readFile('docs/author.md', 'utf8', (err, content) => {
-      if (err) {
-        throw  err;
-      }
-      this.author = marked(content);
-    });
+    this.readMD('about');
+    this.readMD('author');
+    this.readMD('tutorial');
   },
   data() {
     return {
       about: '',
       author: '',
+      tutorial: '',
       avatar: 'http://qiniu.meathill.com/gravatar.jpg',
       version: version
     }
@@ -48,6 +40,15 @@ module.exports = {
     },
     openExternal(event) {
       shell.openExternal(event.target.href);
+    },
+    readMD(md, key = '') {
+      key = key || md;
+      fs.readFile(`docs/${md}.md`, 'utf8', (err, content) => {
+        if (err) {
+          throw  err;
+        }
+        this[key] = marked(content);
+      });
     }
   }
 };

@@ -1,6 +1,7 @@
 /**
  * Created by realm on 2016/12/19.
  */
+const _ = require('underscore');
 const moment = require('../mixin/moment');
 
 module.exports = {
@@ -11,10 +12,18 @@ module.exports = {
       height: 200
     }
   },
-  computed: Vuex.mapState([
+  computed: _.extend({
+    hasSever() {
+      let server = this.$store.state.server;
+      return server.ACCESS_KEY && server.SECRET_KEY && server.bucket;
+    },
+    hasUpload() {
+      return this.hasSever && this.publishTime;
+    }
+  }, Vuex.mapState([
     'lastModifiedTime',
     'publishTime'
-  ]),
+  ])),
   watch: {
     publishTime() {
       this.refresh();

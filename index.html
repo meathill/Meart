@@ -122,7 +122,7 @@
       </p>
       <div class="button-group" role="group" aria-label="发布操作">
         <a href="#publish-modal" class="btn btn-primary" data-toggle="modal"><i class="fa fa-archive"></i> 发布网站</a>
-        <a href="#upload-modal" class="btn btn-success" data-toggle="modal" :class="{disabled: !publishTime}"><i class="fa fa-cloud-upload"></i> 上传到服务器</a>
+        <a href="#upload-modal" class="btn btn-success" :data-toggle="hasUpload ? 'modal' : ''" :class="{disabled: !hasUpload}"><i class="fa fa-cloud-upload"></i> 上传到服务器</a>
       </div>
     </header>
     <nav class="navbar navbar-light bg-faded" v-if="publishTime">
@@ -348,12 +348,12 @@
       </li>
     </ul>
     <div class="tab-content">
-      <div class="tab-pane active" id="help-detail" role="tabpanel">
+      <div class="tab-pane active" id="help-detail" role="tabpanel" v-html="tutorial">
+      </div>
+      <div class="tab-pane" id="help-about" role="tabpanel">
+        <article v-html="about"></article>
         <h3>当前版本：</h3>
         <p>{{version}}</p>
-      </div>
-      <div class="tab-pane" id="help-about" role="tabpanel" v-html="about">
-
       </div>
       <div class="tab-pane" id="help-author" role="tabpanel">
         <div class="row">
