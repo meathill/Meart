@@ -39,6 +39,7 @@ gulp.task('copy', () => {
     gulp.src('app/**').pipe(gulp.dest(DEST + 'app/')),
     gulp.src('electron/**').pipe(gulp.dest(DEST + 'electron/')),
     gulp.src('img/**').pipe(gulp.dest(DEST + 'img/')),
+    gulp.src('docs/*.md').pipe(gulp.dest(DEST + 'docs/')),
     gulp.src(['theme/**', '!theme/dark/.git/', '!theme/dark/styl/', '!theme/default/styl/'])
       .pipe(gulp.dest(DEST + 'theme/')),
     gulp.src('config/default.json').pipe(gulp.dest(DEST + 'config/')),

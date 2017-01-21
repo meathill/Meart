@@ -34,7 +34,7 @@ module.exports = {
       }, 1000);
       console.log(count);
       if (count > 10) {
-        alert('变身给你看！！');
+        alert('变身！！');
         this.avatar = 'http://qiniu.meathill.com/wp-content/uploads/2011/08/MG_9178.jpg';
       }
     },
@@ -43,12 +43,10 @@ module.exports = {
     },
     readMD(md, key = '') {
       key = key || md;
-      fs.readFile(`docs/${md}.md`, 'utf8', (err, content) => {
-        if (err) {
-          throw  err;
-        }
-        this[key] = marked(content);
-      });
+      $.get(`docs/${md}.md`)
+        .then( content => {
+          this[key] = marked(content);
+        });
     }
   }
 };

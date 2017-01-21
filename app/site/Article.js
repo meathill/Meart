@@ -1,6 +1,7 @@
 /**
  * Created by realm on 2016/12/19.
  */
+const _ = require('underscore');
 const Editor = require('../component/Editor');
 const moment = require('../mixin/moment');
 const MutationTypes = require('../store/mutation-types');
@@ -34,7 +35,7 @@ module.exports = {
       }
     },
     article() {
-      return this.$store.state.articles[this.id];
+      return this.isNew ? _.defaults({}, defaults) : this.$store.state.articles[this.id];
     },
     publishedClass() {
       return this.article.status === 0 ? ['bg-success', 'text-white'] : '';
