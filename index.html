@@ -248,8 +248,14 @@
         </a>
       </li>
       <li class="article add col-sm-4">
-        <button type="button" class="btn btn-secondary btn-block" v-on:click="add">
-          <i class="fa fa-plus"></i>
+        <button type="button" class="btn btn-success btn-block" v-on:click="add">
+          <span class="fa-stack fa-lg">
+            <i class="fa fa-picture-o fa-stack-2x fa-rotate-n-25"></i>
+            <i class="fa fa-picture-o fa-stack-2x fa-rotate"></i>
+            <i class="fa fa-plus-circle pbr"></i>
+          </span>
+          <br>
+          <span class="caption">创建新相册</span>
         </button>
       </li>
     </ul>

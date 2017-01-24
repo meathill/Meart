@@ -21,13 +21,17 @@
         text-decoration none
 
     .add
-      .btn
-        color #444
-        font-size 5em
-        border .5rem dashed
 
-      button
-        height 10rem
+      .btn
+        cursor pointer
+        padding 4rem 0
+
+      .fa-stack
+        font-size 3em
+
+      .caption
+        line-height 4
+        font-size 2rem
 
       input
         display none
@@ -73,8 +77,8 @@
         right .5rem
 
         &:hover
-          background-color white
-          color lighten(black, 20%)
+          background-color darken(red, 20%)
+          color white
 
 #article-list
   .card

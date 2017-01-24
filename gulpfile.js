@@ -7,7 +7,7 @@ const del = require('del');
 const gulp = require('gulp');
 const sequence = require('run-sequence');
 const stylus = require('gulp-stylus');
-const minifyCSS = require('gulp-minify-css');
+const cleanCSS = require('gulp-clean-css');
 const install = require('gulp-install');
 const event = require('event-stream');
 const DEST = 'dist/';
@@ -21,7 +21,7 @@ gulp.task('stylus', () => {
     .pipe(stylus({
       compress: true
     }))
-    .pipe(minifyCSS())
+    .pipe(cleanCSS())
     .pipe(gulp.dest(DEST + 'css/'));
 });
 
@@ -30,7 +30,7 @@ gulp.task('stylus-dark', () => {
     .pipe(stylus({
       compress: true
     }))
-    .pipe(minifyCSS())
+    .pipe(cleanCSS())
     .pipe(gulp.dest('./theme/dark/css/'));
 });
 

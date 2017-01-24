@@ -1,0 +1,36 @@
+.pbr,
+.with-add-icon:after
+  transition all .2s ease-in-out
+  position absolute
+  right -8px
+  bottom -2px
+  border-radius 50%
+  width 1em
+  text-align center
+  background-color btn-success-bg
+  border 1px solid btn-success-bg
+
+.with-add-icon
+  position relative
+
+  &:after
+    content '\f055'
+    font-family 'FontAwesome'
+    font-size .5em
+
+.fa-rotate
+  transition all .2s ease-in-out
+  background-color btn-success-bg
+
+for deg in -6..6
+  .fa-rotate-n{deg * 5}
+    transform rotate(deg * 5deg)
+
+.btn-success:hover
+  .pbr,
+  .with-add-icon:after
+    background-color darken(btn-success-bg, 19%)
+    border-color darken(btn-success-bg, 19%)
+
+  .fa-rotate
+    background-color darken(btn-success-bg, 19%)
