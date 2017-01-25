@@ -91,7 +91,7 @@ class Uploader {
           height: 400
         });
         data = /\.png$/i.test(ext) ? data.toPNG() : data.toJPEG(85);
-        fs.writeFileSync(this.tmp + filename, data, err => {
+        fs.writeFile(this.tmp + filename, data, err => {
           if (err) {
             throw err;
           }

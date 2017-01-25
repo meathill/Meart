@@ -150,6 +150,7 @@ class Meart {
   loadConfig() {
     global.settings = this.settings = defaultConfig;
     if (!fs.existsSync(this.sitePath)) {
+      global.isNew = true;
       fs.mkdir(this.path + '/site', (err) => {
         if (!err || err.code === EXIST) {
           return this.startUp();

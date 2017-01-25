@@ -476,6 +476,9 @@
               <template v-if="isAwait">
                 <i class="fa fa-cloud-upload"></i> 开始上传
               </template>
+              <template v-else-if="isProgress">
+                <i class="fa fa-spinner fa-spin"></i> 上传中
+              </template>
               <template v-else>
                 <template v-if="isSuccess">
                   <i class="fa fa-check"></i> 上传完成

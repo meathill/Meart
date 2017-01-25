@@ -3,10 +3,7 @@ const router = require('./app/Router');
 const Publisher = require('./app/popup/Publish');
 const Uploader = require('./app/popup/Upload');
 const store = require('./app/store/index');
-const { DEBUG } = require('./config/config.json');
-if (DEBUG) {
-  require('./app/debug/inspect-element');
-}
+require('./app/debug/inspect-element');
 const helpers = require('./electron/template/helpers');
 
 const app = new Vue({
