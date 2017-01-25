@@ -244,6 +244,7 @@
             <p class="card-text">{{article.description}}</p>
             <small class="text-muted">创建时间：<time :datetime="article.createTime | toDate">{{article.createTime | toMoment}}</time></small><br>
             <small class="text-muted">最后修改：<time :datetime="article.lastModifiedTime | toDate">{{article.lastModifiedTime | toMoment}}</time></small>
+            <span class="status badge" :class="article.status ? 'badge-default' : 'badge-success'">{{article.status ? '草稿' : '已发布'}}</span>
           </div>
         </a>
       </li>

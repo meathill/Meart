@@ -103,13 +103,20 @@ module.exports = {
     },
     onSelectFile(event) {
       this.checkNew();
-      let addon = Array.prototype.map.call(event.target.files, function (file) {
+      let addon = Array.prototype.map.call(event.target.files, file => {
         return {
           src: file.path,
           title: file.name,
           description: ''
         }
       });
+      if (!this.article.thumbnail && addon.length) {
+        this.$store.commit(MutationTypes.EDIT_ARTICLE, {
+          id: this.id,
+          key: 'thumbnail',
+          value: addon[0].src
+        });
+      }
       this.$store.commit(MutationTypes.ADD_PHOTO, {
         id: this.id,
         photos: addon
