@@ -47,7 +47,7 @@ module.exports = {
       });
       this.isSuccess = true;
       this.status = OVER;
-      $('#publish-modal').on('hidden.bs.modal', () => {
+      $('#publish-modal').one('hidden.bs.modal', () => {
         this.isSuccess = false;
         this.status = AWAIT;
       });

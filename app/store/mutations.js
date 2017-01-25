@@ -26,7 +26,9 @@ module.exports = {
     state.articles = articles;
   },
   [types.EDIT_ARTICLE] (state, {id, key, value}) {
-    state.articles[id]['lastModifiedTime'] = Date.now();
+    if (key != 'status') {
+      state.articles[id]['lastModifiedTime'] = Date.now();
+    }
     state.articles[id][key] = value;
   },
 

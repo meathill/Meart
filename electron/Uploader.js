@@ -7,23 +7,17 @@ const qiniu = require('qiniu');
 const md5 = require('md5-file/promise');
 const _ = require('underscore');
 const LOG_FILE = '../site/upload-record.json';
-let server;
-try {
-  server = require('../site/server.json');
-} catch (err) {
-
-}
 
 const IMG_REG = /(href|style|src)="(?!https?:\/\/)([^"]+\.(?:jpg|jpeg|png|webp))[")]/ig;
 
 class Uploader {
   /**
    *
-   * @param {Object} config
    * @param {EventEmitter} event
    * @param {String} path
    */
-  constructor(config, event, path) {
+  constructor(event, path) {
+    let config = require('../site/server.json');
     qiniu.conf.ACCESS_KEY = config.ACCESS_KEY;
     qiniu.conf.SECRET_KEY = config.SECRET_KEY;
     this.bucket = config.bucket;
@@ -38,7 +32,7 @@ class Uploader {
   }
 
   start() {
-    if (!server) {
+    if (!this.isServerConfigured()) {
       throw new Error('缺少服务器配置，无法上传。');
     }
     this.findFiles()
@@ -120,6 +114,10 @@ class Uploader {
   getToken(filename) {
     let putPolicy = new qiniu.rs.PutPolicy(this.bucket + ':' + filename);
     return putPolicy.token();
+  }
+
+  isServerConfigured() {
+    return qiniu.conf.ACCESS_KEY && qiniu.conf.SECRET_KEY && this.bucket;
   }
 
   /**

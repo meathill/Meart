@@ -16,13 +16,13 @@ class Publisher {
   /**
    * 构造函数
    *
-   * @param {object} site 站点信息
    * @param {EventEmitter} event 事件触发器
    *    @param {object} event.sender
    * @param {string} path 当前项目路径
    * @param {string} output [optional] 输出路径后缀
    */
-  constructor(site, event, path = __dirname, output = '') {
+  constructor(event, path = __dirname, output = '') {
+    let site = require('../site/site.json');
     site.articles = site.articles.filter( article => {
       return article && article.status === 0;
     }).sort( (a, b) => { // 按 id 倒序
@@ -56,6 +56,7 @@ class Publisher {
 
   static catchAll(err) {
     console.log(err);
+    fs.writeFile(this.output + 'log', JSON.stringify(err));
   }
 
   copyAssets() {

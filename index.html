@@ -434,6 +434,9 @@
               <template v-if="isAwait">
                 <i class="fa fa-play"></i> 开始发布
               </template>
+              <template v-else-if="isProgress">
+                <i class="fa fa-spin fa-spinner"></i> 正在发布
+              </template>
               <template v-else>
                 <template v-if="isSuccess">
                   <i class="fa fa-check"></i> 发布完成

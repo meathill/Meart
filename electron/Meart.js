@@ -1,4 +1,4 @@
-const {app, BrowserWindow, ipcMain} = require('electron');
+const {app, BrowserWindow, ipcMain, Menu} = require('electron');
 const path = require('path');
 const url = require('url');
 const fs = require('fs');
@@ -9,6 +9,7 @@ const defaultConfig = require('../config/default.json');
 const { DEBUG } = require('../config/config.json');
 const Publisher = require('./Publisher');
 const Uploader = require('./Uploader');
+const menuTemplate = require('./menu');
 const EXIST = 'EEXIST';
 
 class Meart {
@@ -21,7 +22,10 @@ class Meart {
   }
 
   startUp() {
-    if (this.isAppReady && this.site && !this.isStarted) {
+    if (this.isAppReady && !this.isStarted) {
+      if (!DEBUG) {
+        Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate));
+      }
       this.isStarted = true;
       this.createWindow();
     }
@@ -108,21 +112,14 @@ class Meart {
     });
 
     ipcMain.on('/site/init', (event, site) => {
-      global.site = this.site = site;
-      global.isNew = false;
       fs.writeFile(this.sitePath, JSON.stringify(site), 'utf8');
       event.returnValue = true;
     });
 
-    ipcMain.on('/article/new', (event) => {
-      event.returnValue = this.site.articles.length + 1;
-    });
-
     ipcMain.on('/site/save', (event, site) => {
       let now = Date.now();
-      this.site = site;
-      this.site.lastModifiedTime = now;
-      fs.writeFile(this.sitePath, JSON.stringify(this.site), 'utf8', err => {
+      site.lastModifiedTime = now;
+      fs.writeFile(this.sitePath, JSON.stringify(site), 'utf8', err => {
         if (err) {
           throw err;
         }
@@ -131,7 +128,6 @@ class Meart {
     });
 
     ipcMain.on('/server/save', (event, server) => {
-      this.site.server = server;
       fs.writeFile(this.path + '/site/server.json', JSON.stringify(server), 'utf8', err => {
         if (err) {
           throw err;
@@ -141,12 +137,12 @@ class Meart {
     });
 
     ipcMain.on('/publish/', (event) => {
-      let publisher = new Publisher(this.site, event, this.path);
+      let publisher = new Publisher(event, this.path);
       publisher.start();
     });
 
     ipcMain.on('/upload/', (event) => {
-      let uploader = new Uploader(this.site.server, event, this.output);
+      let uploader = new Uploader(event, this.output);
       uploader.start();
     });
   }
@@ -154,8 +150,6 @@ class Meart {
   loadConfig() {
     global.settings = this.settings = defaultConfig;
     if (!fs.existsSync(this.sitePath)) {
-      global.site = this.site = {};
-      global.isNew = true;
       fs.mkdir(this.path + '/site', (err) => {
         if (!err || err.code === EXIST) {
           return this.startUp();
@@ -164,14 +158,7 @@ class Meart {
       });
       return;
     }
-    let sitePromise = this.readFile(this.sitePath, 'site');
-    sitePromise
-      .then(() => {
-        this.startUp();
-      })
-      .catch( err => {
-        console.log(err);
-      });
+    this.startUp();
   }
 
   readFile(file, field, defaults = {}) {
