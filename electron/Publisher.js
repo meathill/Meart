@@ -16,12 +16,11 @@ class Publisher {
   /**
    * 构造函数
    *
-   * @param {EventEmitter} event 事件触发器
-   *    @param {object} event.sender
+   * @param {object} sender
    * @param {string} path 当前项目路径
    * @param {string} output [optional] 输出路径后缀
    */
-  constructor(event, path = __dirname, output = '') {
+  constructor(sender, path = __dirname, output = '') {
     let site = require('../site/site.json');
     site.articles = site.articles.filter( article => {
       return article && article.status === 0;
@@ -29,7 +28,7 @@ class Publisher {
       return b.id - a.id;
     });
     this.site = site;
-    this.event = event;
+    this.sender = sender;
     this.output = path + '/output/' + (output ? output + '/' : '');
     let theme = this.site.siteTheme;
     this.themePath = path + '/theme/' + theme + '/';
@@ -49,7 +48,7 @@ class Publisher {
       .then(this.logVersions.bind(this))
       .then(this.dispatchFinish.bind(this))
       .catch( err => {
-        this.event.sender.send('/publish/error/', err);
+        this.sender.send('/publish/error/', err);
         Publisher.catchAll(err);
       });
   }
@@ -60,7 +59,7 @@ class Publisher {
   }
 
   copyAssets() {
-    this.event.sender.send('/publish/progress/', '复制静态资源', 90);
+    this.sender.send('/publish/progress/', '复制静态资源', 90);
     return new Promise( resolve => {
       ncp(this.themePath + 'css', this.output + 'css', err => {
         if (err) {
@@ -72,7 +71,7 @@ class Publisher {
   }
 
   createArchives(templates) {
-    this.event.sender.send('/publish/progress/', '生成索引页', 40);
+    this.sender.send('/publish/progress/', '生成索引页', 40);
     let pageSize = this.themeOptions.pageSize;
     let total = Math.ceil(this.site.articles.length / pageSize);
     if (!total) {
@@ -110,7 +109,7 @@ class Publisher {
   createArticles(templates) {
     let progress = 40 / this.site.articles.length;
     let count = 0;
-    this.event.sender.send('/publish/progress/', '准备生成单个相册', 45);
+    this.sender.send('/publish/progress/', '准备生成单个相册', 45);
     return Promise.all(this.site.articles.map( article => {
       article = _.extend(article, _.pick(this.site, 'siteTitle', 'siteDesc', 'siteIcon', 'siteTags'));
       let html = templates.article(article);
@@ -119,7 +118,7 @@ class Publisher {
           if (err) {
             throw err;
           }
-          this.event.sender.send('/publish/progress/', '生成相册', 25 + progress * (count + 1));
+          this.sender.send('/publish/progress/', '生成相册', 25 + progress * (count + 1));
           count++;
           resolve();
         });
@@ -128,7 +127,7 @@ class Publisher {
   }
 
   createIndex(templates) {
-    this.event.sender.send('/publish/progress/', '生成首页', 35);
+    this.sender.send('/publish/progress/', '生成首页', 35);
     return new Promise( resolve => {
       fs.writeFile(this.output + 'index.html', templates.index(this.site), 'utf8', err => {
         if (err) {
@@ -140,12 +139,12 @@ class Publisher {
   }
 
   dispatchFinish(time) {
-    this.event.sender.send('/publish/finish/', time);
+    this.sender.send('/publish/finish/', time);
     return true;
   }
 
   generateOutputDirectory(options) {
-    this.event.sender.send('/publish/progress/', '生成导出目录', 5);
+    this.sender.send('/publish/progress/', '生成导出目录', 5);
     if (fs.existsSync(this.output)) {
       return del([this.output + 'css', this.output + '*.html' ]);
     }
@@ -175,7 +174,7 @@ class Publisher {
   }
 
   getThemeTemplates(options = {}) {
-    this.event.sender.send('/publish/progress/', '读取模板文件列表', 10);
+    this.sender.send('/publish/progress/', '读取模板文件列表', 10);
     let template = ['index', 'archive', 'article'];
     if (!options.templates) {
       return template;
@@ -184,7 +183,7 @@ class Publisher {
   }
 
   logVersions() {
-    this.event.sender.send('/publish/progress/', '记录生成细细', 95);
+    this.sender.send('/publish/progress/', '记录生成细细', 95);
     let now = Date.now();
     let build = {
       publishTime: now
@@ -200,7 +199,7 @@ class Publisher {
   }
 
   readPartials(templates) {
-    this.event.sender.send('/publish/progress/', '读取子模板', 25);
+    this.sender.send('/publish/progress/', '读取子模板', 25);
     let partial = this.themePath + 'partial/';
     if (!fs.existsSync(partial)) { // 没有子模版就不处理
       return templates;
@@ -233,7 +232,7 @@ class Publisher {
   }
 
   readTemplates(templates) {
-    this.event.sender.send('/publish/progress/', '读取模板文件', 15);
+    this.sender.send('/publish/progress/', '读取模板文件', 15);
     templates = templates.map( template => {
       return new Promise( resolve => {
         fs.readFile(this.themePath + template + '.hbs', 'utf8', (err, content) => {
@@ -258,7 +257,7 @@ class Publisher {
   }
 
   readThemeOptions() {
-    this.event.sender.send('/publish/progress/', '读取模板信息', 0);
+    this.sender.send('/publish/progress/', '读取模板信息', 0);
     return new Promise( resolve => {
       fs.readFile(this.themePath + 'package.json', 'utf8', (err, content) => {
         if (err) {

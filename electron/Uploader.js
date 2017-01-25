@@ -13,17 +13,18 @@ const IMG_REG = /(href|style|src)="(?!https?:\/\/)([^"]+\.(?:jpg|jpeg|png|webp))
 class Uploader {
   /**
    *
-   * @param {EventEmitter} event
+   * @param {Object} sender
    * @param {String} path
    */
-  constructor(event, path) {
+  constructor(sender, path) {
     let config = require('../site/server.json');
     qiniu.conf.ACCESS_KEY = config.ACCESS_KEY;
     qiniu.conf.SECRET_KEY = config.SECRET_KEY;
     this.bucket = config.bucket;
-    this.event = event;
+    this.sender = sender;
     this.path = path;
     this.tmp = path + 'tmp/';
+    this.uploading = {};
     try {
       this.record = require(LOG_FILE);
     } catch (err) {
@@ -61,12 +62,12 @@ class Uploader {
    * @return {Promise}
    */
   findFiles() {
-    this.event.sender.send('/upload/progress/', '计算所有需要上传的内容', 0);
+    this.sender.send('/upload/progress/', '计算所有需要上传的内容', 0);
     return this.readDir(this.path);
   }
 
   finish() {
-    this.event.sender.send('/upload/finish/');
+    this.sender.send('/upload/finish/');
   }
 
   /**
@@ -78,7 +79,7 @@ class Uploader {
    * @returns {Promise}
    */
   generateThumbnail(images) {
-    this.event.sender.send('/upload/progress/', '开始生成缩略图');
+    this.sender.send('/upload/progress/', '开始生成缩略图');
     return Promise.all(images.filter( image => {
       return image.key;
     }).map( image => {
@@ -128,7 +129,7 @@ class Uploader {
    * @return {Promise}
    */
   readHTML(html, path) {
-    this.event.sender.send('/upload/progress/', '正在分析：' + html);
+    this.sender.send('/upload/progress/', '正在分析：' + html);
     return new Promise( resolve => {
       fs.readFile(path + html, 'utf8', (err, content) => {
         if (err) {
@@ -165,7 +166,7 @@ class Uploader {
    * @return {Promise}
    */
   replaceImageSrc(html, images, origin) {
-    this.event.sender.send('/upload/progress/', '生成新 HTML');
+    this.sender.send('/upload/progress/', '生成新 HTML');
     let map = _.object(_.pluck(images, 'src'), images);
     html = html.replace(IMG_REG, (match, attr, src) => {
       src = src.indexOf('url(') != -1 ? src.substr(src.indexOf('url(') + 4) : src;
@@ -197,7 +198,7 @@ class Uploader {
    * @return {Promise.<*>}
    */
   uploadAssets(files, dir = '') {
-    this.event.sender.send('/upload/progress/', '开始上传其它资源', 70);
+    this.sender.send('/upload/progress/', '开始上传其它资源', 70);
     return Promise.all(files.map( file => {
       file = dir ? dir + '/' + file : file;
       return new Promise( resolve => {
@@ -236,11 +237,14 @@ class Uploader {
    * @todo refresh CDN after uploaded
    */
   uploadFile(source, to = '', hash = '') {
-    this.event.sender.send('/upload/progress/', '开始上传：' + source);
+    if (this.uploading[source]) {
+      return this.uploading[source];
+    }
+    this.sender.send('/upload/progress/', '开始上传：' + source);
     let token = this.getToken(to);
     let extra = new qiniu.io.PutExtra();
     to = to || source;
-    return new Promise(resolve => {
+    this.uploading[source] = new Promise(resolve => {
       qiniu.io.putFile(token, to, source, extra, (err, result) => {
         if (err) {
           throw err;
@@ -251,6 +255,7 @@ class Uploader {
       .then( result => {
         return this.logResult(result, source, hash);
       });
+    return this.uploading[source];
   }
 
   /**
@@ -260,13 +265,13 @@ class Uploader {
    * @return {Promise}
    */
   uploadHTML(files) {
-    this.event.sender.send('/upload/progress/', '开始上传网页', 2);
+    this.sender.send('/upload/progress/', '开始上传网页', 2);
     let htmls = files.filter( file => {
       return /\.html$/.test(file);
     });
     let perpage = 68 / htmls.length;
     return Promise.all(htmls.map( (html, index) => {
-      this.event.sender.send('/upload/progress/', '准备上传：' + html, 2 + index * perpage);
+      this.sender.send('/upload/progress/', '准备上传：' + html, 2 + index * perpage);
       return this.uploadSingleHTML(html, perpage);
     }))
       .then( () => {
@@ -354,7 +359,7 @@ class Uploader {
    * @return {Promise}
    */
   uploadThumbnailImages(images) {
-    this.event.sender.send('/upload/progress/', '开始上传缩略图');
+    this.sender.send('/upload/progress/', '开始上传缩略图');
     return Promise.all(images.filter( image => {
       return image.thumbnail;
     }).map( image => {
@@ -370,13 +375,7 @@ class Uploader {
     console.log(err);
   }
 
-  logResult(result, source, hash) { // 记录下最后上传状态，避免重复上传同样的文件，节省时间
-    this.record[source] = Date.now();
-    fs.writeFile(this.path + LOG_FILE, JSON.stringify(this.record), 'utf8', err => {
-      if (err) {
-        throw err;
-      }
-    });
+  logResult(result, source, hash) {
     console.log('Uploaded: ', source, hash, result);
     result.hash = hash; // 为了避免本地计算的 md5 和服务器不一致
     result.src = source;

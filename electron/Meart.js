@@ -136,13 +136,13 @@ class Meart {
       })
     });
 
-    ipcMain.on('/publish/', (event) => {
-      let publisher = new Publisher(event, this.path);
+    ipcMain.on('/publish/', event => {
+      let publisher = new Publisher(event.sender, this.path);
       publisher.start();
     });
 
-    ipcMain.on('/upload/', (event) => {
-      let uploader = new Uploader(event, this.output);
+    ipcMain.on('/upload/', event => {
+      let uploader = new Uploader(event.sender, this.output);
       uploader.start();
     });
   }
