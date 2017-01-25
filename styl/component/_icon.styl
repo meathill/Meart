@@ -1,3 +1,7 @@
+.fa-stack
+  background-color inherit
+  border-color inherit
+
 .pbr,
 .with-add-icon:after
   transition all .2s ease-in-out
@@ -7,8 +11,9 @@
   border-radius 50%
   width 1em
   text-align center
-  background-color btn-success-bg
-  border 1px solid btn-success-bg
+  background-color inherit
+  border 1px solid
+  border-color inherit
 
 .with-add-icon
   position relative
@@ -20,17 +25,8 @@
 
 .fa-rotate
   transition all .2s ease-in-out
-  background-color btn-success-bg
+  background-color inherit
 
 for deg in -6..6
   .fa-rotate-n{deg * 5}
     transform rotate(deg * 5deg)
-
-.btn-success:hover
-  .pbr,
-  .with-add-icon:after
-    background-color darken(btn-success-bg, 19%)
-    border-color darken(btn-success-bg, 19%)
-
-  .fa-rotate
-    background-color darken(btn-success-bg, 19%)

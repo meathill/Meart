@@ -23,7 +23,7 @@
       </router-link>
       <router-link to="/articles" class="btn btn-secondary btn-block" title="相册">
         <i class="fa fa-photo"></i><br>
-        相册
+        作品集
       </router-link>
       <router-link to="/config" class="btn btn-secondary btn-block" title="设置">
         <i class="fa fa-cogs"></i><br>
@@ -233,7 +233,7 @@
 
 <script type="text/x-template" id="article-list-template">
   <div id="article-list" class="article-list article">
-    <h2>相册</h2>
+    <h2>作品集</h2>
     <hr>
     <ul class="list row">
       <li v-for="article in isVisible(articles)" class="col-sm-4 single-article">
@@ -255,7 +255,7 @@
             <i class="fa fa-plus-circle pbr"></i>
           </span>
           <br>
-          <span class="caption">创建新相册</span>
+          <span class="caption">创建新作品集</span>
         </button>
       </li>
     </ul>
@@ -291,7 +291,7 @@
         </div>
         <div class="col-sm-2">
           <div class="form-group">
-            <label for="draft">发布状态</label>
+            <label for="draft">作品集状态</label>
             <select v-model.number="status" id="draft" class="form-control fa" :class="publishedClass" :disabled="isNew">
               <option value="0" class="fa-check">&#xf00c 发布</option>
               <option value="1">草稿</option>
@@ -321,9 +321,14 @@
           </div>
         </li>
         <li class="col-sm-4 add">
-          <label class="btn btn-secondary btn-block">
-            <i class="fa fa-plus"></i>
-            <input type="file" accept="image/*" @change="onSelectFile">
+          <label class="btn btn-success btn-block">
+            <span class="fa-stack fa-lg">
+              <i class="fa fa-picture-o fa-stack-2x"></i>
+              <i class="fa fa-plus-circle pbr"></i>
+            </span>
+            <br>
+            <span class="caption">添加新作品</span>
+            <input type="file" accept="image/*" @change="onSelectFile" multiple>
           </label>
         </li>
       </ul>
@@ -372,17 +377,7 @@
                 <p>
                   <img :src="avatar" @click="easter" class="img-thumbnail card-img-top">
                 </p>
-                <p class="card-text">
-                  我有不少设计师或者搞摄影的朋友，有一天我觉得做这样一款软件帮他们建站应该是个好主意。
-                </p>
-                <p class="card-text">
-                  于是我就做了。
-                </p>
-                <p class="card-text">
-                  感谢你来使用，欢迎反馈任何问题给我：
-                </p>
-                <a href="https://weibo.com/meathill" @click.prevent="openExternal"><i class="fa fa-weibo"></i> 我的微博</a> &nbsp;
-                <a href="mailto:meathill@qq.com" @click.prevent="openExternal"><i class="fa fa-envelope"></i> 发邮件</a>
+                <article v-html="author"></article>
               </div>
             </div>
           </div>

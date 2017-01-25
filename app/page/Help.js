@@ -38,9 +38,6 @@ module.exports = {
         this.avatar = 'http://qiniu.meathill.com/wp-content/uploads/2011/08/MG_9178.jpg';
       }
     },
-    openExternal(event) {
-      shell.openExternal(event.target.href);
-    },
     readMD(md, key = '') {
       key = key || md;
       $.get(`docs/${md}.md`)

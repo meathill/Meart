@@ -1,4 +1,4 @@
-const remote = require('electron').remote;
+const {remote, shell} = require('electron');
 const router = require('./app/Router');
 const Publisher = require('./app/popup/Publish');
 const Uploader = require('./app/popup/Upload');
@@ -28,3 +28,11 @@ if (remote.getGlobal('isNew')) {
     name: 'articleList'
   });
 }
+
+$('#app').click('a', (event) => {
+  let href = event.target.href;
+  if (/^https?:\/\//.test(href)) {
+    shell.openExternal(href);
+    event.preventDefault();
+  }
+});
