@@ -3,12 +3,14 @@
  */
 const fs = require('fs');
 const { nativeImage } = require('electron');
-const qiniu = require('qiniu');
+const qn = require('qn');
 const md5 = require('md5-file/promise');
 const _ = require('underscore');
+const cheerio = require('cheerio');
 const LOG_FILE = '../site/upload-record.json';
 
 const IMG_REG = /(href|style|src)="(?!https?:\/\/)([^"]+\.(?:jpg|jpeg|png|webp))[")]/ig;
+const URL_REG = /url\((?!https?:\/\/)([^)]+\.(?:jpg|jpeg|png|webp))\)/ig;
 
 class Uploader {
   /**
@@ -18,9 +20,16 @@ class Uploader {
    */
   constructor(sender, path) {
     let config = require('../site/server.json');
-    qiniu.conf.ACCESS_KEY = config.ACCESS_KEY;
-    qiniu.conf.SECRET_KEY = config.SECRET_KEY;
-    this.bucket = config.bucket;
+    if (!Uploader.isServerConfigured(config)) {
+      throw new Error('服务器配置信息不全');
+    }
+    this.qiniu = qn.create({
+      accessKey: config.ACCESS_KEY,
+      secretKey: config.SECRET_KEY,
+      bucket: config.bucket,
+      origin: `http://${config.bucket}.u.qiniudn.com`,
+      uploadURL: 'http://up-z2.qiniu.com'
+    });
     this.sender = sender;
     this.path = path;
     this.tmp = path + 'tmp/';
@@ -33,14 +42,26 @@ class Uploader {
   }
 
   start() {
-    if (!this.isServerConfigured()) {
-      throw new Error('缺少服务器配置，无法上传。');
-    }
-    this.findFiles()
+    this.createTempFolder()
+      .then(this.findFiles.bind(this))
       .then(this.uploadHTML.bind(this))
       .then(this.uploadAssets.bind(this))
       .then(this.finish.bind(this))
       .catch(Uploader.catchAll);
+  }
+
+  createTempFolder() {
+    if (fs.existsSync(this.tmp)) {
+      return Promise.resolve();
+    }
+    return new Promise( resolve => {
+      fs.mkdir(this.tmp, err => {
+        if (err) {
+          throw err;
+        }
+        resolve();
+      });
+    });
   }
 
   findAllImages(html) {
@@ -107,21 +128,6 @@ class Uploader {
   }
 
   /**
-   * Get qiniu token
-   *
-   * @param {String} filename
-   * @return {String}
-   */
-  getToken(filename) {
-    let putPolicy = new qiniu.rs.PutPolicy(this.bucket + ':' + filename);
-    return putPolicy.token();
-  }
-
-  isServerConfigured() {
-    return qiniu.conf.ACCESS_KEY && qiniu.conf.SECRET_KEY && this.bucket;
-  }
-
-  /**
    * Get the html content
    *
    * @param {String} html 文件名
@@ -152,7 +158,7 @@ class Uploader {
         if (err) {
           throw err;
         }
-        resolve(_.without(files, 'tmp', '.DS_Store')); // tmp 目录用来存放缩略图
+        resolve(_.without(files, 'tmp', '.DS_Store', 'upload.log')); // tmp 目录用来存放缩略图
       });
     });
   }
@@ -168,18 +174,29 @@ class Uploader {
   replaceImageSrc(html, images, origin) {
     this.sender.send('/upload/progress/', '生成新 HTML');
     let map = _.object(_.pluck(images, 'src'), images);
-    html = html.replace(IMG_REG, (match, attr, src) => {
-      src = src.indexOf('url(') != -1 ? src.substr(src.indexOf('url(') + 4) : src;
-      let image = map[src];
-      let ext = image.src.substr(image.src.lastIndexOf('.'));
-      let to;
-      if (attr != 'href') {
-        to = image.thumbnail || 'images/' + image.hash + '@h400' + ext;
-      } else {
-        to = image.key || 'images/' + image.hash + ext;
-      }
-      return match.replace(src, to);
+    let $ = cheerio.load(html, {
+      decodeEntities: false
     });
+    $('img').attr('src', (i, src) => {
+      let image = map[src];
+      let ext = src.substr(src.lastIndexOf('.'));
+      return image.key || 'images/' + image.hash + ext;
+    });
+    $('[style]').attr('style', function (i, style) {
+      let useSource = $(this).hasClass('carousel-item') || $(this).hasClass('use-source');
+      return style.replace(URL_REG, (match, src) => {
+        let image = map[src];
+        let ext = src.substr(src.lastIndexOf('.'));
+        let to;
+        if (useSource) {
+          to = image.key || 'images/' + image.hash + ext;
+        } else {
+          to = 'images/' + (image.thumbnail || image.hash + '@h400' + ext);
+        }
+        return match.replace(src, to);
+      });
+    });
+    html = $.html();
     return new Promise( resolve => {
       fs.writeFile(this.tmp + origin, html, 'utf8', err => {
         if (err) {
@@ -241,12 +258,17 @@ class Uploader {
       return this.uploading[source];
     }
     this.sender.send('/upload/progress/', '开始上传：' + source);
-    let token = this.getToken(to);
-    let extra = new qiniu.io.PutExtra();
     to = to || source;
     this.uploading[source] = new Promise(resolve => {
-      qiniu.io.putFile(token, to, source, extra, (err, result) => {
+      this.qiniu.uploadFile(source, {key: to}, (err, result) => {
         if (err) {
+          if (err.code === 614) {
+            return resolve({
+              key: to,
+              hash: hash,
+              src: source
+            });
+          }
           throw err;
         }
         resolve(result);
@@ -255,6 +277,7 @@ class Uploader {
       .then( result => {
         return this.logResult(result, source, hash);
       });
+    fs.appendFile(this.path + 'upload.log', `Upload: ${source}\n`, 'utf8');
     return this.uploading[source];
   }
 
@@ -375,8 +398,19 @@ class Uploader {
     console.log(err);
   }
 
+  static isServerConfigured(config) {
+    return config.ACCESS_KEY && config.SECRET_KEY && config.bucket;
+  }
+
   logResult(result, source, hash) {
+    this.record[source] = Date.now();
+    fs.writeFile(this.path + LOG_FILE, JSON.stringify(this.record), 'utf8', err => {
+      if (err) {
+        throw err;
+      }
+    });
     console.log('Uploaded: ', source, hash, result);
+    fs.appendFile(this.path + 'upload.log', `Upload ok: ${source}`, 'utf8');
     result.hash = hash; // 为了避免本地计算的 md5 和服务器不一致
     result.src = source;
     return result;
