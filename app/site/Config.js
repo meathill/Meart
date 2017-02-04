@@ -99,6 +99,18 @@ module.exports = {
         });
         this.$store.dispatch(ActionTypes.SAVE_SERVER);
       }
+    },
+    serverHost: {
+      get() {
+        return this.$store.state.server.host;
+      },
+      set(value) {
+        this.$store.commit(MutationTypes.SET_SERVER_PROP, {
+          key: 'host',
+          value: value
+        });
+        this.$store.dispatch(ActionTypes.SAVE_SERVER);
+      }
     }
   }, Vuex.mapState([
     'siteIcon'

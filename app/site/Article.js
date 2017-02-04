@@ -37,6 +37,9 @@ module.exports = {
     article() {
       return this.isNew ? _.defaults({}, defaults) : this.$store.state.articles[this.id];
     },
+    host() {
+      return this.$store.state.server.host || 'http://您的网站/';
+    },
     publishedClass() {
       return this.article.status === 0 ? ['bg-success', 'text-white'] : '';
     }

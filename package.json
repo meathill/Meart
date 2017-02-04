@@ -1,12 +1,12 @@
 {
   "name": "Meart",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "A static web builder made for designer or photographer to show their portfolios.",
   "main": "index.js",
   "scripts": {
     "test": "mocha",
     "publish-theme": "node publish-theme",
-    "build": "electron-packager dist app --platform=darwin --arch=x64 --electron-version=1.4.15 --overwrite"
+    "build": "electron-packager dist app --platform=darwin --arch=x64 --electron-version=1.5.0 --overwrite"
   },
   "repository": {
     "type": "git",
@@ -34,6 +34,7 @@
     "mkdirp": "^0.5.1",
     "moment": "^2.17.1",
     "ncp": "^2.0.0",
+    "qiniu": "^6.1.13",
     "qn": "^1.3.0",
     "underscore": "^1.8.3",
     "vue": "^2.1.8",
