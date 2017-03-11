@@ -1,4 +1,10 @@
 .article
+  &.article-list
+    h2
+      font-size 1.875rem
+      line-height 3em
+      margin-bottom 0
+
   .list
     padding 0
 
@@ -21,26 +27,28 @@
       height 250px
       object-fit cover
 
-    a.card
+    a.card,
+    .add .btn
+      min-height 26rem
+      border-radius 0
+      box-shadow 0 4px 8px rgba(0,0,0,.2)
       color black
 
       &:hover
-        background-color alert-info-bg
-        border-color brand-primary
+        box-shadow 0 2px 4px rgba(0,0,0,.5)
+        color black
         text-decoration none
 
+      .card-img-top
+        border-radius 0
+
     .add
+      i
+        line-height 3em
 
       .btn
+        color muted-color
         cursor pointer
-        padding 3rem 0 0
-
-      .fa-stack
-        font-size 3em
-
-      .caption
-        line-height 4
-        font-size 2rem
 
       input
         display none

@@ -17,16 +17,13 @@
 <script type="text/x-template" id="home-template">
   <div id="home">
     <aside>
-      <router-link to="/preview" class="btn btn-secondary btn-block" title="查看网站">
-        <i class="fa fa-home"></i><br>
-        查看网站
-      </router-link>
-      <router-link to="/articles" class="btn btn-secondary btn-block" title="相册">
-        <i class="fa fa-photo"></i><br>
+      <router-link to="/articles" class="btn btn-secondary" title="相册">
         作品集
       </router-link>
-      <router-link to="/config" class="btn btn-secondary btn-block" title="设置">
-        <i class="fa fa-cogs"></i><br>
+      <router-link to="/preview" class="btn btn-secondary" title="查看网站">
+        查看网站
+      </router-link>
+      <router-link to="/config" class="btn btn-secondary" title="设置">
         设置
       </router-link>
       <router-link to="/help" class="btn btn-outline-secondary btn-block secondary" title="帮助"><i class="fa fa-question"></i></router-link>
@@ -38,7 +35,7 @@
 </script>
 
 <script type="text/x-template" id="welcome-template">
-  <form class="carousel slide welcome-panel" data-ride="carousel" data-interval="0" data-keyboard="false" id="welcome-wizard" @submit.prevent="onSubmit" @slid.bs.carousel="onSlide">
+  <form class="carousel slide welcome-panel" data-ride="carousel" data-interval="0" data-keyboard="false" id="welcome-wizard" @submit.prevent="onSubmit">
     <div class="carousel-inner" role="listbox">
       <div class="carousel-item active">
         <section>
@@ -50,7 +47,7 @@
           <a href="#welcome-wizard" data-slide="next" role="button" class="btn btn-primary btn-lg carousel-control">开始创建网站</a>
         </footer>
       </div>
-      <div class="carousel-item">
+      <div class="carousel-item info">
         <fieldset>
           <legend>基本信息</legend>
           <div class="form-group">
@@ -237,8 +234,7 @@
 
 <script type="text/x-template" id="article-list-template">
   <div id="article-list" class="article-list article">
-    <h2>作品集</h2>
-    <hr>
+    <h2>我的作品集</h2>
     <ul class="list row">
       <li v-for="article in isVisible(articles)" class="col-sm-4 single-article">
         <a :href="getHref(article.id)" class="card">
@@ -253,14 +249,10 @@
         </a>
       </li>
       <li class="article add col-sm-4">
-        <button type="button" class="btn btn-success btn-block" v-on:click="add">
-          <span class="fa-stack fa-lg">
-            <i class="fa fa-picture-o fa-stack-2x fa-rotate-n-25"></i>
-            <i class="fa fa-picture-o fa-stack-2x fa-rotate"></i>
-            <i class="fa fa-plus-circle pbr"></i>
-          </span>
+        <button type="button" class="btn btn-secondary btn-block" v-on:click="add">
+          <i class="fa fa-plus fa-4x text-danger"></i>
           <br>
-          <span class="caption">创建新作品集</span>
+          <span class="caption">新建作品集</span>
         </button>
       </li>
     </ul>

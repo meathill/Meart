@@ -35,7 +35,7 @@ module.exports = {
     }
   },
   methods: {
-    onSubmit(event) {
+    onSubmit() {
       let data = _.pick(this.$data, [
         'siteTitle',
         'siteDesc',
@@ -55,9 +55,20 @@ module.exports = {
         name: 'articleList'
       });
     },
+    onSlide(event) {
+      console.log(event);
+    },
     onSelectFile(event) {
       let file = event.target.files[0];
       this.siteIcon = file.path;
     }
+  },
+  mounted() {
+    $(this.$el).on('slid.bs.carousel', (event) => {
+      let target = $(event.relatedTarget);
+      if (target.hasClass('info')) {
+        target.find('input').focus();
+      }
+    });
   }
 };

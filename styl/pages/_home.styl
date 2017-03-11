@@ -1,6 +1,5 @@
-aside-width = 80px
-gap = 10px
-button-size = aside-width - gap * 2
+aside-width = 8.75rem
+gap = 1rem
 
 #home
   height 100%
@@ -11,43 +10,39 @@ button-size = aside-width - gap * 2
     top: 0
     left: 0
     bottom: 0
-    padding gap
 
     > a.btn
-      height button-size
-      font-size 0.75em
-      line-height 1.5em
+      background-color #444
+      border none
+      border-radius 0
+      color muted-color
+      display block
+      height aside-width
+      line-height aside-width
       padding 0
 
-      + a.btn
-        margin gap 0 0
-
-      > i
-        font-size 2em
-        line-height 1.5em
+      &:hover,
+      &:active
+        background-color lighten(#444, 15%)
+        color white
 
       &.router-link-active
-        background-color darken(white, 10%)
-        border-color darken(white, 12%)
-        background-image none
-        box-shadow inset 0 3px 5px rgba(0,0,0,.125)
+        background-color active-color
+        color white
 
       &.secondary
-        position absolute
+        background-color transparent
         border none
-        line-height button-size
-        left gap
-        bottom gap
-        width button-size
-
-        > i
-          line-height button-size
+        position absolute
+        left 0
+        bottom 0
+        width aside-width
 
   .container-fluid
-    background-color white
+    background-color blur-background-color
     min-height 100%
     margin-left aside-width
-    padding-top 15px
+    padding-left 2rem
 
   .settings
     .card-img-top
