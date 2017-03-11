@@ -1,16 +1,82 @@
 .welcome-panel
   background-color white
-  margin-top 2rem
   border-radius 4px
   box-shadow 0 2px 4px rgba(0, 0, 0, 0.1)
-  min-height 600px
+  height 480px
+  width 60%
+  padding 0 3em
+  display flex
+  flex-direction column
+
+  .carousel-inner,
+  .carousel-item
+    height 100%
 
   .carousel-item
     flex-direction column
 
-  h2
+    section,
+    fieldset
+      flex 1
+
+    footer
+      padding 0 0 1.5em
+      text-align center
+
+    fieldset
+      padding 1rem 0 0
+
+      legend
+        margin-bottom 0
+        padding 3rem 0 0
+
+    input,
+    textarea
+      background-color blur-background-color
+      color muted-color
+
+      &::-webkit-input-placeholder
+        color muted-color
+
+      &:focus
+        background-color white
+        color black
+
+  .btn-primary
+    background-color active-color
+    border none
+    border-radius 3.5rem
+    font-size 1.5rem
+    min-width 10rem
+
+    &:hover,
+    &:active
+      background-color lighten(active-color, 15%)
+
+  .theme-list .card
+    overflow hidden
+
+    .card-img-overlay
+      color white
+      padding .5rem
+      background-color rgba(0,0,0,.2)
+      transition all 0.2s
+      transform translateY(7.5rem)
+
+      h4
+        font-size .9rem
+
+      p
+        font-size .8rem
+
+    &:hover .card-img-overlay
+      transform translateY(0)
+
+  h1
     text-align center
     line-height 3em
+    margin-bottom 0
+    font-weight normal
 
   .carousel-control
     position static
