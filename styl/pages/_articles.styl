@@ -1,5 +1,7 @@
 .article
   &.article-list
+    padding-left 2rem
+
     h2
       font-size 1.875rem
       line-height 3em
@@ -55,9 +57,24 @@
 
   &.single
     header
-      .thumbnail img
-        max-height 200px
-        object-fit cover
+      background-color white
+      border-bottom 1px solid border-color
+      padding 2rem
+
+      .row
+        margin 0
+
+      [class|=col]
+        padding 0
+
+      .thumbnail
+        padding-right 1rem
+        img
+          max-height 200px
+          object-fit cover
+
+      h1
+        font-size 1.875rem
 
       > *:last-child
         padding-top 3rem
@@ -73,6 +90,7 @@
           border-color brand-primary
 
     .album
+      padding 1rem
       .delete-button
         background-color transparent
         border-color currentColor

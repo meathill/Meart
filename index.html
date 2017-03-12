@@ -274,7 +274,7 @@
             <h1>{{article.title | defaultValue('title')}}</h1>
           </editor>
           <editor :origin-value="article.description" @change="onEditorChange('description', $event)">
-            <p class="lead">{{article.description | defaultValue('description')}}</p>
+            <p>{{article.description | defaultValue('description')}}</p>
           </editor>
           <editor :origin-value="article.url" @change="onEditorChange('url', $event)">
             <p>
@@ -299,7 +299,6 @@
           </editor>
         </div>
       </header>
-      <hr>
       <ul class="row list album">
         <li v-for="(photo, index) in article.album" class="col-sm-4 photo" :class="{ active: photo.isActive }">
           <div class="card">
