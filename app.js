@@ -7,6 +7,9 @@ require('./app/system/contextMenu');
 require('./electron/template/helpers');
 
 const app = new Vue({
+  data: {
+    isNew: true
+  },
   store,
   router
 }).$mount('#app');
@@ -21,6 +24,7 @@ if (remote.getGlobal('isNew')) {
     name: "welcome"
   });
 } else {
+  app.isNew = false;
   router.push({
     name: 'articleList'
   });

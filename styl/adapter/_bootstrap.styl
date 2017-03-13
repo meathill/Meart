@@ -1,2 +1,22 @@
-.nav-tabs
-  margin-bottom 1rem
+h2
+  font-size 1.875rem
+
+.form-control
+  background-color blur-background-color
+  color muted-color
+
+  &::-webkit-input-placeholder
+    color muted-color
+
+  &:focus
+    border-color active-color
+
+.btn-outline-primary
+  color active-color
+  border-color active-color
+
+  &:hover,
+  &:active
+    background-color active-color
+    border-color darken(active-color,10%)
+    color white

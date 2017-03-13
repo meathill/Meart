@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="css/screen.css">
 </head>
 <body>
-<div id="app">
+<div id="app" :class="isNew ? 'welcome' : ''">
   <router-view></router-view>
 </div>
 
@@ -110,19 +110,19 @@
   <div id="preview">
     <header>
       <h2>预览网站</h2>
-      <p>上次生成时间：<time :datetime="publishTime | toDate" v-if="publishTime">{{publishTime | toMoment}}</time>
-        <span class="badge badge-success" v-if="publishTime > lastModifiedTime"><i class="fa fa-check"></i> 最新</span>
-        | 最近修改时间：<time :datetime="lastModifiedTime | toDate" v-if="lastModifiedTime">{{lastModifiedTime | toMoment}}</time>
+      <p class="text-muted">上次生成时间：<time :datetime="publishTime | toDate" v-if="publishTime">{{publishTime | toMoment}}</time>
+        <span class="badge badge-success" v-if="publishTime > lastModifiedTime"><i class="fa fa-check"></i> 最新</span><br>
+        最近修改时间：<time :datetime="lastModifiedTime | toDate" v-if="lastModifiedTime">{{lastModifiedTime | toMoment}}</time>
       </p>
       <div class="button-group" role="group" aria-label="发布操作">
-        <a href="#publish-modal" class="btn btn-primary" data-toggle="modal"><i class="fa fa-archive"></i> 发布网站</a>
-        <a href="#upload-modal" class="btn btn-success" :data-toggle="hasUpload ? 'modal' : ''" :class="{disabled: !hasUpload}"><i class="fa fa-cloud-upload"></i> 上传到服务器</a>
+        <a href="#publish-modal" class="btn btn-outline-primary" data-toggle="modal">发布网站</a>
+        <a href="#upload-modal" class="btn btn-outline-success" :data-toggle="hasUpload ? 'modal' : ''" :class="{disabled: !hasUpload}">上传到服务器</a>
       </div>
     </header>
     <nav class="navbar navbar-light bg-faded" v-if="publishTime">
-      <form class="form-inline float-xs-left">
-        <button type="button" class="btn btn-secondary btn-sm" @click="goBack"><i class="fa fa-chevron-left"></i></button>
-        <button type="button" class="btn btn-secondary btn-sm" @click="refresh"><i class="fa fa-refresh"></i></button>
+      <form class="form-inline float-left">
+        <button type="button" class="btn btn-secondary" @click="goBack"><i class="fa fa-chevron-left"></i></button>
+        <button type="button" class="btn btn-secondary" @click="refresh"><i class="fa fa-refresh"></i></button>
       </form>
     </nav>
     <iframe src="output/index.html" v-if="publishTime" :height="height"></iframe>
@@ -135,17 +135,18 @@
 
 <script type="text/x-template" id="config-template">
   <div id="config">
-    <h2>设置</h2>
-    <hr>
+    <header>
+      <h2>设置</h2>
+    </header>
     <ul class="nav nav-tabs" role="tablist">
       <li class="nav-item">
         <a href="#site-config" class="nav-link active" data-toggle="tab" role="tab">
-          <i class="fa fa-info-circle"></i> 网站信息
+          网站信息
         </a>
       </li>
       <li class="nav-item">
         <a href="#site-server" class="nav-link" data-toggle="tab" role="tab">
-          <i class="fa fa-server"></i> 服务器信息
+          服务器信息
         </a>
       </li>
     </ul>
@@ -169,6 +170,12 @@
               <label class="col-sm-2 col-form-label" for="site-icon">网站图标</label>
               <div class="col-sm-2">
                 <img v-if="siteIcon" :src="siteIcon" class="img-thumbnail site-icon">
+              </div>
+              <div class="col-sm-2">
+                <label class="btn btn-outline-secondary">
+                  <input type="file" @change="onFileSelect">
+                  重新上传
+                </label>
               </div>
             </div>
             <div class="form-group row">
@@ -250,7 +257,7 @@
       </li>
       <li class="article add col-sm-4">
         <button type="button" class="btn btn-secondary btn-block" v-on:click="add">
-          <i class="fa fa-plus fa-4x text-danger"></i>
+          <i class="fa fa-plus fa-4x"></i>
           <br>
           <span class="caption">新建作品集</span>
         </button>
@@ -263,13 +270,13 @@
   <article class="single article">
     <template>
       <header class="row">
-        <div class="col-sm-3 thumbnail">
+        <div class="col-sm-4 thumbnail">
           <input type="file" class="hide" id="article-thumbnail" @change="onSelectThumbnail">
           <label for="article-thumbnail">
             <img :src="article.thumbnail | defaultValue('thumbnail')" class="img-thumbnail">
           </label>
         </div>
-        <div class="col-sm-7">
+        <div class="col-sm-5">
           <editor :origin-value="article.title" @change="onEditorChange('title', $event)">
             <h1>{{article.title | defaultValue('title')}}</h1>
           </editor>
@@ -281,22 +288,22 @@
               <u><small class="text-muted">{{host}}</small>{{article.url | defaultValue('url')}}<small class="text-muted">.html</small></u>
             </p>
           </editor>
+          <editor :origin-value="article.tags" @change="onEditorChange('tags', $event)">
+            <p>{{article.tags | defaultValue('tags')}}</p>
+          </editor>
           <p class="text-muted">
             <small>创建时间：<time :datetime="article.createTime | toDate">{{article.createTime | toMoment}}</time></small> |
             <small>修改时间：<time :datetime="article.lastModifiedTime | toDate">{{article.lastModifiedTime | toMoment}}</time></small>
           </p>
         </div>
-        <div class="col-sm-2">
-          <div class="form-group">
-            <label for="draft">作品集状态</label>
-            <select v-model.number="status" id="draft" class="form-control fa" :class="publishedClass" :disabled="isNew">
+        <div class="col-sm-2 offset-sm-1">
+          <div class="form-group row form-inline">
+            <label for="draft" class="col-sm-4">状态：</label>
+            <select v-model.number="status" id="draft" class="form-control fa col-sm-8" :class="publishedClass" :disabled="isNew">
               <option value="0" class="fa-check">&#xf00c 发布</option>
               <option value="1">草稿</option>
             </select>
           </div>
-          <editor :origin-value="article.tags" @change="onEditorChange('tags', $event)">
-            <p>{{article.tags | defaultValue('tags')}}</p>
-          </editor>
         </div>
       </header>
       <ul class="row list album">
@@ -317,11 +324,8 @@
           </div>
         </li>
         <li class="col-sm-4 add">
-          <label class="btn btn-success btn-block">
-            <span class="fa-stack fa-lg">
-              <i class="fa fa-picture-o fa-stack-2x"></i>
-              <i class="fa fa-plus-circle pbr"></i>
-            </span>
+          <label class="btn btn-secondary btn-block">
+            <i class="fa fa-plus fa-4x"></i>
             <br>
             <span class="caption">添加新作品</span>
             <input type="file" accept="image/*" @change="onSelectFile" multiple>
