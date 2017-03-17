@@ -26,7 +26,7 @@
       <router-link to="/config" class="btn btn-secondary" title="设置">
         设置
       </router-link>
-      <router-link to="/help" class="btn btn-outline-secondary btn-block secondary" title="帮助"><i class="fa fa-question"></i></router-link>
+      <router-link to="/help" class="btn btn-outline-secondary btn-block secondary" title="帮助"><i class="fa fa-question-circle-o fa-2x"></i></router-link>
     </aside>
     <router-view class="container-fluid">
 
@@ -108,7 +108,7 @@
 
 <script type="text/x-template" id="preview-template">
   <div id="preview">
-    <header>
+    <header class="row">
       <h2>预览网站</h2>
       <p class="text-muted">上次生成时间：<time :datetime="publishTime | toDate" v-if="publishTime">{{publishTime | toMoment}}</time>
         <span class="badge badge-success" v-if="publishTime > lastModifiedTime"><i class="fa fa-check"></i> 最新</span><br>
@@ -119,13 +119,15 @@
         <a href="#upload-modal" class="btn btn-outline-success" :data-toggle="hasUpload ? 'modal' : ''" :class="{disabled: !hasUpload}">上传到服务器</a>
       </div>
     </header>
-    <nav class="navbar navbar-light bg-faded" v-if="publishTime">
+    <nav class="navbar navbar-light bg-faded row" v-if="publishTime">
       <form class="form-inline float-left">
         <button type="button" class="btn btn-secondary" @click="goBack"><i class="fa fa-chevron-left"></i></button>
         <button type="button" class="btn btn-secondary" @click="refresh"><i class="fa fa-refresh"></i></button>
       </form>
     </nav>
-    <iframe src="output/index.html" v-if="publishTime" :height="height"></iframe>
+    <div class="row">
+      <iframe src="output/index.html" v-if="publishTime" :height="height"></iframe>
+    </div>
     <div class="alert alert-warning" v-else>
       <p>您还没有生成过网站页面，无法提供预览效果。</p>
       <a href="#publish-modal" class="btn btn-primary btn-lg" data-toggle="modal"><i class="fa fa-archive"></i> 立刻发布网站</a>
@@ -135,10 +137,10 @@
 
 <script type="text/x-template" id="config-template">
   <div id="config">
-    <header>
+    <header class="row">
       <h2>设置</h2>
     </header>
-    <ul class="nav nav-tabs" role="tablist">
+    <ul class="nav nav-tabs row" role="tablist">
       <li class="nav-item">
         <a href="#site-config" class="nav-link active" data-toggle="tab" role="tab">
           网站信息
@@ -150,90 +152,90 @@
         </a>
       </li>
     </ul>
-    <div class="tab-content">
-      <div id="site-config" class="tab-pane active"role="tabpanel">
-        <div class="settings">
-          <form>
-            <div class="form-group row">
-              <label class="col-sm-2 col-form-label" for="site-title">网点名称</label>
-              <div class="col-sm-10">
-                <input class="form-control" id="site-title" v-model="siteTitle">
+    <div class="row">
+      <div class="tab-content">
+        <div id="site-config" class="tab-pane active"role="tabpanel">
+          <div class="settings">
+            <form>
+              <div class="form-group row">
+                <label class="col-sm-2 col-form-label" for="site-title">网点名称</label>
+                <div class="col-sm-10">
+                  <input class="form-control" id="site-title" v-model="config.siteTitle">
+                </div>
               </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-sm-2 col-form-label" for="site-desc">网站简介</label>
-              <div class="col-sm-10">
-                <textarea class="form-control" id="site-desc" v-model="siteDesc" rows="2"></textarea>
+              <div class="form-group row">
+                <label class="col-sm-2 col-form-label" for="site-desc">网站简介</label>
+                <div class="col-sm-10">
+                  <textarea class="form-control" id="site-desc" v-model="config.siteDesc" rows="2"></textarea>
+                </div>
               </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-sm-2 col-form-label" for="site-icon">网站图标</label>
-              <div class="col-sm-2">
-                <img v-if="siteIcon" :src="siteIcon" class="img-thumbnail site-icon">
+              <div class="form-group row">
+                <label class="col-sm-2 col-form-label" for="site-icon">网站图标</label>
+                <div class="col-sm-4">
+                  <img v-if="config.siteIcon" :src="config.siteIcon" class="img-thumbnail site-icon">
+                  <label class="btn btn-secondary">
+                    <input type="file" @change="onSelectFile" class="hide">
+                    重新上传
+                  </label>
+                </div>
               </div>
-              <div class="col-sm-2">
-                <label class="btn btn-outline-secondary">
-                  <input type="file" @change="onFileSelect">
-                  重新上传
-                </label>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-sm-2 col-form-label">网站模板</label>
-              <div class="col-sm-10">
-                <div class="row theme-list">
-                  <div class="col-sm-4" v-for="theme in themes">
-                    <input type="radio" name="site-theme" class="hide" v-model="siteTheme" :value="theme.dir" :id="'theme-' + theme.dir">
-                    <label class="card" :for="'theme-' + theme.dir">
-                      <img class="card-img-top img-fluid" :src="'theme/' + theme.dir + '/' + theme.thumbnail" alt="默认模板" v-if="theme.thumbnail">
-                      <div class="card-block">
-                        <h4 class="card-title">{{theme.name}}</h4>
-                        <p class="card-text">{{theme.description}}</p>
-                      </div>
-                    </label>
+              <div class="form-group row">
+                <label class="col-sm-2 col-form-label">网站模板</label>
+                <div class="col-sm-10">
+                  <div class="row theme-list">
+                    <div class="col-sm-3" v-for="theme in themes">
+                      <input type="radio" name="site-theme" class="hide" v-model="config.siteTheme" :value="theme.dir" :id="'theme-' + theme.dir">
+                      <label class="card" :for="'theme-' + theme.dir">
+                        <img class="card-img img-fluid" :src="'theme/' + theme.dir + '/' + theme.thumbnail" alt="默认模板" v-if="theme.thumbnail">
+                        <div class="card-img-overlay">
+                          <h4 class="card-title">{{theme.name}}</h4>
+                          <p class="card-text">{{theme.description}}</p>
+                        </div>
+                      </label>
+                    </div>
                   </div>
                 </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div id="site-server" class="tab-pane" role="tabpanel">
+          <form @submit.prevent="saveServerSettings" >
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label" for="server-name">服务器名称</label>
+              <div class="col-sm-10">
+                <select class="form-control" id="server-name" v-model="config.server.name">
+                  <option value="qiniu">七牛</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label" for="ACCESS_KEY">Access Key</label>
+              <div class="col-sm-10">
+                <input type="password" class="form-control" id="access_key" v-model="config.server.ACCESS_KEY">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label" for="SECRET_KEY">Secret Key</label>
+              <div class="col-sm-10">
+                <input type="password" class="form-control" id="secret_key" v-model="config.server.SECRET_KEY">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label" for="bucket">存放空间</label>
+              <div class="col-sm-10">
+                <input class="form-control" id="bucket" v-model="config.server.bucket">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label" for="host">域名</label>
+              <div class="col-sm-10">
+                <input class="form-control" id="host" v-model="config.server.host">
+                <p class="form-text text-muted">用于刷新 CDN 缓存，请包含 <code>http://</code> 或者 <code>https://</code>，以 <code>/</code> 结束。</p>
               </div>
             </div>
           </form>
         </div>
-      </div>
-      <div id="site-server" class="tab-pane" role="tabpanel">
-        <form @submit.prevent="saveServerSettings" >
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label" for="server-name">服务器名称</label>
-            <div class="col-sm-10">
-              <select class="form-control" id="server-name" v-model="serverName">
-                <option value="qiniu">七牛</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label" for="ACCESS_KEY">Access Key</label>
-            <div class="col-sm-10">
-              <input type="password" class="form-control" id="access_key" v-model="serverACCESS_KEY">
-            </div>
-          </div>
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label" for="SECRET_KEY">Secret Key</label>
-            <div class="col-sm-10">
-              <input type="password" class="form-control" id="secret_key" v-model="serverSECRET_KEY">
-            </div>
-          </div>
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label" for="bucket">存放空间</label>
-            <div class="col-sm-10">
-              <input class="form-control" id="bucket" v-model="serverBucket">
-            </div>
-          </div>
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label" for="host">域名</label>
-            <div class="col-sm-10">
-              <input class="form-control" id="host" v-model="serverHost">
-              <p class="form-text text-muted">用于刷新 CDN 缓存，请包含 <code>http://</code> 或者 <code>https://</code>，以 <code>/</code> 结束。</p>
-            </div>
-          </div>
-        </form>
       </div>
     </div>
   </div>
@@ -241,7 +243,7 @@
 
 <script type="text/x-template" id="article-list-template">
   <div id="article-list" class="article-list article">
-    <h2>我的作品集</h2>
+    <h2 class="row">我的作品集</h2>
     <ul class="list row">
       <li v-for="article in isVisible(articles)" class="col-sm-4 single-article">
         <a :href="getHref(article.id)" class="card">
@@ -345,9 +347,10 @@
 
 <script type="text/x-template" id="help-template">
   <div id="help">
-    <h2>帮助</h2>
-    <hr>
-    <ul class="nav nav-tabs" role="tablist">
+    <header class="row">
+      <h2 class="row">帮助</h2>
+    </header>
+    <ul class="nav nav-tabs row" role="tablist">
       <li class="nav-item">
         <a class="nav-link active" data-toggle="tab" role="tab" href="#help-detail">帮助</a>
       </li>
@@ -358,51 +361,56 @@
         <a class="nav-link" data-toggle="tab" role="tab" href="#help-author">作者</a>
       </li>
     </ul>
-    <div class="tab-content">
-      <div class="tab-pane active" id="help-detail" role="tabpanel" v-html="tutorial">
-      </div>
-      <div class="tab-pane" id="help-about" role="tabpanel">
-        <article v-html="about"></article>
-        <h3>当前版本：</h3>
-        <p>{{version}}</p>
-      </div>
-      <div class="tab-pane" id="help-author" role="tabpanel">
-        <div class="row">
-          <div class="col-sm-6">
-            <h3>
-              你好，我是 Meart 的开发者 Meathill
-            </h3>
-            <div class="card">
-              <div class="card-block">
-                <p>
-                  <img :src="avatar" @click="easter" class="img-thumbnail card-img-top">
-                </p>
-                <article v-html="author"></article>
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-6">
-            <h3>请我喝杯咖啡吧</h3>
-            <div class="row">
-              <div class="col-sm-6">
-                <div class="card">
-                  <header class="card-header">
-                    微信
-                  </header>
-                  <img src="img/weixin-qrcode.jpg" class="card-img-top img-fluid img-thumbnail">
-                  <div class="card-block">
-                    <p class="card-text">扫一扫，让我有更多的时间完善这款软件。</p>
-                  </div>
+    <div class="row">
+      <div class="tab-content">
+        <div class="tab-pane active" id="help-detail" role="tabpanel">
+          <article v-html="tutorial">
+
+          </article>
+        </div>
+        <div class="tab-pane" id="help-about" role="tabpanel">
+          <article v-html="about"></article>
+          <h3>当前版本：</h3>
+          <p>{{version}}</p>
+        </div>
+        <div class="tab-pane" id="help-author" role="tabpanel">
+          <div class="row">
+            <div class="col-sm-6">
+              <h3>
+                你好，我是 Meart 的开发者 Meathill
+              </h3>
+              <div class="card">
+                <div class="card-block">
+                  <p>
+                    <img :src="avatar" @click="easter" class="img-thumbnail card-img-top">
+                  </p>
+                  <article v-html="author"></article>
                 </div>
               </div>
-              <div class="col-sm-6">
-                <div class="card">
-                  <header class="card-header">
-                    支付宝
-                  </header>
-                  <img src="img/zhifubao-qrcode.jpg" class="card-img-top img-fluid img-thumbnail">
-                  <div class="card-block">
-                    <p class="card-text">扫一扫，拥有更强的功能，更多的模板。</p>
+            </div>
+            <div class="col-sm-6">
+              <h3>请我喝杯咖啡吧</h3>
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="card">
+                    <header class="card-header">
+                      微信
+                    </header>
+                    <img src="img/weixin-qrcode.jpg" class="card-img-top img-fluid img-thumbnail">
+                    <div class="card-block">
+                      <p class="card-text">扫一扫，让我有更多的时间完善这款软件。</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="card">
+                    <header class="card-header">
+                      支付宝
+                    </header>
+                    <img src="img/zhifubao-qrcode.jpg" class="card-img-top img-fluid img-thumbnail">
+                    <div class="card-block">
+                      <p class="card-text">扫一扫，拥有更强的功能，更多的模板。</p>
+                    </div>
                   </div>
                 </div>
               </div>

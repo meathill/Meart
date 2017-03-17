@@ -16,6 +16,11 @@ module.exports = {
   [types.SET_SERVER_PROP] (state, {key, value}) {
     state.server[key] = value;
   },
+  [types.EDIT_CONFIG](state, config) {
+    _.each(config, (value, key) => {
+      state[key] = value;
+    });
+  },
 
   [types.ADD_ARTICLE] (state, { id }) {
     let articles = state.articles;

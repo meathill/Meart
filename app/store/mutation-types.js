@@ -13,6 +13,7 @@ module.exports = {
 
   'SET_SITE_PROP': 'setSiteProp',
   'SET_SERVER_PROP': 'setServerProp',
+  'EDIT_CONFIG': 'editConfig',
 
   'SAVED': 'saved',
 

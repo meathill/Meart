@@ -38,10 +38,17 @@ gap = 1rem
         bottom 0
         width aside-width
 
+        &.router-link-active
+          color active-color
+
   .container-fluid
     background-color blur-background-color
     min-height 100%
     margin-left aside-width
+
+    > header
+      padding 2rem
+      border-bottom 1px solid border-color
 
   .settings
     .card-img-top

@@ -1,4 +1,26 @@
 .theme-list
+  .card
+    overflow hidden
+
+    .card-img
+      width 100%
+
+    .card-img-overlay
+      color white
+      padding .5rem
+      background-color rgba(0,0,0,.2)
+      transition all 0.2s
+      transform translateY(7.5rem)
+
+      h4
+        font-size .9rem
+
+      p
+        font-size .8rem
+
+    &:hover .card-img-overlay
+      transform translateY(0)
+
   input:checked + label.card
     color active-color
 

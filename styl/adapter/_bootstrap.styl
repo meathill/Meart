@@ -20,3 +20,32 @@ h2
     background-color active-color
     border-color darken(active-color,10%)
     color white
+
+.btn-secondary:hover
+  color active-color
+  background-color transparent
+  border-color active-color
+
+.nav-tabs
+  .nav-item
+    min-width 12.5rem
+    text-align center
+
+  .nav-link
+    border-top none
+    border-bottom none
+    border-right-color border-color
+    color gray
+    font-size 1.25rem
+    line-height 2.2
+
+    &.active
+      color active-color
+
+  + div.row
+    flex 1
+
+.tab-content
+  background-color white
+  padding 2rem
+  width 100%
