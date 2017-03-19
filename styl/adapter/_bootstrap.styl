@@ -3,7 +3,7 @@ h2
 
 .form-control
   background-color blur-background-color
-  color muted-color
+  color gray
 
   &::-webkit-input-placeholder
     color muted-color
@@ -31,10 +31,17 @@ h2
     min-width 12.5rem
     text-align center
 
+    + .nav-item .nav-link
+      border-left-color border-color
+
+    &:last-child .nav-link
+      border-right 1px solid border-color
+
   .nav-link
     border-top none
     border-bottom none
-    border-right-color border-color
+    border-right none
+    border-radius 0
     color gray
     font-size 1.25rem
     line-height 2.2

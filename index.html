@@ -348,7 +348,7 @@
 <script type="text/x-template" id="help-template">
   <div id="help">
     <header class="row">
-      <h2 class="row">帮助</h2>
+      <h2>帮助</h2>
     </header>
     <ul class="nav nav-tabs row" role="tablist">
       <li class="nav-item">
@@ -375,46 +375,30 @@
         </div>
         <div class="tab-pane" id="help-author" role="tabpanel">
           <div class="row">
-            <div class="col-sm-6">
-              <h3>
-                你好，我是 Meart 的开发者 Meathill
-              </h3>
-              <div class="card">
-                <div class="card-block">
-                  <p>
-                    <img :src="avatar" @click="easter" class="img-thumbnail card-img-top">
-                  </p>
-                  <article v-html="author"></article>
-                </div>
-              </div>
-            </div>
-            <div class="col-sm-6">
-              <h3>请我喝杯咖啡吧</h3>
+            <article class="col-sm-6">
+              <h3>你好，我是 Meart 的开发者 Meathill</h3>
+              <p>
+                <img :src="avatar" @click="easter" class="img-thumbnail card-img-top">
+              </p>
+              <article v-html="author"></article>
+            </article>
+            <article class="col-sm-6">
+              <h3>如果觉得 Meart 不错，<br>请我喝杯咖啡吧</h3>
               <div class="row">
                 <div class="col-sm-6">
-                  <div class="card">
-                    <header class="card-header">
-                      微信
-                    </header>
-                    <img src="img/weixin-qrcode.jpg" class="card-img-top img-fluid img-thumbnail">
-                    <div class="card-block">
-                      <p class="card-text">扫一扫，让我有更多的时间完善这款软件。</p>
-                    </div>
-                  </div>
+                  <img src="img/weixin-qrcode.jpg" class="card-img-top img-fluid img-thumbnail">
+                  <p class="t-a-c">微信支付</p>
                 </div>
                 <div class="col-sm-6">
-                  <div class="card">
-                    <header class="card-header">
-                      支付宝
-                    </header>
-                    <img src="img/zhifubao-qrcode.jpg" class="card-img-top img-fluid img-thumbnail">
-                    <div class="card-block">
-                      <p class="card-text">扫一扫，拥有更强的功能，更多的模板。</p>
-                    </div>
-                  </div>
+                  <img src="img/zhifubao-qrcode.jpg" class="card-img-top img-fluid img-thumbnail">
+                  <p class="t-a-c">支付宝支付</p>
                 </div>
               </div>
-            </div>
+              <p class="lead">
+                您的支持是我坚持下去的动力，<br>
+                THANK YOU All！
+              </p>
+            </article>
           </div>
         </div>
       </div>
