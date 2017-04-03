@@ -6,11 +6,6 @@ const actions = require('./actions');
 const getters = require('./getters');
 let site, publish, server;
 try {
-  site = require('../../site/site.json');
-} catch (e) {
-  site = {};
-}
-try {
   publish = require('../../output/build.json');
 } catch (e) {
   publish = {
