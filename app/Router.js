@@ -43,11 +43,7 @@ const routes = [
   {
     path: '/welcome',
     name: 'welcome',
-    component: Welcome,
-    beforeRouteLeave(to, from, next) {
-      this.$emit('site-submit');
-      next();
-    }
+    component: Welcome
   }
 ];
 module.exports = new VueRouter({

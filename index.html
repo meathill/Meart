@@ -44,17 +44,17 @@
           <p>接下来，请跟随向导指引，完成网初始化。</p>
         </section>
         <footer>
-          <a href="#welcome-wizard" data-slide="next" role="button" class="btn btn-primary btn-lg carousel-control">开始创建网站</a>
+          <a href="#welcome-wizard" data-slide="next" role="button" class="btn btn-primary btn-lg carousel-control" tabindex="0">开始创建网站</a>
         </footer>
       </div>
       <div class="carousel-item info">
         <fieldset>
           <legend>基本信息</legend>
           <div class="form-group">
-            <input class="form-control" name="site-title" id="site-title" placeholder="网站名称，比如“我的作品”" v-model="siteTitle">
+            <input class="form-control" name="site-title" id="site-title" placeholder="网站名称，比如“我的作品”" v-model="siteTitle" tabindex="1">
           </div>
           <div class="form-group">
-            <textarea class="form-control" name="site-desc" id="site-desc" rows="3" placeholder="网站描述，在某些主题中会显示，主要用作被搜索时展示" v-model="siteDesc">
+            <textarea class="form-control" name="site-desc" id="site-desc" rows="3" placeholder="网站描述，在某些主题中会显示，主要用作被搜索时展示" v-model="siteDesc" tabindex="2">
             </textarea>
           </div>
           <div class="form-group">
@@ -62,14 +62,14 @@
               <img class="rounded img-thumbnail" :src="siteIcon" width="80" height="80">
             </p>
             <input type="file" class="hide" id="site-icon" @change="onSelectFile">
-            <label class="btn btn-secondary" for="site-icon">
+            <label class="btn btn-secondary" for="site-icon" tabindex="3">
               网站图标
             </label>
             <span class="text-muted"><small>（png，ico 格式，可选）</small></span>
           </div>
         </fieldset>
         <footer>
-          <a href="#welcome-wizard" data-slide="next" role="button" class="btn btn-primary btn-lg carousel-control">下一步</a>
+          <a href="#welcome-wizard" data-slide="next" role="button" class="btn btn-primary btn-lg carousel-control" tabindex="4">下一步</a>
         </footer>
       </div>
       <div class="carousel-item">

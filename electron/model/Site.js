@@ -35,11 +35,17 @@ class Site {
   }
 
   initSite(event, site)  {
-    fs.writeFile(this.dataPath, JSON.stringify(site), 'utf8');
+    global.site = this.site = site;
+    fs.writeFile(this.dataPath, JSON.stringify(site), 'utf8', err => {
+      if (err) {
+        throw err;
+      }
+    });
     event.returnValue = true;
   }
 
   saveServer(event, server) {
+    global.server = this.server = server;
     fs.writeFile(this.serverPath, JSON.stringify(server), 'utf8', err => {
       if (err) {
         throw err;
@@ -51,6 +57,7 @@ class Site {
   saveSite(event, site) {
     let now = Date.now();
     site.lastModifiedTime = now;
+    this.site = global.site = site;
     fs.writeFile(this.dataPath, JSON.stringify(site), 'utf8', err => {
       if (err) {
         throw err;

@@ -6,6 +6,7 @@ const Editor = require('../component/Editor');
 const moment = require('../mixin/moment');
 const MutationTypes = require('../store/mutation-types');
 const ActionTypes = require('../store/action-types');
+const { assignRecursive } = require('../utils/object');
 const defaults = require('./../store/articleDefault.json');
 const map = Array.prototype.map;
 
@@ -30,12 +31,13 @@ module.exports = {
       return this.article.status === 0 ? ['bg-success', 'text-white'] : '';
     }
   },
-  beforeDestroy() {
+  beforeRouteLeave(from, to, next) {
     this.$store.commit(MutationTypes.SAVE_ARTICLE, {
       id: this.id,
       article: this.article
     });
     this.$store.dispatch(ActionTypes.SAVE);
+    next();
   },
   created() {
     let id = this.$route.params.id;
@@ -43,7 +45,7 @@ module.exports = {
       this.isNew = false;
       this.id = id = Number(id);
     }
-    this.article = _.extend({}, this.isNew ? defaults : this.$store.state.site.articles[this.id]);
+    this.article = this.isNew ? _.extend({}, defaults) : assignRecursive(this.$store.state.site.articles[this.id]);
   },
   filters: {
     defaultValue(value, key) {

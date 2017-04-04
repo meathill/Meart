@@ -11,7 +11,12 @@ const app = new Vue({
     isNew: true
   },
   store,
-  router
+  router,
+  methods: {
+    onSiteInit() {
+      this.isNew = false;
+    }
+  }
 }).$mount('#app');
 
 Publisher.store = store;
@@ -23,7 +28,8 @@ if (remote.getGlobal('isNew')) {
   router.push({
     name: "welcome"
   });
-  router.$once('site-submit', () => {
+  router.app.$once('site-init', () => {
+    console.log('ok');
     app.isNew = false;
   });
 } else {

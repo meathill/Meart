@@ -51,7 +51,7 @@ module.exports = {
           value: value
         });
       });
-      this.$emit('submit');
+      this.$router.app.$emit('site-init');
       this.$router.push({
         name: 'articleList'
       });
