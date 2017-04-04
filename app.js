@@ -23,6 +23,9 @@ if (remote.getGlobal('isNew')) {
   router.push({
     name: "welcome"
   });
+  router.$once('site-submit', () => {
+    app.isNew = false;
+  });
 } else {
   app.isNew = false;
   router.push({

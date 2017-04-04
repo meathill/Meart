@@ -8,7 +8,7 @@ module.exports = {
   template: '#article-list-template',
   computed: {
     articles() {
-      return this.$store.state.articles;
+      return this.$store.state.site.articles;
     }
   },
   methods: {

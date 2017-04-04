@@ -2,12 +2,12 @@ const {app, BrowserWindow, Menu} = require('electron');
 const path = require('path');
 const url = require('url');
 const fs = require('fs');
-const _ = require('underscore');
 const moment = require('moment');
 const mkdirp = require('mkdirp');
 const defaultConfig = require('../config/default.json');
 const { DEBUG } = require('../config/config.json');
 const menuTemplate = require('./menu');
+const Site = require('./model/Site');
 const ipcHandler = require('./ipcHandler');
 const EXIST = 'EEXIST';
 
@@ -18,6 +18,7 @@ class Meart {
     this.appPath = app.getAppPath();
     this.path = app.getPath('home') + '/meart/';
     this.sitePath = this.path + '/site/site.json'; // 站点信息;
+    this.serverPath = this.path + '/site/server.json'; // 服务器配置
     this.output = this.path + '/output/';
     Promise.all([
       this.delegateEvent(),
@@ -87,18 +88,22 @@ class Meart {
     global.isNew = true;
     return new Promise(resolve => mkdirp(this.path + '/site', err => {
       if (!err || err.code === EXIST) {
-        resolve();
+        return resolve();
       }
       throw err;
     }));
   }
 
   loadSite() {
-    if (!fs.existsSync(this.sitePath)) {
+    let site = this.site = new Site(this.path);
+    if (!site.isExist) {
       return true;
     }
 
-    return require(this.sitePath);
+    if (fs.existsSync(this.output + 'build.json')) {
+      global.publish = this.publish = require(this.output + 'build.json');
+    }
+    return site;
   }
 
   static checkDebug() {

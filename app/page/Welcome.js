@@ -51,6 +51,7 @@ module.exports = {
           value: value
         });
       });
+      this.$emit('submit');
       this.$router.push({
         name: 'articleList'
       });

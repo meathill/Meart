@@ -4,6 +4,7 @@
 module.exports = {
   'ADD_ARTICLE': 'addArticle',
   'EDIT_ARTICLE': 'editArticle',
+  'SAVE_ARTICLE': 'saveArticle',
 
   'ADD_PHOTO': 'addPhoto',
   'EDIT_PHOTO': 'editPhoto',
@@ -14,6 +15,7 @@ module.exports = {
   'SET_SITE_PROP': 'setSiteProp',
   'SET_SERVER_PROP': 'setServerProp',
   'EDIT_CONFIG': 'editConfig',
+  'EDIT_SERVER': 'editServer',
 
   'SAVED': 'saved',
 

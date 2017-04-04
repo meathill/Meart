@@ -8,13 +8,13 @@ bower_components
 # build
 dist
 styl/*.css
-css/
+/css
 output
 *.asar
 app-darwin-x64
 
 # dev
 settings.json
-site/
+/site
 config/dev.json
 tmp/

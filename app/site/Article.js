@@ -7,6 +7,7 @@ const moment = require('../mixin/moment');
 const MutationTypes = require('../store/mutation-types');
 const ActionTypes = require('../store/action-types');
 const defaults = require('./../store/articleDefault.json');
+const map = Array.prototype.map;
 
 module.exports = {
   name: 'Article',
@@ -16,27 +17,12 @@ module.exports = {
   },
   data () {
     return {
+      article: null,
       isNew: true,
       id: null
     }
   },
   computed : {
-    status: {
-      get() {
-        return this.article.status;
-      },
-      set(value) {
-        this.$store.commit(MutationTypes.EDIT_ARTICLE, {
-          id: this.id,
-          key: 'status',
-          value: value
-        });
-        this.$store.dispatch(ActionTypes.SAVE);
-      }
-    },
-    article() {
-      return this.isNew ? _.defaults({}, defaults) : this.$store.state.articles[this.id];
-    },
     host() {
       return this.$store.state.server.host || 'http://您的网站/';
     },
@@ -44,12 +30,20 @@ module.exports = {
       return this.article.status === 0 ? ['bg-success', 'text-white'] : '';
     }
   },
+  beforeDestroy() {
+    this.$store.commit(MutationTypes.SAVE_ARTICLE, {
+      id: this.id,
+      article: this.article
+    });
+    this.$store.dispatch(ActionTypes.SAVE);
+  },
   created() {
     let id = this.$route.params.id;
-    if (id != 'new') {
+    if (id !== 'new') {
       this.isNew = false;
       this.id = id = Number(id);
     }
+    this.article = _.extend({}, this.isNew ? defaults : this.$store.state.site.articles[this.id]);
   },
   filters: {
     defaultValue(value, key) {
@@ -67,46 +61,26 @@ module.exports = {
       }
     },
     remove(index) {
-      this.$store.commit(MutationTypes.REMOVE_PHOTO, {
-        id: this.id,
-        index: index
-      });
-      this.$store.dispatch(ActionTypes.SAVE);
+      this.article.album.splice(index, 1);
     },
     onEditorChange(key, value) {
       this.checkNew();
-      this.$store.commit(MutationTypes.EDIT_ARTICLE, {
-        id: this.id,
-        key: key,
-        value: value
-      });
-      this.$store.dispatch(ActionTypes.SAVE);
+      this.article[key] = value;
     },
     onPhotoLoad(event, index) {
       if (this.article.album[index].aspectRatio) {
         return;
       }
-      this.$store.commit(MutationTypes.SET_PHOTO_ATTR, {
-        id: this.id,
-        index: index,
-        width: event.target.width,
-        height: event.target.height
-      });
-      this.$store.dispatch(ActionTypes.SAVE);
+      this.article.album[index].width = event.target.width;
+      this.article.album[index].height = event.target.height;
     },
     onPhotoChange(key, index, value) {
       this.checkNew();
-      this.$store.commit(MutationTypes.EDIT_PHOTO, {
-        id: this.id,
-        key: key,
-        index: index,
-        value: value
-      });
-      this.$store.dispatch(ActionTypes.SAVE);
+      this.article.album[index][key] = value;
     },
     onSelectFile(event) {
       this.checkNew();
-      let addon = Array.prototype.map.call(event.target.files, file => {
+      let addon = map.call(event.target.files, file => {
         return {
           src: file.path,
           title: file.name,
@@ -114,26 +88,13 @@ module.exports = {
         }
       });
       if (!this.article.thumbnail && addon.length) {
-        this.$store.commit(MutationTypes.EDIT_ARTICLE, {
-          id: this.id,
-          key: 'thumbnail',
-          value: addon[0].src
-        });
+        this.article.thumbnail = addon[0].src;
       }
-      this.$store.commit(MutationTypes.ADD_PHOTO, {
-        id: this.id,
-        photos: addon
-      });
-      this.$store.dispatch(ActionTypes.SAVE);
+      this.article.album = this.article.album.concat(addon);
     },
     onSelectThumbnail(event) {
       this.checkNew();
-      this.$store.commit(MutationTypes.EDIT_ARTICLE, {
-        id: this.id,
-        key: 'thumbnail',
-        value: event.target.files[0].path
-      });
-      this.$store.dispatch(ActionTypes.SAVE);
+      this.article.thumbnail = event.target.files[0].path;
     }
   },
   mixins: [moment]

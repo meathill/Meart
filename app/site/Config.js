@@ -12,7 +12,8 @@ module.exports = {
   template: '#config-template',
   data() {
     return {
-      config: _.pick(this.$store.state, 'siteTitle', 'siteDesc', 'siteTheme', 'siteIcon', 'server'),
+      config: _.pick(this.$store.state.site, 'siteTitle', 'siteDesc', 'siteTheme', 'siteIcon'),
+      server: _.extend({}, this.$store.state.server),
       themes: null
     };
   },
@@ -33,6 +34,7 @@ module.exports = {
   },
   beforeRouteLeave(to, from, next) {
     this.$store.commit(MutationTypes.EDIT_CONFIG, this.config);
+    this.$store.commit(MutationTypes.EDIT_SERVER, this.server);
     this.$store.dispatch(ActionTypes.SAVE_SERVER);
     this.$store.dispatch(ActionTypes.SAVE);
     next();

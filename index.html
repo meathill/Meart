@@ -204,7 +204,7 @@
             <div class="form-group row">
               <label class="col-sm-2 col-form-label" for="server-name">服务器名称</label>
               <div class="col-sm-10">
-                <select class="form-control" id="server-name" v-model="config.server.name">
+                <select class="form-control" id="server-name" v-model="server.name">
                   <option value="qiniu">七牛</option>
                 </select>
               </div>
@@ -212,25 +212,25 @@
             <div class="form-group row">
               <label class="col-sm-2 col-form-label" for="ACCESS_KEY">Access Key</label>
               <div class="col-sm-10">
-                <input type="password" class="form-control" id="access_key" v-model="config.server.ACCESS_KEY">
+                <input type="password" class="form-control" id="access_key" v-model="server.ACCESS_KEY">
               </div>
             </div>
             <div class="form-group row">
               <label class="col-sm-2 col-form-label" for="SECRET_KEY">Secret Key</label>
               <div class="col-sm-10">
-                <input type="password" class="form-control" id="secret_key" v-model="config.server.SECRET_KEY">
+                <input type="password" class="form-control" id="secret_key" v-model="server.SECRET_KEY">
               </div>
             </div>
             <div class="form-group row">
               <label class="col-sm-2 col-form-label" for="bucket">存放空间</label>
               <div class="col-sm-10">
-                <input class="form-control" id="bucket" v-model="config.server.bucket">
+                <input class="form-control" id="bucket" v-model="server.bucket">
               </div>
             </div>
             <div class="form-group row">
               <label class="col-sm-2 col-form-label" for="host">域名</label>
               <div class="col-sm-10">
-                <input class="form-control" id="host" v-model="config.server.host">
+                <input class="form-control" id="host" v-model="server.host">
                 <p class="form-text text-muted">用于刷新 CDN 缓存，请包含 <code>http://</code> 或者 <code>https://</code>，以 <code>/</code> 结束。</p>
               </div>
             </div>
@@ -301,7 +301,7 @@
         <div class="col-sm-2 offset-sm-1">
           <div class="form-group row form-inline">
             <label for="draft" class="col-sm-4">状态：</label>
-            <select v-model.number="status" id="draft" class="form-control fa col-sm-8" :class="publishedClass" :disabled="isNew">
+            <select v-model.number="article.status" id="draft" class="form-control fa col-sm-8" :class="publishedClass" :disabled="isNew">
               <option value="0" class="fa-check">&#xf00c 发布</option>
               <option value="1">草稿</option>
             </select>

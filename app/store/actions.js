@@ -12,7 +12,7 @@ module.exports = {
       console.log('saved');
       commit(mutations.SAVED, time);
     });
-    ipcRenderer.send('/site/save', state);
+    ipcRenderer.send('/site/save', state.site);
   },
 
   [actions.SAVE_SERVER] ( { state }) {

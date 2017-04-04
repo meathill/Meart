@@ -9,27 +9,18 @@ const Uploader = require('./Uploader');
 
 class ipcHandler {
 
-  constructor(appPath, docPath, sitePath, output) {
+  constructor(appPath, sitePath, output) {
     this.appPath = appPath;
-    this.docPath = docPath;
     this.sitePath = sitePath;
     this.output = output;
 
     ipcMain.on('/theme/', this.getThemesList.bind(this));
-
-    ipcMain.on('/site/init', this.initSite.bind(this));
-
-    ipcMain.on('/site/save', this.saveSite.bind(this));
-
-    ipcMain.on('/server/save', this.saveServer.bind(this));
-
     ipcMain.on('/publish/', this.publish.bind(this));
-
     ipcMain.on('/upload/', this.upload.bind(this));
   }
 
   getThemesList(event) {
-    let basePath = this.path + '/theme/';
+    let basePath = this.appPath + '/theme/';
     new Promise( resolve => {
       fs.readdir(basePath, 'utf8', (err, files) => {
         if (err) {
@@ -73,34 +64,9 @@ class ipcHandler {
       });
   }
 
-  initSite(event, site)  {
-    fs.writeFile(this.sitePath, JSON.stringify(site), 'utf8');
-    event.returnValue = true;
-  }
-
   publish(event) {
     let publisher = new Publisher(event.sender, this.sitePath);
     publisher.start();
-  }
-
-  saveServer(event, server) {
-    fs.writeFile(this.sitePath + '/server.json', JSON.stringify(server), 'utf8', err => {
-      if (err) {
-        throw err;
-      }
-      event.sender.send('saved');
-    });
-  }
-
-  saveSite(event, site) {
-    let now = Date.now();
-    site.lastModifiedTime = now;
-    fs.writeFile(this.sitePath, JSON.stringify(site), 'utf8', err => {
-      if (err) {
-        throw err;
-      }
-      event.sender.send('saved', now);
-    });
   }
 
   upload(event) {
