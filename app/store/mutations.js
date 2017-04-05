@@ -25,7 +25,7 @@ module.exports = {
   },
 
   [types.ADD_ARTICLE] (state, { id }) {
-    let articles = state.articles;
+    let articles = state.site.articles;
     let newArticle = _.clone(article);
     newArticle.id = id;
     newArticle.createTime = Date.now();

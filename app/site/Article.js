@@ -20,8 +20,10 @@ module.exports = {
     return {
       article: null,
       isNew: true,
-      id: null
-    }
+      id: null,
+      thumbnail: '',
+      addButton: ''
+    };
   },
   computed : {
     host() {
@@ -53,6 +55,20 @@ module.exports = {
     }
   },
   methods: {
+    addPhotos: function (files) {
+      this.checkNew();
+      let addon = map.call(files, file => {
+        return {
+          src: file.path,
+          title: file.name,
+          description: ''
+        }
+      });
+      if (!this.article.thumbnail && addon.length) {
+        this.article.thumbnail = addon[0].src;
+      }
+      this.article.album = this.article.album.concat(addon);
+    },
     checkNew: function () {
       if (this.isNew) {
         this.id = this.$store.getters.newID;
@@ -62,12 +78,37 @@ module.exports = {
         this.isNew = false;
       }
     },
-    remove(index) {
+    removePhoto(index) {
       this.article.album.splice(index, 1);
     },
-    onEditorChange(key, value) {
+    set: function (key, value) {
       this.checkNew();
       this.article[key] = value;
+    },
+    addButton_onDragEnd(event) {
+      if (event.dataTransfer.files) {
+        this.addPhotos(event.dataTransfer.files);
+      }
+    },
+    addButton_onDragEnter() {
+      this.addButton = 'active';
+    },
+    addButton_onDragExit() {
+      this.addButton = '';
+    },
+    thumbnail_onDragEnd(event) {
+      if (event.dataTransfer.files) {
+        this.set('thumbnail', event.dataTransfer.files[0].path);
+      }
+    },
+    thumbnail_onDragEnter() {
+      this.thumbnail = 'active';
+    },
+    thumbnail_onDragExit() {
+      this.thumbnail = '';
+    },
+    onEditorChange(key, value) {
+      this.set(key, value);
     },
     onPhotoLoad(event, index) {
       if (this.article.album[index].aspectRatio) {
@@ -81,22 +122,10 @@ module.exports = {
       this.article.album[index][key] = value;
     },
     onSelectFile(event) {
-      this.checkNew();
-      let addon = map.call(event.target.files, file => {
-        return {
-          src: file.path,
-          title: file.name,
-          description: ''
-        }
-      });
-      if (!this.article.thumbnail && addon.length) {
-        this.article.thumbnail = addon[0].src;
-      }
-      this.article.album = this.article.album.concat(addon);
+      this.addPhotos(event.target.files);
     },
     onSelectThumbnail(event) {
-      this.checkNew();
-      this.article.thumbnail = event.target.files[0].path;
+      this.set('thumbnail', event.target.files[0].path);
     }
   },
   mixins: [moment]

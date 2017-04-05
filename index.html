@@ -275,7 +275,7 @@
         <div class="col-sm-4 thumbnail">
           <input type="file" class="hide" id="article-thumbnail" @change="onSelectThumbnail">
           <label for="article-thumbnail">
-            <img :src="article.thumbnail | defaultValue('thumbnail')" class="img-thumbnail">
+            <img :src="article.thumbnail | defaultValue('thumbnail')" class="img-thumbnail"  :class="thumbnail" @dragend.prevent="thumbnail_onDragEnd" @dragenter="thumbnail_onDragEnter" @dragexit="thumbnail_onDragExit">
           </label>
         </div>
         <div class="col-sm-5">
@@ -311,7 +311,7 @@
       <ul class="row list album">
         <li v-for="(photo, index) in article.album" class="col-sm-4 photo" :class="{ active: photo.isActive }">
           <div class="card">
-            <button type="button" class="btn btn-sm btn-secondary delete-button" @click="remove(index)">
+            <button type="button" class="btn btn-sm btn-secondary delete-button" @click="removePhoto(index)">
               <i class="fa fa-trash"></i>
             </button>
             <img class="card-img-top img-fluid" :src="photo.src" :alt="photo.title" @load="onPhotoLoad($event, index)">
@@ -325,7 +325,7 @@
             </div>
           </div>
         </li>
-        <li class="col-sm-4 add">
+        <li class="col-sm-4 add" :class="addButton" @dragenter="addButton_onDragEnter" @dragexit="addButton_onDragExit" @dragend.prevent="addButton_onDragEnd">
           <label class="btn btn-secondary btn-block">
             <i class="fa fa-plus fa-4x"></i>
             <br>
