@@ -7,7 +7,8 @@
     "test": "mocha",
     "publish-theme": "node publish-theme",
     "watch:stylus": "stylus -w styl/screen.styl -o css/",
-    "build": "electron-packager dist app --platform=darwin --arch=x64 --electron-version=1.5.0 --overwrite"
+    "build": "electron-packager dist app --platform=darwin --arch=x64 --electron-version=1.5.0 --overwrite",
+    "start": "./node_modules/.bin/electron ./"
   },
   "repository": {
     "type": "git",
@@ -44,7 +45,7 @@
   },
   "devDependencies": {
     "colors.css": "^2.3.0",
-    "electron": "^1.7.7",
+    "electron": "^1.7.8",
     "event-stream": "^3.3.4",
     "gulp": "^3.9.1",
     "gulp-clean-css": "^3.0.3",

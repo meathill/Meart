@@ -1,14 +1,28 @@
 /**
  * Created by meathill on 2016/11/27.
  */
+const path = require('path');
+const webpack = require('webpack');
+const dev = require('./config/dev');
+
 module.exports = {
-  entry: './app/index.js',
+  entry: './app/app.js',
   output: {
-    filename: 'bundle.js',
-    path: './dist'
+    filename: 'app.js',
+    path: path.resolve(__dirname, './dist')
   },
   module: {
-    noParse: /vue/
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: 'babel-loader',
+      },
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader',
+      },
+    ],
   },
   resolve: {
     alias: {
@@ -16,8 +30,8 @@ module.exports = {
     }
   },
   target: 'electron-renderer',
-  node: {
-    __dirname: false,
-    __filename: false
-  }
+  devtool: 'source-map',
+  plugins: [
+    new webpack.DefinePlugin(dev),
+  ],
 };

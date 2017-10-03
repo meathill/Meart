@@ -9,9 +9,7 @@
   <link rel="stylesheet" href="css/screen.css">
 </head>
 <body>
-<div id="app" :class="isNew ? 'welcome' : ''">
-  <router-view></router-view>
-</div>
+
 
 <script type="text/x-template" id="home-template">
   <div id="home">
@@ -497,7 +495,7 @@
 <script src="node_modules/vue-router/dist/vue-router.min.js"></script>
 <script src="node_modules/vuex/dist/vuex.min.js"></script>
 <script src="node_modules/moment/min/moment-with-locales.min.js"></script>
-<script src="app.js"></script>
+<script src="app/app.js"></script>
 <script>
   if (window.module) {
     module = window.module;

@@ -1,23 +1,17 @@
-const {remote, shell} = require('electron');
-const router = require('./app/Router');
-const Publisher = require('./app/popup/Publish');
-const Uploader = require('./app/popup/Upload');
-const store = require('./app/store/index');
-require('./app/system/contextMenu');
-require('./electron/template/helpers');
+import App from 'App.vue';
+import router from './Router';
+import store from './store';
 
 const app = new Vue({
-  data: {
-    isNew: true
-  },
   store,
   router,
   methods: {
     onSiteInit() {
       this.isNew = false;
     }
-  }
-}).$mount('#app');
+  },
+  ...App,
+});
 
 Publisher.store = store;
 const publisher = new Vue(Publisher).$mount('#publish-modal .modal-content');
@@ -39,10 +33,13 @@ if (remote.getGlobal('isNew')) {
   });
 }
 
-$('#app').click('a', (event) => {
+document.getElementById('app').addEventListener('click', (event) => {
+  if (event.target.tagName.toLowerCase() !== 'a') {
+    return;
+  }
   let href = event.target.href;
   if (/^https?:\/\//.test(href)) {
     shell.openExternal(href);
     event.preventDefault();
   }
-});
+}, false);
