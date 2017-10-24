@@ -27,11 +27,23 @@ module.exports = {
   resolve: {
     alias: {
       'vue$': 'vue/dist/vue.common.js'
-    }
+    },
   },
   target: 'electron-renderer',
   devtool: 'source-map',
+  watch: true,
+  watchOptions: {
+    poll: 1000,
+    ignored: 'node_modules',
+  },
   plugins: [
     new webpack.DefinePlugin(dev),
   ],
+  externals: {
+    'vue': 'Vue',
+    'vuex': 'Vuex',
+    'vue-router': 'VueRouter',
+    'handlebars': 'Handlebars',
+    'moment': 'moment',
+  },
 };

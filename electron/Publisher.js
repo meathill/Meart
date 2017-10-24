@@ -8,7 +8,6 @@ const _ = require('underscore');
 const { ncp } = require('ncp');
 const mkdirp = require('mkdirp');
 const del = require('del');
-const helpers = require('./template/helpers');
 const themeDefaults = require('../theme/defaults.json');
 const EXIST = 'EEXIST';
 

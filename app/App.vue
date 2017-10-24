@@ -1,5 +1,5 @@
 <template>
-  <div id="app" :class="classes">
+  <div id="app" :class="classes" @click="onClick">
     <router-view></router-view>
   </div>
 </template>
@@ -8,8 +8,8 @@
   const {remote, shell} = require('electron');
   const Publisher = require('./popup/Publish');
   const Uploader = require('./popup/Upload');
-  require('./system/contextMenu');
-  require('../electron/template/helpers');
+  import './system/contextMenu';
+  import '../electron/template/helpers';
 
   export default {
     computed: {
@@ -22,6 +22,36 @@
       return {
         isNew: true,
       };
+    },
+
+    methods: {
+      onClick(event) {
+        if (event.target.tagName.toLowerCase() !== 'a') {
+          return;
+        }
+        let href = event.target.href;
+        if (/^https?:\/\//.test(href)) {
+          shell.openExternal(href);
+          event.preventDefault();
+        }
+      },
+    },
+
+    mounted() {
+      if (remote.getGlobal('isNew')) {
+        router.push({
+          name: "welcome",
+        });
+        this.$once('site-init', () => {
+          console.log('ok');
+          this.isNew = false;
+        });
+      } else {
+        this.isNew = false;
+        router.push({
+          name: 'articleList'
+        });
+      }
     }
   }
 </script>

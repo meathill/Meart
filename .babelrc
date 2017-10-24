@@ -1,0 +1,8 @@
+{
+  "presets": [
+    ["env", {
+      "targets": "electron"
+    }]
+  ],
+  "plugins": ["transform-object-rest-spread"]
+}

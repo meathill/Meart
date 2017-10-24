@@ -1,13 +1,13 @@
 /**
  * Created by realm on 2016/12/19.
  */
-const Welcome = require('./page/Welcome');
-const Home = require('./Home');
-const Preview = require('./site/Preview');
-const SiteConfig = require('./site/Config');
-const ArticleList = require('./site/ArticleList');
-const Article = require('./site/Article');
-const Help = require('./page/Help');
+const Welcome = require('../page/Welcome');
+const Home = require('../Home');
+const Preview = require('../site/Preview');
+const SiteConfig = require('../site/Config');
+const ArticleList = require('../site/ArticleList');
+const Article = require('../site/Article');
+const Help = require('../page/Help');
 
 const routes = [
   {

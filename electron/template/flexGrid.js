@@ -19,7 +19,7 @@ function output (photos, options) {
  *
  * @returns {String|Array}
  */
-module.exports = (photos, options) => {
+export default function(photos, options) {
   // 假定分辨率都是 1200 以上
   let viewportWidth = 1200;
   let height = 400;

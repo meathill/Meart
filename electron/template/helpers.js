@@ -2,9 +2,9 @@
  * Created by meathill on 2017/1/6.
  */
 
-const Handlebars = require('handlebars');
-const moment = require('moment');
-const flexGrid = require('./flexGrid');
+import Handlebars from 'handlebars';
+import moment from 'moment';
+import flexGrid from './flexGrid';
 
 moment.locale('zh-cn');
 
@@ -15,7 +15,7 @@ Handlebars.registerHelper('toDate', (value) => {
   return moment(value).format('YYYY-MM-DD HH:mm:ss');
 });
 Handlebars.registerHelper('equal', function(expect, actual, options) {
-  if (expect == actual) {
+  if (expect === actual) {
     return options.fn(this);
   } else {
     return options.inverse(this);
