@@ -1,13 +1,13 @@
 /**
  * Created by realm on 2016/12/19.
  */
-const Welcome = require('../page/Welcome');
-const Home = require('../Home');
-const Preview = require('../site/Preview');
-const SiteConfig = require('../site/Config');
-const ArticleList = require('../site/ArticleList');
+const Welcome = require('../page/Welcome.vue');
+const Home = require('../Home.vue');
+const Preview = require('../site/Preview.vue');
+const SiteConfig = require('../site/Config.vue');
+const ArticleList = require('../site/ArticleList.vue');
 const Article = require('../site/Article');
-const Help = require('../page/Help');
+const Help = require('../page/Help.vue');
 
 const routes = [
   {
@@ -16,8 +16,14 @@ const routes = [
     component: Home,
     children: [
       {
+        path: 'welcome',
+        name: 'welcome',
+        component: Welcome
+      },
+      {
         path: 'preview',
-        component: Preview
+        name: 'preview',
+        component: Preview,
       },
       {
         path: 'articles',
@@ -37,15 +43,10 @@ const routes = [
         path: 'help',
         name: 'help',
         component: Help
-      }
-    ]
+      },
+    ],
   },
-  {
-    path: '/welcome',
-    name: 'welcome',
-    component: Welcome
-  }
 ];
-module.exports = new VueRouter({
+export default new VueRouter({
   routes
 });

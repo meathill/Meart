@@ -1,7 +1,15 @@
+<template>
+<div class="dbl-click-editor" v-bind:class="{ editing: isEditing }" @dblclick="edit">
+  <slot></slot>
+  <input class="form-control" v-model="value" @blur="editDone" @keyup.enter.prevent="editDone" @keyup.esc="cancel" autofocus>
+</div>
+</template>
+
+<script>
 /**
  * Created by realm on 2016/12/21.
  */
-module.exports = {
+export default {
   name: 'Editor',
   template: '#editor',
   data() {
@@ -33,3 +41,4 @@ module.exports = {
   },
   props: ['originValue']
 };
+</script>
