@@ -71,8 +71,7 @@
 </template>
 
 <script>
-const fs = require('fs');
-const _ = require('underscore');
+const _ = require('lodash');
 const { ipcRenderer } = require('electron');
 const MutationTypes = require('../store/mutation-types');
 

@@ -17,8 +17,8 @@
         <button type="button" class="btn btn-secondary" @click="refresh"><i class="fa fa-refresh"></i></button>
       </form>
     </nav>
-    <div class="row">
-      <iframe src="output/index.html" v-if="publishTime" :height="height"></iframe>
+    <div class="row" v-if="publishTime">
+      <iframe src="output/index.html" :height="height"></iframe>
     </div>
     <div class="alert alert-warning" v-else>
       <p>您还没有生成过网站页面，无法提供预览效果。</p>
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-const _ = require('underscore');
+const _ = require('lodash');
 const moment = require('../mixin/moment');
 
 export default {

@@ -8,7 +8,7 @@ const qn = require('qn');
 const qiniu = require('qiniu');
 const { generateAccessToken } = qiniu.util;
 const md5 = require('md5-file/promise');
-const _ = require('underscore');
+const _ = require('lodash');
 const cheerio = require('cheerio');
 const LOG_FILE = '../site/upload-record.json';
 

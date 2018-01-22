@@ -106,7 +106,7 @@
 
 <script>
 const { ipcRenderer } = require('electron');
-const _ = require('underscore');
+const _ = require('lodash');
 const MutationTypes = require('../store/mutation-types');
 const ActionTypes = require('../store/action-types');
 

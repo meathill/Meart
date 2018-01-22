@@ -6,8 +6,6 @@
 
 <script>
   const {remote, shell} = require('electron');
-  const Publisher = require('./popup/Publish');
-  const Uploader = require('./popup/Upload');
   import './system/contextMenu';
   import '../electron/template/helpers';
 

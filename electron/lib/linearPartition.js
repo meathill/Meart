@@ -2,7 +2,7 @@
  * Compiled from https://github.com/crispymtn/linear-partition/blob/master/linear_partition.coffee
  */
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 /**
  *

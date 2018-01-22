@@ -2,7 +2,7 @@
  * Created by meathill on 2016/12/30.
  */
 
-const _ = require('underscore');
+const _ = require('lodash');
 const types = require('./mutation-types');
 const article = require('./articleInit.json');
 

@@ -1,11 +1,10 @@
 /**
  * Created by meathill on 2017/1/2.
  */
-const assert = require('assert');
 const fs = require('fs');
 const should = require('should');
 const del = require('del');
-const _ = require('underscore');
+const _ = require('lodash');
 const Handlebars = require('handlebars');
 const site = require('../../site/site.json');
 const Publisher = require('../../electron/Publisher');

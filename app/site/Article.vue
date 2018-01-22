@@ -69,8 +69,8 @@
 </template>
 
 <script>
-const _ = require('underscore');
-const Editor = require('../component/Editor');
+const _ = require('lodash');
+const Editor = require('../component/Editor.vue');
 const moment = require('../mixin/moment');
 const MutationTypes = require('../store/mutation-types');
 const ActionTypes = require('../store/action-types');

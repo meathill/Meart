@@ -4,7 +4,7 @@
 
 const fs = require('fs');
 const Handlebars = require('handlebars');
-const _ = require('underscore');
+const _ = require('lodash');
 const { ncp } = require('ncp');
 const mkdirp = require('mkdirp');
 const del = require('del');

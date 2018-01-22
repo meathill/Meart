@@ -2,7 +2,7 @@
  * Created by meathill on 2017/4/4.
  */
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 function assignRecursive(from) {
   if (!_.isArray(from) && !_.isObject(from)) {

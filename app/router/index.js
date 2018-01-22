@@ -6,7 +6,7 @@ const Home = require('../Home.vue');
 const Preview = require('../site/Preview.vue');
 const SiteConfig = require('../site/Config.vue');
 const ArticleList = require('../site/ArticleList.vue');
-const Article = require('../site/Article');
+const Article = require('../site/Article.vue');
 const Help = require('../page/Help.vue');
 
 const routes = [
