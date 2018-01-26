@@ -12,6 +12,7 @@ styl/*.css
 output
 *.asar
 app-darwin-x64
+Meart-*
 
 # dev
 settings.json
