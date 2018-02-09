@@ -70,12 +70,12 @@
 
 <script>
 const _ = require('lodash');
-const Editor = require('../component/Editor.vue');
-const moment = require('../mixin/moment');
-const MutationTypes = require('../store/mutation-types');
-const ActionTypes = require('../store/action-types');
-const { assignRecursive } = require('../utils/object');
-const defaults = require('./../store/articleDefault.json');
+const Editor = require('src/component/Editor.vue');
+const moment = require('src/mixin/moment');
+const MutationTypes = require('src/store/mutation-types');
+const ActionTypes = require('src/store/action-types');
+const { assignRecursive } = require('src/utils/object');
+const defaults = require('src/store/articleDefault.json');
 const map = Array.prototype.map;
 
 module.exports = {

@@ -29,7 +29,7 @@
 
 <script>
 const _ = require('lodash');
-const moment = require('../mixin/moment');
+const moment = require('src/mixin/moment');
 
 export default {
   name: 'Preview',

@@ -1,15 +1,19 @@
-<template>
-  <div id="app" :class="classes" @click="onClick">
-    <router-view></router-view>
-  </div>
+<template lang="pug">
+  #app(:class="classes", @click="onClick")
+    router-view
 </template>
 
 <script>
-  const {remote, shell} = require('electron');
+  import {remote, shell} from 'electron';
   import './system/contextMenu';
   import '../electron/template/helpers';
+  import Welcome from './page/Welcome.vue';
 
   export default {
+    components: {
+      Welcome,
+    },
+
     computed: {
       classes() {
         return this.isNew ? 'welcome' : '';
@@ -37,7 +41,7 @@
 
     mounted() {
       if (remote.getGlobal('isNew')) {
-        router.push({
+        this.$router.push({
           name: "welcome",
         });
         this.$once('site-init', () => {
@@ -46,8 +50,8 @@
         });
       } else {
         this.isNew = false;
-        router.push({
-          name: 'articleList'
+        this.$router.push({
+          name: 'article.list'
         });
       }
     }

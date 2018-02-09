@@ -1,25 +1,20 @@
 /**
  * Created by realm on 2016/12/19.
  */
-const Welcome = require('../page/Welcome.vue');
-const Home = require('../Home.vue');
-const Preview = require('../site/Preview.vue');
-const SiteConfig = require('../site/Config.vue');
-const ArticleList = require('../site/ArticleList.vue');
-const Article = require('../site/Article.vue');
-const Help = require('../page/Help.vue');
+import Welcome from 'src/page/Welcome.vue';
+import Home from 'src/module/Home.vue';
+import Preview from 'src/module/site/container/Preview.vue';
+import SiteConfig from 'src/module/site/container/Config.vue';
+import ArticleList from 'src/module/article/container/ArticleList.vue';
+import Article from 'src/module/article/container/Article.vue';
+import Help from 'src/page/Help.vue';
 
 const routes = [
   {
-    path: '/',
+    path: '/admin',
     name: "home",
     component: Home,
     children: [
-      {
-        path: 'welcome',
-        name: 'welcome',
-        component: Welcome
-      },
       {
         path: 'preview',
         name: 'preview',
@@ -27,12 +22,12 @@ const routes = [
       },
       {
         path: 'articles',
-        name: 'articleList',
+        name: 'article.list',
         component: ArticleList,
       },
       {
         path: 'article/:id',
-        name: 'article',
+        name: 'article.detail',
         component: Article
       },
       {
@@ -46,7 +41,17 @@ const routes = [
       },
     ],
   },
+  {
+    path: '/welcome',
+    name: 'welcome',
+    component: Welcome,
+  },
+  {
+    path: '/(.*)',
+    redirect: '/home',
+  },
 ];
 export default new VueRouter({
-  routes
+  mode: 'hash',
+  routes,
 });

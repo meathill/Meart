@@ -25,8 +25,10 @@ module.exports = {
     ],
   },
   resolve: {
+    extensions: ['.js', '.vue', '.json'],
     alias: {
-      'vue$': 'vue/dist/vue.common.js'
+      'vue$': 'vue/dist/vue.common.js',
+      'src': path.resolve(__dirname, './app'),
     },
   },
   target: 'electron-renderer',

@@ -26,13 +26,16 @@
 </template>
 
 <script>
-const moment = require('../mixin/moment');
+import {mapState} from 'vuex';
+const moment = require('src/mixin/moment');
 
 export default {
-  name: 'ArticleList',
   computed: {
-    articles() {
-      return this.$store.state.site.articles;
+    ...mapState('site', ['articles']),
+  },
+  data() {
+    return {
+
     }
   },
   methods: {
@@ -52,6 +55,9 @@ export default {
     getHref(value) {
       return '#/article/' + value;
     }
+  },
+  beforeMount() {
+    debugger;
   },
   mixins: [moment]
 };

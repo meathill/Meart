@@ -1,9 +1,9 @@
-<template>
+<template lang="pug">
   <form class="carousel slide welcome-panel" data-ride="carousel" data-interval="0" data-keyboard="false" id="welcome-wizard" @submit.prevent="onSubmit">
     <div class="carousel-inner" role="listbox">
       <div class="carousel-item active">
         <section>
-          <h1>欢迎使用 Meart</h1>
+          h1 欢迎使用 Meart
           <p>Meart 是一个免费工具，试图帮助设计师、摄影师快捷方便的创建个人作品网站。Meart 尽量将技术细节隐藏起来，所有过程均通过图形界面操作来实现。最终网站托管在免费 CDN 上。</p>
           <p>接下来，请跟随向导指引，完成网初始化。</p>
         </section>
@@ -26,9 +26,7 @@
               <img class="rounded img-thumbnail" :src="siteIcon" width="80" height="80">
             </p>
             <input type="file" class="hide" id="site-icon" @change="onSelectFile">
-            <label class="btn btn-secondary" for="site-icon" tabindex="3">
-              网站图标
-            </label>
+            label.btn.btn-secondary(for="site-icon", tabindex="3") 网站图标
             <span class="text-muted"><small>（png，ico 格式，可选）</small></span>
           </div>
         </fieldset>
