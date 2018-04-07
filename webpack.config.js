@@ -7,10 +7,6 @@ const dev = require('./config/dev');
 
 module.exports = {
   entry: './app/app.js',
-  output: {
-    filename: 'app.js',
-    path: path.resolve(__dirname, './dist')
-  },
   module: {
     rules: [
       {
@@ -33,6 +29,7 @@ module.exports = {
   },
   target: 'electron-renderer',
   devtool: 'source-map',
+  mode: 'development',
   watch: true,
   watchOptions: {
     poll: 1000,
