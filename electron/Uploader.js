@@ -1,21 +1,20 @@
 /**
  * Created by meathill on 2017/1/5.
  */
-const fs = require('fs');
 const http = require('http');
 const { nativeImage } = require('electron');
-const qn = require('qn');
 const qiniu = require('qiniu');
 const { generateAccessToken } = qiniu.util;
 const md5 = require('md5-file/promise');
 const _ = require('lodash');
 const cheerio = require('cheerio');
+const {appendFile, exists, mkdir, readDir, readFile, stat, writeFile} = require('./util/fs');
 const LOG_FILE = '../site/upload-record.json';
 
 const IMG_REG = /(href|style|src)="(?!https?:\/\/)([^"]+\.(?:jpg|jpeg|png|webp))[")]/ig;
 const URL_REG = /url\((?!https?:\/\/)([^)]+\.(?:jpg|jpeg|png|webp))\)/ig;
 
-let uploading;
+const uploading = new Set();
 let refreshFiles;
 let record;
 let config;
@@ -25,25 +24,17 @@ class Uploader {
    *
    * @param {Object} sender
    * @param {String} path
+   * @param {Object} config
    */
-  constructor(sender, path) {
-    config = require('../site/server.json');
+  constructor(sender, path, config) {
+    const {ACCESS_KEY, SECRET_KEY} = config;
     if (!Uploader.isServerConfigured(config)) {
       throw new Error('服务器配置信息不全');
     }
-    this.qiniu = qn.create({
-      accessKey: config.ACCESS_KEY,
-      secretKey: config.SECRET_KEY,
-      bucket: config.bucket,
-      origin: `http://${config.bucket}.u.qiniudn.com`,
-      uploadURL: 'http://up-z2.qiniu.com'
-    });
-    qiniu.conf.ACCESS_KEY = config.ACCESS_KEY;
-    qiniu.conf.SECRET_KEY = config.SECRET_KEY;
+    this.mac = new qiniu.auth.digest.Mac(ACCESS_KEY, SECRET_KEY);
     this.sender = sender;
     this.path = path;
-    this.tmp = path + 'tmp/';
-    uploading = {};
+    this.tmpFolder = path + 'tmp/';
     refreshFiles = [];
     try {
       record = require(LOG_FILE);
@@ -52,38 +43,29 @@ class Uploader {
     }
   }
 
-  start() {
-    this.createTempFolder()
-      .then(this.findFiles.bind(this))
-      .then(this.uploadHTML.bind(this))
-      .then(this.uploadAssets.bind(this))
-      .then(this.refreshCDN.bind(this))
-      .then(this.finish.bind(this))
-      .catch(Uploader.catchAll);
+  async start() {
+    await this.createTempFolder();
+    const files = await this.findFiles();
+    await this.uploadHTML(files);
+    await this.uploadAssets();
+    await this.refreshCDN();
+    await this.finish();
   }
 
-  createTempFolder() {
-    if (fs.existsSync(this.tmp)) {
-      return Promise.resolve();
+  async createTempFolder() {
+    const isTempFolderExists = await exists(this.tmpFolder);
+    if (isTempFolderExists) {
+      return;
     }
-    return new Promise( resolve => {
-      fs.mkdir(this.tmp, err => {
-        if (err) {
-          throw err;
-        }
-        resolve();
-      });
-    });
+
+    return mkdir(this.tmpFolder);
   }
 
   findAllImages(html) {
     let images = [];
-    html.replace(IMG_REG, (match, attr, src) => {
-      if (src.indexOf('url(') != -1) {
-        src = src.substr(src.indexOf('url(') + 4);
-      }
+    $ = cheerio.load(html);
+    $('img').src(src => {
       images.push(src);
-      return match;
     });
     return _.uniq(images);
   }
@@ -96,7 +78,7 @@ class Uploader {
    */
   findFiles() {
     this.sender.send('/upload/progress/', '计算所有需要上传的内容', 0);
-    return this.readDir(this.path);
+    return readDir(this.path);
   }
 
   finish(refresh) {
@@ -113,30 +95,19 @@ class Uploader {
    */
   generateThumbnail(images) {
     this.sender.send('/upload/progress/', '开始生成缩略图');
-    return Promise.all(images.filter( image => {
-      return image.key;
-    }).map( image => {
-      let {src, hash, key} = image;
-      let ext = key.substr(key.lastIndexOf('.'));
-      let filename = hash + '@h400' + ext;
+    return Promise.all(images.filter(image => image.key).map(async image => {
+      const {src, hash, key} = image;
+      const ext = key.substr(key.lastIndexOf('.'));
+      const filename = hash + '@h400' + ext;
       let img = nativeImage.createFromPath(src);
-      return new Promise( resolve => {
-        let data = img.resize( {
-          height: 400
-        });
-        data = /\.png$/i.test(ext) ? data.toPNG() : data.toJPEG(85);
-        fs.writeFile(this.tmp + filename, data, err => {
-          if (err) {
-            throw err;
-          }
-          image.thumbnail = filename;
-          resolve(image);
-        });
-      })
-    }))
-      .then( images => {
-        return images;
+      img = img.resize( {
+        height: 400
       });
+      const data = /\.png$/i.test(ext) ? img.toPNG() : img.toJPEG(85);
+      await writeFile(this.tmpFolder + filename, data);
+      image.thumbnail = filename;
+      return image;
+    }));
   }
 
   /**
@@ -148,14 +119,7 @@ class Uploader {
    */
   readHTML(html, path) {
     this.sender.send('/upload/progress/', '正在分析：' + html);
-    return new Promise( resolve => {
-      fs.readFile(path + html, 'utf8', (err, content) => {
-        if (err) {
-          throw err;
-        }
-        resolve(content);
-      })
-    });
+    return readFile(path + html, 'utf8');
   }
 
   /**
@@ -307,38 +271,35 @@ class Uploader {
    * @param {String} hash 文件 MD5 值
    * @return {Promise}
    */
-  uploadFile(source, to = '', hash = '') {
-    if (uploading[source]) {
-      return uploading[source];
+  async uploadFile(source, to = '', hash = '') {
+    if (uploading.has(source)) {
+      return;
     }
     this.sender.send('/upload/progress/', '开始上传：' + source);
     to = to || source;
     refreshFiles.push(to);
-
-    uploading[source] = new Promise(resolve => {
-      let options = {
-        key: to,
-        scope: config.bucket + ':' + to
-      };
-      this.qiniu.uploadFile(source, options, (err, result) => {
-        if (err) {
-          if (err.code === 614) {
-            return resolve({
-              key: to,
-              hash: hash,
-              src: source
-            });
-          }
-          throw err;
-        }
-        resolve(result);
-      });
-    })
-      .then( result => {
-        return this.logResult(result, source, hash);
-      });
-    fs.appendFile(this.path + 'upload.log', `Upload: ${source}\n`, 'utf8');
-    return uploading[source];
+    const options = {
+      key: to,
+      scope: `${bucket}:${to}` ,
+    };
+    const policy = new qiniu.rs.PutPolicy(options);
+    const token = policy.uploadToken(mac);
+    uploading.add(source);
+    try {
+      const result = this.qiniu.uploadFile(source, options);
+    } catch (err) {
+      if (err.code === 614) {
+        const result = {
+          key: to,
+          hash: hash,
+          src: source,
+        };
+      }
+      throw err;
+    }
+    this.logResult(result, source, result.hash);
+    appendFile(this.path + 'upload.log', `Upload: ${source}\n`, 'utf8');
+    uploading.delete(source);
   }
 
   /**
@@ -347,21 +308,18 @@ class Uploader {
    * @param {Array} files 全部文件
    * @return {Promise}
    */
-  uploadHTML(files) {
+  async uploadHTML(files) {
     this.sender.send('/upload/progress/', '开始上传网页', 2);
-    let htmls = files.filter( file => {
-      return /\.html$/.test(file);
+    let htmls = files.filter(file => /\.html$/.test(file));
+    let perPage = 68 / htmls.length;
+    let count = 0;
+    for (const html of htmls) {
+      this.sender.send('/upload/progress/', '准备上传：' + html, 2 + count * perPage);
+      await this.uploadSingleHTML(html, perPage);
+    }
+    return files.filter( file => {
+      return !/\.html$/.test(file);
     });
-    let perpage = 68 / htmls.length;
-    return Promise.all(htmls.map( (html, index) => {
-      this.sender.send('/upload/progress/', '准备上传：' + html, 2 + index * perpage);
-      return this.uploadSingleHTML(html, perpage);
-    }))
-      .then( () => {
-        return files.filter( file => {
-          return !/\.html$/.test(file);
-        });
-      });
   }
 
   /**
@@ -370,26 +328,14 @@ class Uploader {
    * @param {String} file 文件路径
    * @return {Promise}
    */
-  uploadSingleHTML(file) {
-    let html, allImages;
-    return this.readHTML(file, this.path)
-      .then( content => {
-        html = content;
-        return this.findAllImages(html);
-      })
-      .then(this.uploadSourceImages.bind(this))
-      .then( images => {
-        allImages = images;
-        return this.generateThumbnail(images)
-      })
-      .then(this.uploadThumbnailImages.bind(this))
-      .then( () => {
-        return this.replaceImageSrc(html, allImages, file);
-      })
-      .then( newHTML => {
-        return this.uploadFile(newHTML, file);
-      })
-      .catch(Uploader.catchAll);
+  async uploadSingleHTML(file, perPage) {
+    const html = await this.readHTML(file, this.path);
+    let allImages = await this.findAllImages(html);
+    allImages = await this.uploadSourceImages(allImages);
+    allImages = await this.generateThumbnail(allImages);
+    await this.uploadThumbnailImages(allImages);
+    const newHTML = this.replaceImageSrc(html, allImages, file);
+    await this.uploadFile(newHTML, file);
   };
 
   /**
@@ -399,38 +345,19 @@ class Uploader {
    * @return {Promise}
    */
   uploadSourceImages(images) {
-    return Promise.all(images.map( image => {
-      return md5(image)
-        .then( hash => {
-          return new Promise( resolve => {
-            fs.stat(image, (err, stat) => {
-              if (err) {
-                throw err;
-              }
-              let result = {
-                hash: hash,
-                src: image,
-                size: stat.size
-              };
-              if (stat.mtime <= record[image]) { // 上传过的不处理
-                return resolve(result);
-              }
-              result.isModified = true;
-              resolve(result);
-            })
-          })
-        })
-        .then( result => {
-          if (!result.isModified) {
-            return result;
-          }
-
-          let ext = image.substr(image.lastIndexOf('.'));
-          return this.uploadFile(image, 'images/' + result.hash + ext, result.hash);
-        })
-        .catch( err => {
-          console.log(err);
-        });
+    return Promise.all(images.map(async image => {
+      const hash = await md5(image);
+      const {size, mtime} = await stat(image);
+      const result = {
+        hash,
+        src: image,
+        size,
+      };
+      if (mtime <= record[image]) { // 上传过的不处理
+        return result;
+      }
+      let ext = image.substr(image.lastIndexOf('.'));
+      return this.uploadFile(image, 'images/' + result.hash + ext, result.hash);
     }));
   }
 
@@ -442,15 +369,10 @@ class Uploader {
    */
   uploadThumbnailImages(images) {
     this.sender.send('/upload/progress/', '开始上传缩略图');
-    return Promise.all(images.filter( image => {
-      return image.thumbnail;
-    }).map( image => {
-        let {thumbnail} = image;
-        return this.uploadFile(this.tmp + thumbnail, 'images/' + thumbnail)
-          .then( result => {
-            return result;
-          });
-      }));
+    return Promise.all(images.filter(image => image.thumbnail).map(image => {
+      let {thumbnail} = image;
+      return this.uploadFile(this.tmpFolder + thumbnail, 'images/' + thumbnail);
+    }));
   }
 
   static catchAll(err) {
