@@ -39,10 +39,14 @@
     border-radius 3.5rem
     font-size 1.5rem
     min-width 10rem
+    padding-left .5em
+    padding-right .5em
 
-    &:hover,
-    &:active
+    &:hover
       background-color lighten(active-color, 15%)
+
+    &:not(:disabled):not(.disabled):active
+      background-color darken(active-color, 15%)
 
   h1
     text-align center

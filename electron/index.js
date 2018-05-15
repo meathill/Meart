@@ -3,7 +3,7 @@
  */
 
 console.log('start');
-const Meart = require('./electron/Meart');
+const Meart = require('./Meart');
 let meart = new Meart();
 
 

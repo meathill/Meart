@@ -1,13 +1,13 @@
 /**
  * Created by realm on 2016/12/19.
  */
-import Welcome from 'src/page/Welcome.vue';
+import Welcome from 'src/module/Welcome.vue';
 import Home from 'src/module/Home.vue';
 import Preview from 'src/module/site/container/Preview.vue';
 import SiteConfig from 'src/module/site/container/Config.vue';
 import ArticleList from 'src/module/article/container/ArticleList.vue';
 import Article from 'src/module/article/container/Article.vue';
-import Help from 'src/page/Help.vue';
+import Help from 'src/module/Help.vue';
 
 const routes = [
   {

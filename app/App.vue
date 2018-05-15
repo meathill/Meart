@@ -7,12 +7,8 @@
   import {remote, shell} from 'electron';
   import './system/contextMenu';
   import '../electron/template/helpers';
-  import Welcome from './page/Welcome.vue';
 
   export default {
-    components: {
-      Welcome,
-    },
 
     computed: {
       classes() {

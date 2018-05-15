@@ -13,6 +13,7 @@ output
 *.asar
 app-darwin-x64
 Meart-*
+/index.js
 
 # dev
 settings.json
