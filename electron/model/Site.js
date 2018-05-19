@@ -2,21 +2,27 @@
  * Created by meathill on 2017/4/4.
  */
 
-const fs = require('fs');
 const { ipcMain } = require('electron');
+import {exists, readJSON, writeFile} from '../util/fs';
 
-class Site {
-  constructor(path) {
+const path = process.cwd();
+
+export default class Site {
+  constructor() {
     this.path = path + 'site/';
     this.dataPath = this.path + 'site.json';
     this.serverPath = this.path + 'server.json';
 
-    this.isExist = fs.existsSync(this.dataPath);
+    this.init();
+  }
+
+  async init() {
+    this.isExist = await exists(this.dataPath);
     if (this.isExist) {
-      this.data = require(this.dataPath);
+      this.data = await readJSON(this.dataPath);
     }
-    if (fs.existsSync(this.serverPath)) {
-      this.server = require(this.serverPath);
+    if (await exists(this.serverPath)) {
+      this.server = await readJSON(this.serverPath);
     } else {
       this.server = {
         name: 'qiniu',
@@ -35,35 +41,34 @@ class Site {
 
   initSite(event, site)  {
     global.site = this.site = site;
-    fs.writeFile(this.dataPath, JSON.stringify(site), 'utf8', err => {
-      if (err) {
+    writeFile(this.dataPath, JSON.stringify(site), 'utf8')
+      .catch(err => {
         throw err;
-      }
-    });
+      });
     event.returnValue = true;
   }
 
   saveServer(event, server) {
     global.server = this.server = server;
-    fs.writeFile(this.serverPath, JSON.stringify(server), 'utf8', err => {
-      if (err) {
+    writeFile(this.serverPath, JSON.stringify(server), 'utf8')
+      .then(() => {
+        event.sender.send('saved');
+      })
+      .catch(err => {
         throw err;
-      }
-      event.sender.send('saved');
-    });
+      });
   }
 
   saveSite(event, site) {
     let now = Date.now();
     site.lastModifiedTime = now;
     this.site = global.site = site;
-    fs.writeFile(this.dataPath, JSON.stringify(site), 'utf8', err => {
-      if (err) {
+    writeFile(this.dataPath, JSON.stringify(site), 'utf8')
+      .then(() => {
+        event.sender.send('saved', now);
+      })
+      .catch(err => {
         throw err;
-      }
-      event.sender.send('saved', now);
-    });
+      });
   }
 }
-
-module.exports = Site;

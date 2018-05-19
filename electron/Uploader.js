@@ -6,9 +6,9 @@ const { nativeImage } = require('electron');
 const qiniu = require('qiniu');
 const { generateAccessToken } = qiniu.util;
 const md5 = require('md5-file/promise');
-const _ = require('lodash');
+import {object, pluck, uniq, without} from 'lodash';
 const cheerio = require('cheerio');
-const {appendFile, exists, mkdir, readDir, readFile, stat, writeFile} = require('./util/fs');
+const {appendFile, exists, mkdirp, readDir, readFile, stat, writeFile} = require('./util/fs');
 const LOG_FILE = '../site/upload-record.json';
 
 const IMG_REG = /(href|style|src)="(?!https?:\/\/)([^"]+\.(?:jpg|jpeg|png|webp))[")]/ig;
@@ -19,7 +19,7 @@ let refreshFiles;
 let record;
 let config;
 
-class Uploader {
+export default class Uploader {
   /**
    *
    * @param {Object} sender
@@ -58,7 +58,7 @@ class Uploader {
       return;
     }
 
-    return mkdir(this.tmpFolder);
+    return mkdirp(this.tmpFolder);
   }
 
   findAllImages(html) {
@@ -67,7 +67,7 @@ class Uploader {
     $('img').src(src => {
       images.push(src);
     });
-    return _.uniq(images);
+    return uniq(images);
   }
 
   /**
@@ -128,15 +128,9 @@ class Uploader {
    * @param {String} path 路径
    * @return {Promise}
    */
-  readDir(path) {
-    return new Promise(resolve => {
-      fs.readdir(path, 'utf8', (err, files) => {
-        if (err) {
-          throw err;
-        }
-        resolve(_.without(files, 'tmp', '.DS_Store', 'upload.log')); // tmp 目录用来存放缩略图
-      });
-    });
+  async readDir(path) {
+    const files = await readDir(path);
+    return without(files, 'tmp', '.DS_Store', 'upload.log'); // tmp 目录用来存放缩略图
   }
 
   /**
@@ -174,7 +168,7 @@ class Uploader {
       });
 
       req.write(JSON.stringify({
-        urls: _.unique(refreshFiles).map( url => {
+        urls: uniq(refreshFiles).map( url => {
           return config.host + url;
         })
       }));
@@ -190,9 +184,9 @@ class Uploader {
    * @param {String} origin 原始文件名
    * @return {Promise}
    */
-  replaceImageSrc(html, images, origin) {
+  async replaceImageSrc(html, images, origin) {
     this.sender.send('/upload/progress/', '生成新 HTML');
-    let map = _.object(_.pluck(images, 'src'), images);
+    let map = object(pluck(images, 'src'), images);
     let $ = cheerio.load(html, {
       decodeEntities: false
     });
@@ -216,14 +210,8 @@ class Uploader {
       });
     });
     html = $.html();
-    return new Promise( resolve => {
-      fs.writeFile(this.tmp + origin, html, 'utf8', err => {
-        if (err) {
-          throw err;
-        }
-        resolve(this.tmp + origin);
-      });
-    });
+    await writeFile(this.tmp + origin, html, 'utf8');
+    return this.tmp + origin;
   }
 
   /**
@@ -235,31 +223,18 @@ class Uploader {
    */
   uploadAssets(files, dir = '') {
     this.sender.send('/upload/progress/', '开始上传其它资源', 70);
-    return Promise.all(files.map( file => {
+    return Promise.all(files.map(async file => {
       file = dir ? dir + '/' + file : file;
-      return new Promise( resolve => {
-        fs.stat(this.path + file, (err, stat) => {
-          if (err) {
-            throw err;
-          }
-          resolve(stat);
-        })
-      })
-        .then( stat => {
-          if (stat.isDirectory()) { // 是目录，递归之
-            return this.readDir(this.path + file)
-              .then( files => {
-                return this.uploadAssets(files, file);
-              });
-          }
+      const info = await stat(this.path + file);
+      if (info.isDirectory()) { // 是目录，递归之
+        const files = await this.readDir(this.path + file);
+        return await this.uploadAssets(files, file);
+      }
 
-          let source = this.path + file;
-          if (!(source in record) || stat.mtime > record[source]) {
-            return this.uploadFile(source, file);
-          } else {
-            return true;
-          }
-        });
+      let source = this.path + file;
+      if (!(source in record) || stat.mtime > record[source]) {
+        return await this.uploadFile(source, file);
+      }
     }));
   }
 
@@ -286,7 +261,7 @@ class Uploader {
     const token = policy.uploadToken(mac);
     uploading.add(source);
     try {
-      const result = this.qiniu.uploadFile(source, options);
+      const result = await this.qiniu.uploadFile(source, options);
     } catch (err) {
       if (err.code === 614) {
         const result = {
@@ -394,13 +369,13 @@ class Uploader {
 
   logResult(result, source, hash) {
     record[source] = Date.now();
-    fs.writeFile(this.path + LOG_FILE, JSON.stringify(record), 'utf8', err => {
+    writeFile(this.path + LOG_FILE, JSON.stringify(record), 'utf8', err => {
       if (err) {
         throw err;
       }
     });
     console.log('Uploaded: ', source, hash, result);
-    fs.appendFile(this.path + 'upload.log', `Upload ok: ${source}`, 'utf8', err => {
+    appendFile(this.path + 'upload.log', `Upload ok: ${source}`, 'utf8', err => {
       if (err) {
         throw err;
       }
@@ -410,5 +385,3 @@ class Uploader {
     return result;
   };
 }
-
-module.exports = Uploader;

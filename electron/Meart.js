@@ -6,7 +6,7 @@ const mkdirp = require('mkdirp');
 const defaultConfig = require('../config/default.json');
 const { DEBUG } = require('../config/config.json');
 const menuTemplate = require('./menu');
-const Site = require('./model/Site');
+import Site from './model/Site';
 const ipcHandler = require('./ipcHandler');
 const EXIST = 'EEXIST';
 

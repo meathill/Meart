@@ -8,6 +8,13 @@ module.exports = Object.assign({}, base, {
     path: path.resolve(__dirname, '../dist/app'),
   },
   target: 'electron-renderer',
+  externals: {
+    'vue': 'Vue',
+    'vuex': 'Vuex',
+    'vue-router': 'VueRouter',
+    'handlebars': 'Handlebars',
+    'moment': 'moment',
+  },
   devServer: {
     contentBase: path.resolve(__dirname, '../dist/app'),
     disableHostCheck: true,

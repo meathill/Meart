@@ -15,21 +15,24 @@ module.exports = {
         test: /\.vue$/,
         loader: 'vue-loader',
       },
+      {
+        test: /\.hbs$/,
+        loader: "handlebars-loader",
+        query: {
+          partialDirs: [
+            path.resolve(__dirname, '../electron/template'),
+          ],
+        },
+      },
     ],
   },
   resolve: {
     extensions: ['.js', '.vue', '.json'],
     alias: {
       'src': path.resolve(__dirname, '../app'),
+      lodash: 'lodash-es',
     },
   },
   mode: 'development',
   devtool: 'source-map',
-  externals: {
-    'vue': 'Vue',
-    'vuex': 'Vuex',
-    'vue-router': 'VueRouter',
-    'handlebars': 'Handlebars',
-    'moment': 'moment',
-  },
 };
