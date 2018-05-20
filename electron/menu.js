@@ -1,6 +1,6 @@
 const {app} = require('electron');
 
-module.exports = [
+export default [
   {
     label: "Meart",
     submenu: [

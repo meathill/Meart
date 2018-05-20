@@ -20,7 +20,7 @@ export default class Publisher {
    * @param {string} output [optional] 输出路径后缀
    */
   constructor(sender, output = '') {
-    this.init(sender, output)
+    this.isReady = this.init(sender, output)
       .then(() => {
         console.log('Publisher created');
       });
@@ -28,7 +28,7 @@ export default class Publisher {
 
   async init(sender, output) {
     let site;
-    if (await exists(siteData)) {
+    if (exists(siteData)) {
       site = await readJSON(siteData);
     } else {
       site = {
@@ -113,12 +113,12 @@ export default class Publisher {
 
   async generateOutputDirectory(options) {
     this.sender.send('/publish/progress/', '生成导出目录', 5);
-    if (await exists(this.output)) {
+    if (exists(this.output)) {
       return del([this.output + 'css', this.output + '*.html' ]);
     }
 
     try {
-      mkdirp(this.output)
+      await mkdirp(this.output)
     } catch (err) {
       if (err.code === EXIST) {
         return options;
@@ -149,7 +149,7 @@ export default class Publisher {
   async readPartials(templates) {
     this.sender.send('/publish/progress/', '读取子模板', 25);
     let partial = this.themePath + 'partial/';
-    if (!await exists(partial)) { // 没有子模版就不处理
+    if (!exists(partial)) { // 没有子模版就不处理
       return templates;
     }
     const files = await readDir(partial, 'utf8');

@@ -2,7 +2,7 @@
  * Compiled from https://github.com/crispymtn/linear-partition/blob/master/linear_partition.coffee
  */
 
-const _ = require('lodash');
+import {min, max} from 'lodash';
 
 /**
  *
@@ -11,7 +11,7 @@ const _ = require('lodash');
  *
  * @returns {Array}
  */
-module.exports = (seq, k) =>{
+export default (seq, k) =>{
   let ans, i, j, m, n, solution, table, x, y, _i, _j, _k, _l;
   n = seq.length;
   if (k <= 0) {
@@ -60,11 +60,11 @@ module.exports = (seq, k) =>{
   }
   for (i = _k = 1; 1 <= n ? _k < n : _k > n; i = 1 <= n ? ++_k : --_k) {
     for (j = _l = 1; 1 <= k ? _l < k : _l > k; j = 1 <= k ? ++_l : --_l) {
-      m = _.min((function() {
+      m = min((function() {
         let _m, _results;
         _results = [];
         for (x = _m = 0; 0 <= i ? _m < i : _m > i; x = 0 <= i ? ++_m : --_m) {
-          _results.push([_.max([table[x][j - 1], table[i][0] - table[x][0]]), x]);
+          _results.push([max([table[x][j - 1], table[i][0] - table[x][0]]), x]);
         }
         return _results;
       })(), function(o) {

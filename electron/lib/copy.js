@@ -10,7 +10,7 @@ let fs = require('fs');
  * @param {String} to 目标文件地址
  * @returns {Promise}
  */
-module.exports = function (source, to) {
+export default function (source, to) {
   let read = fs.createReadStream(source);
   let write = fs.createReadStream(to);
 

@@ -2,6 +2,7 @@
  * Created by meathill on 2016/11/27.
  */
 const path = require('path');
+const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
 
 module.exports = {
   module: {
@@ -30,9 +31,8 @@ module.exports = {
     extensions: ['.js', '.vue', '.json'],
     alias: {
       'src': path.resolve(__dirname, '../app'),
-      lodash: 'lodash-es',
+      'any-promise': 'promise-monofill',
     },
   },
   mode: 'development',
-  devtool: 'source-map',
 };

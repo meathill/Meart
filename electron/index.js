@@ -3,8 +3,8 @@
  */
 
 console.log('start');
-const Meart = require('./Meart');
-let meart = new Meart();
+import Meart from './Meart';
+new Meart();
 
 
 

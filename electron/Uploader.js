@@ -6,17 +6,16 @@ const { nativeImage } = require('electron');
 const qiniu = require('qiniu');
 const { generateAccessToken } = qiniu.util;
 const md5 = require('md5-file/promise');
-import {object, pluck, uniq, without} from 'lodash';
+import {fromPairs , uniq, without} from 'lodash';
 const cheerio = require('cheerio');
 const {appendFile, exists, mkdirp, readDir, readFile, stat, writeFile} = require('./util/fs');
-const LOG_FILE = '../site/upload-record.json';
+const LOG_FILE = '../site/upload-record.log';
 
 const IMG_REG = /(href|style|src)="(?!https?:\/\/)([^"]+\.(?:jpg|jpeg|png|webp))[")]/ig;
 const URL_REG = /url\((?!https?:\/\/)([^)]+\.(?:jpg|jpeg|png|webp))\)/ig;
 
 const uploading = new Set();
 let refreshFiles;
-let record;
 let config;
 
 export default class Uploader {
@@ -35,12 +34,8 @@ export default class Uploader {
     this.sender = sender;
     this.path = path;
     this.tmpFolder = path + 'tmp/';
-    refreshFiles = [];
-    try {
-      record = require(LOG_FILE);
-    } catch (err) {
-      record = {};
-    }
+    this.readLog();
+    this.refreshFiles = [];
   }
 
   async start() {
@@ -53,7 +48,7 @@ export default class Uploader {
   }
 
   async createTempFolder() {
-    const isTempFolderExists = await exists(this.tmpFolder);
+    const isTempFolderExists = exists(this.tmpFolder);
     if (isTempFolderExists) {
       return;
     }
@@ -133,6 +128,15 @@ export default class Uploader {
     return without(files, 'tmp', '.DS_Store', 'upload.log'); // tmp 目录用来存放缩略图
   }
 
+  async readLog() {
+    if (!exists(LOG_FILE)) {
+      this.log = {};
+      return;
+    }
+    const content = await readFile(LOG_FILE, 'utf8');
+    this.log = fromPairs(content.split('\n').map(line => line.split(' ')));
+  }
+
   /**
    * 刷新 CDN 缓存
    */
@@ -186,7 +190,7 @@ export default class Uploader {
    */
   async replaceImageSrc(html, images, origin) {
     this.sender.send('/upload/progress/', '生成新 HTML');
-    let map = object(pluck(images, 'src'), images);
+    let map = keyBy(images, 'src');
     let $ = cheerio.load(html, {
       decodeEntities: false
     });
@@ -232,7 +236,7 @@ export default class Uploader {
       }
 
       let source = this.path + file;
-      if (!(source in record) || stat.mtime > record[source]) {
+      if (!(source in this.log) || stat.mtime > this.log[source]) {
         return await this.uploadFile(source, file);
       }
     }));
@@ -328,7 +332,7 @@ export default class Uploader {
         src: image,
         size,
       };
-      if (mtime <= record[image]) { // 上传过的不处理
+      if (mtime <= this.log[image]) { // 上传过的不处理
         return result;
       }
       let ext = image.substr(image.lastIndexOf('.'));
@@ -368,18 +372,8 @@ export default class Uploader {
   }
 
   logResult(result, source, hash) {
-    record[source] = Date.now();
-    writeFile(this.path + LOG_FILE, JSON.stringify(record), 'utf8', err => {
-      if (err) {
-        throw err;
-      }
-    });
+    appendFile(this.path + LOG_FILE, `${source} ${Date.now()}`, 'utf8');
     console.log('Uploaded: ', source, hash, result);
-    appendFile(this.path + 'upload.log', `Upload ok: ${source}`, 'utf8', err => {
-      if (err) {
-        throw err;
-      }
-    });
     result.hash = hash; // 为了避免本地计算的 md5 和服务器不一致
     result.src = source;
     return result;

@@ -4,7 +4,7 @@ import mkdirpBase from 'mkdirp';
 import ncpBase from 'ncp';
 
 const appendFile = promisify(fs.appendFile);
-const exists = promisify(fs.exists);
+const exists = fs.existsSync;
 const mkdir = promisify(fs.mkdir);
 const readDir = promisify(fs.readdir);
 const readFile = promisify(fs.readFile);

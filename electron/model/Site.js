@@ -13,15 +13,15 @@ export default class Site {
     this.dataPath = this.path + 'site.json';
     this.serverPath = this.path + 'server.json';
 
-    this.init();
+    this.isReady = this.init();
   }
 
   async init() {
-    this.isExist = await exists(this.dataPath);
+    this.isExist = exists(this.dataPath);
     if (this.isExist) {
       this.data = await readJSON(this.dataPath);
     }
-    if (await exists(this.serverPath)) {
+    if (exists(this.serverPath)) {
       this.server = await readJSON(this.serverPath);
     } else {
       this.server = {

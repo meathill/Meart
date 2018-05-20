@@ -1,7 +1,7 @@
 const path = require('path');
 const base = require('./webpack.config.base');
 
-module.exports = Object.assign({}, base, {
+const config = Object.assign({}, base, {
   entry: path.resolve(__dirname, '../app/app.js'),
   output: {
     filename: 'index.js',
@@ -21,3 +21,15 @@ module.exports = Object.assign({}, base, {
     port: 9003,
   },
 });
+config.resolve.alias.lodash = 'lodash-es';
+config.module.rules[0].options = {
+  presets: [
+    "env", {
+      "targets": {
+        "chrome": "61"
+      },
+    },
+  ],
+};
+
+module.exports = config;
