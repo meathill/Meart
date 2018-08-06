@@ -50,7 +50,7 @@ export default class Meart {
     });
 
     this.win.loadURL(url.format({
-      pathname: path.join(__dirname, '../index.html'),
+      pathname: path.resolve('./index.html'),
       protocol: 'file:',
       slashes: true
     }));
