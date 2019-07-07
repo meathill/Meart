@@ -32,21 +32,21 @@
     "cheerio": "^1.0.0-rc.3",
     "colors.css": "^3.0.0",
     "del": "^3.0.0",
-    "electron": "^5.0.3",
+    "electron": "^5.0.6",
     "font-awesome": "^4.7.0",
     "handlebars": "^4.1.2",
-    "marked": "^0.6.2",
+    "marked": "^0.6.3",
     "md5-file": "^4.0.0",
     "moment": "^2.24.0",
     "ncp": "^2.0.0",
     "qiniu": "^7.2.2",
     "vue": "^2.6.10",
-    "vue-router": "^3.0.6",
+    "vue-router": "^3.0.7",
     "vuex": "^3.1.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.5",
-    "@babel/preset-env": "^7.4.5",
+    "@babel/core": "^7.5.0",
+    "@babel/preset-env": "^7.5.0",
     "babel-loader": "^8.0.6",
     "css-loader": "^2.1.1",
     "gulp": "^4.0.0",
@@ -54,12 +54,12 @@
     "lodash-es": "^4.17.11",
     "mkdirp": "^0.5.1",
     "mocha": "^5.2.0",
-    "pug": "^2.0.3",
+    "pug": "^2.0.4",
     "should": "^13.2.3",
     "vue-loader": "^15.1.0",
     "vue-template-compiler": "^2.6.10",
-    "webpack": "^4.33.0",
-    "webpack-cli": "^3.3.3",
-    "webpack-dev-server": "^3.7.1"
+    "webpack": "^4.35.2",
+    "webpack-cli": "^3.3.5",
+    "webpack-dev-server": "^3.7.2"
   }
 }
