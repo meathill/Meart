@@ -8,9 +8,4 @@ module.exports = Object.assign({}, base, {
     path: path.resolve(__dirname, '../dist'),
   },
   target: 'electron-main',
-  watch: true,
-  watchOptions: {
-    poll: 1000,
-    ignored: 'node_modules,',
-  },
 });

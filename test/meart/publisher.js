@@ -7,13 +7,13 @@ const del = require('del');
 const _ = require('lodash');
 const Handlebars = require('handlebars');
 const site = require('../../site/site.json');
-const Publisher = require('../../electron/Publisher');
+const Publisher = require('../../src/electron/Publisher');
 const event = require('./MockEvent');
 
 describe('Test Publisher', () => {
   let publisher;
   let theme = 'dark';
-  
+
   before( (done) => {
     site.siteTheme = theme;
     publisher = new Publisher(site, event, __dirname + '/../..', 'tmp');
@@ -131,7 +131,7 @@ describe('Test Publisher', () => {
         });
     });
   });
-  
+
   describe('#createIndex()', () => {
     let mockTemplates = {
       index: Handlebars.compile('{{siteTitle}}'),

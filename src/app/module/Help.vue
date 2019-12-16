@@ -63,7 +63,7 @@
 const { shell } = require('electron');
 const marked = require('marked');
 const fs = require('fs');
-const {version} = require('../../package.json');
+const {version} = require('../../../package.json');
 
 let timeout;
 let count = 0;

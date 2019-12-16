@@ -7,10 +7,10 @@ const path = require('path');
 const should = require('should');
 const _ = require('lodash');
 const md5 = require('md5-file/promise');
-const Uploader = require('../../electron/Uploader');
+const Uploader = require('../../src/electron/Uploader');
 const server = require('../../site/server.json');
 const event = require('./MockEvent');
-const copy = require('../../electron/lib/copy');
+const copy = require('../../src/electron/lib/copy');
 
 describe('Test Uploader', () => {
   let output = __dirname + '/../../output/';

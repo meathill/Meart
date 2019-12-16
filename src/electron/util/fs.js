@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'src/electron/util/fs';
 import {promisify} from 'util';
 import mkdirpBase from 'mkdirp';
 import ncpBase from 'ncp';

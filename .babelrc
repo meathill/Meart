@@ -1,12 +1,11 @@
 {
   "presets": [
     [
-      "env", {
-        "targets": {
-          "electron": "3.0.0"
-        }
+      "@babel/preset-env",
+      {
+        "useBuiltIns": "usage",
+        "corejs": 3
       }
     ]
-  ],
-  "plugins": ["transform-object-rest-spread"]
+  ]
 }
