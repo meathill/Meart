@@ -8,9 +8,3 @@ const app = new Vue({
   router,
   ...App,
 }).$mount('#app');
-
-export {
-  app,
-  router,
-  store,
-};

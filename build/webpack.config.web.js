@@ -8,9 +8,7 @@ const config = Object.assign({}, base, {
     filename: 'index.js',
     path: resolve(__dirname, '../dist/ui'),
   },
-  target: 'electron-renderer',
   devServer: {
-    contentBase: resolve(__dirname, '../dist/ui'),
     port: 8080,
   },
   plugins: base.plugins.concat([

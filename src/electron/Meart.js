@@ -1,6 +1,5 @@
 const {app, BrowserWindow, Menu} = require('electron');
 const path = require('path');
-const url = require('url');
 const {exists, mkdirp, readJSON} = require('./util/fs');
 const defaultConfig = require('../config/default.json');
 const { DEBUG } = require('../config/config.json');
