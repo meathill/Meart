@@ -18,5 +18,5 @@ Meart-*
 # dev
 settings.json
 /site
-config/dev.json
+src/config/dev.json
 tmp/

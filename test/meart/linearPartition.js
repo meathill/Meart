@@ -3,7 +3,7 @@
  */
 
 const should = require('should');
-const linearPartition = require('../../electron/lib/linearPartition');
+const linearPartition = require('../../src/electron/lib/linearPartition');
 
 describe('split', () => {
   let source = [9,2,6,3,8,5,8,1,7,3,4];

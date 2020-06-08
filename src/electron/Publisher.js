@@ -5,7 +5,7 @@
 import path from 'path';
 const {assign, clone, defaults, pick, range, uniq} = require('lodash');
 const del = require('del');
-const themeDefaults = require('../theme/defaults.json');
+const themeDefaults = require('../../theme/defaults.json');
 import {exists, mkdirp, ncp, readDir, readFile, readJSON, writeFile} from './util/fs';
 
 const EXIST = 'EEXIST';

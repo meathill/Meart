@@ -3,7 +3,7 @@
  */
 
 const should = require('should');
-const flexGrid = require('../../../electron/template/flexGrid');
+const flexGrid = require('../../../src/electron/template/flexGrid');
 
 const testCase = [
   {

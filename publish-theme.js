@@ -3,7 +3,7 @@
  */
 
 const del = require('del');
-const Publisher = require('./electron/Publisher');
+const Publisher = require('./src/electron/Publisher');
 const site = require('./site/site.json');
 const theme = process.argv[2] || 'dark';
 

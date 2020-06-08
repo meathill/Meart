@@ -27,7 +27,7 @@
 
 <script>
 import {mapState} from 'vuex';
-const moment = require('src/mixin/moment');
+const moment = require('@/mixin/moment');
 
 export default {
   computed: {
