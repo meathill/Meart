@@ -56,7 +56,7 @@
     "lodash-es": "^4.17.14",
     "mkdirp": "^1.0.4",
     "mocha": "^7.2.0",
-    "pug": "^3.0.0",
+    "pug": "^3.0.1",
     "pug-plain-loader": "^1.0.0",
     "should": "^13.2.3",
     "vue-loader": "^15.9.3",
