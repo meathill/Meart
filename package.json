@@ -32,7 +32,7 @@
     "bootstrap": "^5.1.1",
     "cheerio": "^1.0.0-rc.10",
     "colors.css": "^3.0.0",
-    "marked": "^3.0.3",
+    "marked": "^4.0.10",
     "md5-file": "^5.0.0",
     "moment": "^2.29.1",
     "ncp": "^2.0.0",
